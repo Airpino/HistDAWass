@@ -1,0 +1,16 @@
+{
+    "contents" : "Package: HistDAWass\nType: Package\nTitle: HistDAWass - Histogram-valued data analysis\nVersion: 0.1\nDate: 2015-02-17\nAuthors@R: c(person(\"Antonio\", \"Irpino\", role = c(\"aut\", \"cre\"),\n  \t     email = \"antonio.irpino@unina2.it\"))\nAuthor: Antonio Irpino [aut, cre]\nMaintainer: Antonio Irpino <antonio.irpino@unina2.it>\nDescription: The package collects classes and methods for data analysis of\n    histogram-valued data, i.e., data described by univariate histograms. The\n    methods and the basic statistics for histogram-valued data are mainly based\n    on the L2 Wasserstein metric between distributions, i.e., a Euclidean\n    metric between quantile functions.\nLicense: GPL (>=2)\nImports: \n    FactoMineR,\n    class\nLazyData: true\nCollate:     'All_classes.R'\n    'Fuzzy_cmeans.R'\n    'H_time_series.R'\n    'HistDAWass-package.R'\n    'Kohonen_maps.R'\n    'Met_HTS.R'\n    'Met_MatH.R'\n    'Met_distributionH.R'\n    'Utility.R'\n    'principal_components.R'\n    'regression.R'\n    'unsuperv_classification.R'\n",
+    "created" : 1424180834878.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2900593760",
+    "id" : "5D0DACC0",
+    "lastKnownWriteTime" : 1424180843,
+    "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/HistDAWass/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "dcf"
+}

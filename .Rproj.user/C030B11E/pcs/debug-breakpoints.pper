@@ -1,0 +1,21 @@
+{
+    "debugBreakpointsState" : {
+        "breakpoints" : [
+            {
+                "editor_line_number" : 188,
+                "editor_state" : 1,
+                "function_name" : "toplevel",
+                "function_steps" : "",
+                "id" : 0,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : false,
+                "line_number" : 188,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/HistDAWass/Ex/GILGEN_and_noise.R",
+                "state" : 1,
+                "type" : 1
+            }
+        ]
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/HistDAWass",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        },
+        {
+            "ascending" : false,
+            "columnIndex" : 4
+        }
+    ]
+}
