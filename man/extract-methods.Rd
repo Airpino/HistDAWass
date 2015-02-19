@@ -3,10 +3,10 @@
 \docType{methods}
 \name{[}
 \alias{[}
-\alias{[,MatH-method}
+\alias{[,MatH,ANY,ANY,ANY-method}
 \title{Method [}
 \usage{
-\S4method{[}{MatH}(x, i, j, ..., drop = TRUE)
+\S4method{[}{MatH,ANY,ANY,ANY}(x, i, j, drop)
 }
 \arguments{
 \item{x}{a \code{matH} object}
@@ -15,9 +15,9 @@
 
 \item{j}{a set of integer values identifying the columns}
 
-\item{...}{not useful}
-
 \item{drop}{a logical value iherited from the basic method "[" but not used (default=TRUE)}
+
+\item{...}{not useful}
 }
 \value{
 A \code{matH} object

@@ -1,13 +1,14 @@
 #https://github.com/variani/pckdev/wiki/Documenting-with-roxygen2
 #http://stackoverflow.com/questions/7356120/how-to-properly-document-s4-methods-using-roxygen2
 
-#' HistDAWass - Histogram-valued data analysis
+#' Histogram-Valued Data Analysis
 #' 
-#' The package collects classes and methods for data analysis of
-#' histogram-valued data, i.e., data described by univariate histograms. The
+#' We consider histogram-valued data, i.e., data described by univariate histograms. The
 #' methods and the basic statistics for histogram-valued data are mainly based
 #' on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric
-#' between quantile functions.
+#' between quantile functions. The package contains unsupervised classification techniques, 
+#' least square regression and tools for histrogram-valued data and for histogram time series.
+#'
 #' 
 #' \tabular{ll}{ Package: \tab HistDAWass\cr Type: \tab Package\cr Version:
 #' \tab 0.1\cr Date: \tab 2014-09-17\cr License: \tab GPL (>=2)\cr Depends:

@@ -37,8 +37,7 @@ MatH=function(x=list(new('distributionH')), nrows=1, ncols=1,rownames=NULL,varna
 #' Method [
 #' @name [
 #' @rdname extract-methods
-#' @aliases [,MatH-method
-#' @aliases [-methods
+#' @aliases [,MatH,ANY,ANY,ANY-method
 #' @description This method overrides the "[" operator for a  \code{matH} object.
 #' @param x a \code{matH} object
 #' @param i  a set of integer values identifying the rows
@@ -49,10 +48,10 @@ MatH=function(x=list(new('distributionH')), nrows=1, ncols=1,rownames=NULL,varna
 #' @examples
 #' D=BLOOD #the BLOOD dataset
 #' SUB_D=BLOOD[c(1,2,5),c(1,2)]
-#' @exportMethod [
+#' @export
 setMethod("[",
           signature(x = "MatH"),
-          function (x, i, j, ..., drop = TRUE) 
+          function (x, i, j, drop) 
           {
             if (missing(i) &&  missing(j)) {
               i=c(1:nrow(x@M))

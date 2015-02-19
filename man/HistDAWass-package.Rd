@@ -4,13 +4,13 @@
 \name{HistDAWass-package}
 \alias{HistDAWass}
 \alias{HistDAWass-package}
-\title{HistDAWass - Histogram-valued data analysis}
+\title{Histogram-Valued Data Analysis}
 \description{
-The package collects classes and methods for data analysis of
-histogram-valued data, i.e., data described by univariate histograms. The
+We consider histogram-valued data, i.e., data described by univariate histograms. The
 methods and the basic statistics for histogram-valued data are mainly based
 on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric
-between quantile functions.
+between quantile functions. The package contains unsupervised classification techniques,
+least square regression and tools for histrogram-valued data and for histogram time series.
 }
 \details{
 \tabular{ll}{ Package: \tab HistDAWass\cr Type: \tab Package\cr Version:

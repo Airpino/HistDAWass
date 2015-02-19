@@ -11,6 +11,7 @@
 #' @examples
 #' # or using
 #' mydist=distributionH(x=c(1,2,3),p=c(0,0.4, 1))
+#' @import methods
 distributionH=function(x=numeric(0),p=numeric(0)){
   object=new("distributionH",x=x,p=p)
   return(object)
@@ -352,6 +353,7 @@ setMethod("+",
 #' @name minus
 #' @aliases -,distributionH,distributionH-method 
 #' @description the difference of two distribution according to the L2 Wasssertein
+#' @export
 setMethod("-",
           signature(e1 = "distributionH",e2="distributionH"),
           function (e1, e2) 
@@ -396,6 +398,7 @@ setMethod("-",
 #' @description the product of a number and a distribution according to the L2 Wasssertein
 #' @param e1 a \code{distributionH} object or a number
 #' @param e2 a \code{distributionH} object or a number
+#' @export
 setMethod("*",
           signature(e1 = "distributionH",e2="distributionH"),
           function (e1, e2) 
@@ -554,7 +557,6 @@ setMethod(f="checkEmptyBins",signature="distributionH",
 #' @return \deqn{y= F^{-1}(p)=Q(p)} A number that is the quantile of the passed
 #' histogram \env{object} at level \env{p}.
 #' @author Antonio Irpino
-#' @keywords ~kwd1 ~kwd2
 #' @examples
 #' 
 #' ##---- A mydist distribution ----

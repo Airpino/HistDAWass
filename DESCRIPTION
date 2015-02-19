@@ -1,21 +1,26 @@
 Package: HistDAWass
 Type: Package
-Title: HistDAWass - Histogram-valued data analysis
+Title: Histogram-Valued Data Analysis
 Version: 0.1
 Date: 2015-02-17
 Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
   	     email = "antonio.irpino@unina2.it"))
 Author: Antonio Irpino [aut, cre]
 Maintainer: Antonio Irpino <antonio.irpino@unina2.it>
-Description: The package collects classes and methods for data analysis of
-    histogram-valued data, i.e., data described by univariate histograms. The
-    methods and the basic statistics for histogram-valued data are mainly based
-    on the L2 Wasserstein metric between distributions, i.e., a Euclidean
-    metric between quantile functions.
+Description: In the framework of Symbolic Data Analysis, a relatively new approach 
+          to the statistical analysis of multi-valued data, we consider histogram-valued data, i.e.,
+          data described by univariate histograms. The  methods and the basic statistics for 
+          histogram-valued data are mainly based 
+          on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric 
+          between quantile functions. The package contains unsupervised classification techniques, 
+          least square regression and tools for histogram-valued data and for histogram time series.
 License: GPL (>=2)
-Imports: 
+Imports:
+    methods,
     FactoMineR,
     class
+Depends:
+    graphics
 LazyData: true
 Collate:     'All_classes.R'
     'Fuzzy_cmeans.R'
