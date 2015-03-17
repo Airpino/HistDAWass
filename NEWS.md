@@ -11,9 +11,9 @@ A new function was added for generating a histogram from a set of raw data
 
 > Visualization
 
-Now for plotting we used the `ggplot2` package.
+Now for plotting, `ggplot2` package is used generally.
 
-A new plot for visualizing Histogram Time Series is added
+A new plot for visualizing Histogram Time Series was added.
 
 A new plot for comparing obversed vs predicted histogram was added.
 
