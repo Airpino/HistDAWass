@@ -4,7 +4,7 @@
 \name{skewH}
 \alias{skewH}
 \alias{skewH,distributionH-method}
-\title{Method \code{skewH}}
+\title{Method \code{skewH}: computes the skewness of a distribution}
 \usage{
 skewH(object)
 
@@ -17,7 +17,7 @@ skewH(object)
 A value for the skewness index
 }
 \description{
-Method \code{skewH}
+Method \code{skewH}: computes the skewness of a distribution
 
 Skewness of a histogram (using the third standardized moment)
 }

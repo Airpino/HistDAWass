@@ -4,7 +4,7 @@
 \name{get.m}
 \alias{get.m}
 \alias{get.m,distributionH-method}
-\title{Method \code{get.m}}
+\title{Method \code{get.m}: the mean of a distribution}
 \usage{
 get.m(object)
 
@@ -17,7 +17,7 @@ get.m(object)
 A numeric value
 }
 \description{
-Method \code{get.m}
+Method \code{get.m}: the mean of a distribution
 
 This functon return the mean of a \code{distributionH} object.
 }

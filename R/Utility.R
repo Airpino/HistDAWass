@@ -303,3 +303,160 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
   }
   return(list(SSQ=sum(SSQ_det),SSQ_det=SSQ_det,ProtoGEN=GP))
 }
+
+#'From real data to distributionH.
+#' 
+#' @param data a set of numeric values.
+#' @param algo (optional) a string. Default is "histogram", i.e. the function "histogram"
+#' defined in the \code{\link[histogram]{histogram}}  package. \cr If "base" 
+#' the \code{\link[graphics]{hist}} function is used. \cr
+#' "FixedQuantiles" computes the histogram using as breaks a fixed number of quantiles.\cr
+#' "ManualBreaks" computes a histogram where braks are provided as a vector of values.\cr
+#' "PolyLine" computes a histogram using a piecewise linear approximation of the empirical
+#' cumulative distribution function using the "Ramer-Douglas-Peucker algorithm", 
+#'  \url{http://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm}. 
+#'  An \code{epsilon} parameter is required.
+#'  The data are scaled in order to have a standard deviation equal to one.
+#' @param type (optional) a string. Default is "combined" and generates 
+#' a histogram having regularly spaced breaks (i.e., equi-width bins) and 
+#' irregularly spaced ones. The choice is done accordingly with the penalization method described in 
+#' \code{\link[histogram]{histogram}}. "regular" returns equi-width binned histograms, "irregular" returns
+#' a histogram without equi-width histograms. 
+#' @param qua a positive integer to provide if \code{algo="FixedQuantiles"} is chosen. Default=10.
+#' @param breaks a vector of values to provide if  \code{algo="ManualBreaks"} is chosen.
+#' @param epsilon a number between 0 and 1 to provide if \code{algo="PolyLine"} is chosen. Default=0.01.
+#' @return A \code{distributionH} object, i.e. a distribution.
+#' @importFrom histogram histogram
+#' @export
+#' @examples
+#' data=rnorm(n = 1000,mean = 2,sd = 3)
+#' mydist=data2hist(data)
+#' plot(mydist)
+#' @seealso \code{\link[histogram]{histogram}} function
+data2hist<-function(data, 
+                    algo="histogram",
+                    type="combined",
+                    qua=10,
+                    breaks=numeric(0),
+                    epsilon=0.01){
+  a=switch(algo,"base"=1, "histogram"=2, "FixedQuantiles"=3,"ManualBreaks"=4 ,
+           "PolyLine"=5,2)
+  t=switch(type,"regular"=1, "irregular"=2, "combined"=3, 3)
+  if (a==1){
+    h <- hist(data)
+    x=h$breaks
+    counts=h$counts
+    counts[which(counts==0)]=0.001
+    p=c(0,cumsum(counts/sum(counts)))
+  }
+  if (a==2){
+   
+    if (t==1){
+      h<-histogram(data,type="regular", verbose=FALSE,plot=FALSE)
+    }
+    if (t==2){
+      h<-histogram(data,type="irregular",verbose=FALSE,plot=FALSE)
+    }
+    if (t==3){
+      h<-histogram(data,type="combined",verbose=FALSE,plot=FALSE)
+    }
+    x=h$breaks
+    counts=h$counts
+    counts[which(counts==0)]=0.001
+    p=c(0,cumsum(counts/sum(counts)))
+  }
+  if (a==3){
+    p=c(0:qua)/qua
+    x=rep(0,qua+1)
+    for (i in 0:qua){      
+      x[i+1]=as.numeric(quantile(data,probs = p[i+1]))
+      if (i>0){
+        if(x[i+1]<=x[i]) x[i+1]=x[i]+(1e-10)
+      }
+    }    
+  }
+  if (a==4){
+    #checking limits
+    
+    ini=min(data)
+    end=max(data)
+    rr=end-ini
+    tol=min(1e-10,(rr*(1e-10)))
+    end=end+tol
+    breaks=sort(unique(c(breaks,ini,end)))
+    breaks=breaks[which(breaks>=ini)]
+    breaks=breaks[which(breaks<=end)]
+    #end check
+    data.cut = cut(data, breaks, right=FALSE)
+    counts=as.vector(table(data.cut))
+    x=breaks
+    p=c(0,cumsum(counts/sum(counts)))
+  }
+  if (a==5){
+    data=sort(data)
+    stdev=sd(data)
+    
+    cums=c(0:(length(data)-1))/(length(data)-1)
+    points=cbind(data/stdev,cums)
+    resu=DouglasPeucker(as.matrix(points),epsilon=epsilon)
+    x=as.vector(resu[,1])*stdev
+    p=as.vector(resu[,2])
+  }
+  mydist<- distributionH(x,p)
+  return(mydist)
+}
+#'Ramer-Douglas-Peucker algorithm for curve fitting with a PolyLine
+#' 
+#' @param points a 2D matrix with the coordinates of 2D points
+#' @param epsilon an number between 0 and 1. Recomended 0.01.
+#' @return A matrix with the points of segments of a Poly Line.
+#' @export
+#' @seealso \code{\link[HistDAWass]{data2hist}} function
+#' @export
+DouglasPeucker=function(points,epsilon){
+  dmax=0
+  index=0
+  end=nrow(points)
+  ResultList=numeric(0)
+  if (end<3) return (ResultList=rbind(ResultList,points))
+  for (i in 2:(end-1)){
+    d=ShortestDistance(points[i,], line=rbind(points[1,],points[end,]))
+    if (d>dmax){
+      index=i
+      dmax=d
+    }
+  }
+  #if dmax is greater than epsilon recursively apply
+  if (dmax>epsilon){
+   # print(dmax)
+    recResults1=DouglasPeucker(points[1:index,],epsilon)
+    recResults2=DouglasPeucker(points[index:end,],epsilon)
+    ResultList=rbind(ResultList,recResults1,recResults2)
+   
+  }
+  else
+  {
+    ResultList=rbind(ResultList,points[1,],points[end,])
+  }
+  ResultList=as.matrix(ResultList[!duplicated(ResultList),])
+  colnames(ResultList)=c("x","p")
+  return(ResultList)
+}
+#' Shortes distance from a point o a 2d segment
+#' 
+#' @param p coordinates of a point
+#' @param line a 2x2 matrix with the coordinates of two points defining a line
+#' @return A numeric value, the Euclidean distance of point \code{p} to the \code{line}.
+#' @export
+#' @seealso \code{\link[HistDAWass]{data2hist}} function and \code{\link[HistDAWass]{DouglasPeucker}} function
+#' @export
+ShortestDistance=function(p, line){
+  x1=line[1,1]
+  y1=line[1,2]
+  x2=line[2,1]
+  y2=line[2,2]
+  x0=p[1]
+  y0=p[2]
+  d=abs((y2-y1)*x0-(x2-x1)*y0+x2*y1-y2*x1)/sqrt((y2-y1)^2+(x2-x1)^2)
+  return(as.numeric(d))
+}

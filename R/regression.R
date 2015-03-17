@@ -195,19 +195,76 @@ WH.regression.two.components.predict=function(data,parameters){
   }
   return(predictions)
 }
-WH.regression.two.components.GOF=function(observed,predicted){
-  indiv=nrow(observed@M)
+#' Goodness of Fit indices for Multiple regression of histogram variables based on a two component model and L2 Wasserstein distance
+#' @description It computes three goodness of fit indices using the results and the predictions of a regression done with \code{WH.regression.two.components} function.
+#' @param observed A one column MatH object, the observed histogram variable
+#' @param predicted A one column MatH object, the predicted histogram variable.
+#' @return a list with the GOF indices
+#' @references 
+#' Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach 
+#' based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
+#' An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{http://arxiv.org/abs/1202.1436v2}
+#' @examples
+#' # do regression
+#'  model.parameters=WH.regression.two.components(data = BLOOD,Yvar = 1, Xvars= c(2:3))
+#'  #' # do prediction
+#' Predicted.BLOOD=WH.regression.two.components.predict(data = BLOOD[,2:3],parameters=model.parameters)
+#' # compute GOF indices
+#' GOF.indices=WH.regression.GOF(observed=BLOOD[,1], predicted=Predicted.BLOOD)
+#' @export
+WH.regression.GOF=function(observed, predicted){
+    indiv=nrow(observed@M)
   WassD2=matrix(0,nrow = indiv,ncol = 1)
+  TOTSSQ=WH.SSQ(observed)
+  MO=WH.vec.mean(observed)
+  SSQR=0
   RMSE_W=0;
+  NUM_OMEGA=0
+  DEN_OMEGA=0
   for (i in 1:indiv){
     WassD2[i,1]=WassSqDistH(observed@M[i,1][[1]],predicted@M[i,1][[1]])
-    
+    SSQR=SSQR+WassSqDistH(predicted@M[i,1][[1]], MO)
+    NUM_OMEGA=NUM_OMEGA+(predicted@M[i,1][[1]]@m-MO@m)^2+(predicted@M[i,1][[1]]@s)^2
+    DEN_OMEGA=DEN_OMEGA+(observed@M[i,1][[1]]@m-MO@m)^2+(observed@M[i,1][[1]]@s)^2
   }
-  RMSE_W=sqrt(sum(WassD2))
-  
-  return(RMSE_W)
+
+  return(indices=list(RMSE_W=sqrt(sum(WassD2)/indiv), 
+                      OMEGA=NUM_OMEGA/DEN_OMEGA,
+                      PSEUDOR2=list(index=max(0, min(SSQR/TOTSSQ,1-sum(WassD2)/TOTSSQ)),
+                                    details=c(TotSSQ=TOTSSQ, SSQ.R=SSQR, SSQ.E=sum(WassD2), 
+                                              Bias=TOTSSQ-SSQR-sum(WassD2), SSQ.R.rel=SSQR/TOTSSQ,
+                                              SSQ.E.rel=sum(WassD2)/TOTSSQ, 
+                                              SSQ.bias.rel=(TOTSSQ-SSQR-sum(WassD2))/TOTSSQ))))
 }
-## Omega Brito
-## RMSE 
-## PseudoR2
-## Bootstrap confidence intervals for parameters
+
+WH.regr.two.comp.Bootstrap=function(data,Yvar,Xvars,simplify=FALSE,
+                                    qua=20,rep=100, GOF=FALSE){
+  nobj=get.MatH.nrows(data)
+  ind=sample(nobj,nobj,replace = TRUE)
+  pars=WH.regression.two.components(data[ind,],Yvar,Xvars,simplify=simplify,qua=qua)
+  
+  if (GOF==TRUE){
+    OBS=data[ind,Yvar]
+    PRED=WH.regression.two.components.predict(data[ind,Xvars],pars)
+    idxs=WH.regression.GOF(OBS,PRED)
+    MP=c(pars,RMSEW=idxs$RMSE_W, OMEGA=idxs$OMEGA,PSEUDOR2=idxs$PSEUDOR2$index)
+  }else{
+    MP=pars
+  }
+  for (i in 1:rep){
+    ind=sample(nobj,nobj,replace = TRUE)
+    pars=WH.regression.two.components(data[ind,],Yvar,Xvars,simplify=simplify,qua=qua)
+    
+    if (GOF==TRUE){
+    OBS=data[ind,Yvar]
+    PRED=WH.regression.two.components.predict(data[ind,Xvars],pars)
+    idxs=WH.regression.GOF(OBS,PRED)
+    TMP=c(pars,RMSEW=idxs$RMSE_W, OMEGA=idxs$OMEGA,PSEUDOR2=idxs$PSEUDOR2$index)
+    MP=rbind(MP,TMP)
+    }else{
+      MP=rbind(MP,pars)
+    }
+  }
+  print(summary(MP))
+  return(MP)
+}

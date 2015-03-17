@@ -6,8 +6,7 @@
 \alias{plot-MatH}
 \title{Method plot for a matrix  of histograms}
 \usage{
-\S4method{plot}{MatH}(x, y = "missing", type = "HISTO", col = "green",
-  border = "black")
+\S4method{plot}{MatH}(x, y = "missing", type = "HISTO", border = "black")
 }
 \arguments{
 \item{x}{a \code{distributionH} object}
@@ -19,8 +18,6 @@ Other allowed types are \cr
 "DENS"=a density approximation, \cr
 "BOXPLOT"=l boxplot}
 
-\item{col}{(optional) a string the color of the plot, default="green".}
-
 \item{border}{(optional) a string the color of the border of the plot, default="black".}
 }
 \description{
@@ -29,8 +26,8 @@ of the matrix of histograms.
 }
 \examples{
 plot(BLOOD) #plots BLOOD dataset
- plot(BLOOD, type="HISTO", col="red", border="blue") #plots a matrix of histograms
- plot(BLOOD, type="DENS", col="red", border="blue") #plots a matrix of densities
+ plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
+ plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
  plot(BLOOD, type="BOXPLOT") #plots a  boxplots
 }
 

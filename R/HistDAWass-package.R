@@ -11,7 +11,7 @@
 #'
 #' 
 #' \tabular{ll}{ Package: \tab HistDAWass\cr Type: \tab Package\cr Version:
-#' \tab 0.1\cr Date: \tab 2014-09-17\cr License: \tab GPL (>=2)\cr Depends:
+#' \tab 0.1.1\cr Date: \tab 2014-09-17\cr License: \tab GPL (>=2)\cr Depends:
 #' \tab methods\cr } ~~ An overview of how to use the package, including the
 #' most important functions ~~
 #' 
@@ -25,6 +25,7 @@
 #' approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4\cr
 #' #' Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets: 
 #' Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.
+#' @import ggplot2 grid
 #' @keywords package
 #' @examples
 #' 

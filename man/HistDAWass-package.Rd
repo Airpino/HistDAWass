@@ -14,7 +14,7 @@ least square regression and tools for histrogram-valued data and for histogram t
 }
 \details{
 \tabular{ll}{ Package: \tab HistDAWass\cr Type: \tab Package\cr Version:
-\tab 0.1\cr Date: \tab 2014-09-17\cr License: \tab GPL (>=2)\cr Depends:
+\tab 0.1.1\cr Date: \tab 2014-09-17\cr License: \tab GPL (>=2)\cr Depends:
 \tab methods\cr } ~~ An overview of how to use the package, including the
 most important functions ~~
 }

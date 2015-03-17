@@ -4,7 +4,7 @@
 \name{get.distr}
 \alias{get.distr}
 \alias{get.distr,distributionH-method}
-\title{Method \code{get.distr}}
+\title{Method \code{get.distr}: show the distribution}
 \usage{
 get.distr(object)
 
@@ -17,7 +17,7 @@ get.distr(object)
 A data frame: the first column contains the domain the second the CDF values.
 }
 \description{
-Method \code{get.distr}
+Method \code{get.distr}: show the distribution
 
 This functon return the cumulative distribution function of a \code{distributionH} object.
 }

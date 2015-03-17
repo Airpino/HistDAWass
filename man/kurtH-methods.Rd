@@ -4,7 +4,7 @@
 \name{kurtH}
 \alias{kurtH}
 \alias{kurtH,distributionH-method}
-\title{Method \code{kurtH}}
+\title{Method \code{kurtH}: computes the kurthosis of a distribution}
 \usage{
 kurtH(object)
 
@@ -18,7 +18,7 @@ A value for the kurtosis index, 3 is the kurtosis of a Gaussian
 distribution
 }
 \description{
-Method \code{kurtH}
+Method \code{kurtH}: computes the kurthosis of a distribution
 
 Kurtosis of a histogram (using the fourth standardized moment)
 }

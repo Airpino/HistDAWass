@@ -19,7 +19,10 @@ using the Wassertein based standard deviation. Use if one wants to have variable
 
 \item{distance}{A string default "WDIST" the L2 Wasserstein distance (other distances will be implemented)}
 
-\item{method}{A string, default="complete", is the the agglomeration method to be used.}
+\item{method}{A string, default="complete", is the the agglomeration method to be used.
+This should be (an unambiguous abbreviation of) one of "\code{ward.D}", "\code{ward.D2}",
+ "\code{single}", "\code{complete}", "\code{average}" (= UPGMA), "\code{mcquitty}"
+ (= WPGMA), "\code{median}" (= WPGMC) or "\code{centroid}" (= UPGMC).}
 }
 \value{
 An object of class hclust which describes the tree produced by
@@ -31,7 +34,9 @@ The function implements a Hierarchical clustering
  Extends the \code{hclust} function of the \pkg{stat} package.
 }
 \examples{
-results=WH_hclust(x = BLOOD,simplify = TRUE, method="ward.D2")
+results=WH_hclust(x = BLOOD,simplify = TRUE, method="complete")
+plot(results) # it plots the dendrogram
+cutree(results,k = 5) # it returns the labels for 5 clusters
 }
 \references{
 Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering

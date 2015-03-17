@@ -19,7 +19,7 @@ distributionH=function(x=numeric(0),p=numeric(0)){
 
 #Get
 
-#' Method \code{get.m}
+#' Method \code{get.m}: the mean of a distribution 
 #' @name get.m
 #' @rdname get.m-methods
 #' @exportMethod get.m
@@ -41,7 +41,7 @@ setMethod("get.m","distributionH",
           }
 )
 
-#' Method \code{get.s}
+#' Method \code{get.s}: the standard deviation of a distribution
 #' @name get.s
 #' @rdname get.s-methods
 #' @exportMethod get.s
@@ -63,7 +63,7 @@ setMethod("get.s","distributionH",
               return(NA)
           }
 )
-#' Method \code{get.distr}
+#' Method \code{get.distr}: show the distribution
 #' @name get.distr
 #' @rdname get.distr-methods
 #' @exportMethod get.distr
@@ -87,7 +87,7 @@ setMethod("get.distr","distributionH",
               return(NA)
           }
 )
-#' Method \code{get.histo}
+#' Method \code{get.histo}: show the distribution with bins
 #' @name get.histo
 #' @rdname get.histo-methods
 #' @exportMethod get.histo
@@ -117,27 +117,27 @@ setMethod("get.histo","distributionH",
 )
 
 # Basic statistics of distributions --------
-#' Method \code{meanH}
+#' Method \code{meanH}: computes the mean of a distribution
 #' @name meanH
 #' @rdname meanH-methods
 #' @exportMethod meanH
 setGeneric("meanH", function(object) standardGeneric("meanH"))
-#' Method \code{stdH}
+#' Method \code{stdH}: computes the standard deviation of a distribution
 #' @name stdH
 #' @rdname stdH-methods
 #' @exportMethod stdH
 setGeneric( "stdH", function(object) standardGeneric("stdH"))
-#' Method \code{skewH}
+#' Method \code{skewH}: computes the skewness of a distribution
 #' @name skewH
 #' @rdname skewH-methods
 #' @exportMethod skewH
 setGeneric("skewH", function(object) standardGeneric("skewH"))
-#' Method \code{kurtH}
+#' Method \code{kurtH}: computes the kurthosis of a distribution
 #' @name kurtH
 #' @rdname kurtH-methods
 #' @exportMethod kurtH
 setGeneric("kurtH", function(object) standardGeneric("kurtH"))
-#' Method \code{crwtransform}
+#' Method \code{crwtransform}: returns the centers and the radii of bins of a distribution
 #' @name crwtransform
 #' @rdname crwtransform-methods
 #' @exportMethod crwtransform
@@ -193,7 +193,7 @@ setMethod("stdH","distributionH",
               c=resu[[1]]
               r=resu[[2]]
               w=resu[[3]]
-              std=sqrt(t(w)%*%(c^2+1/3*r^2)-(t(w)%*%c)^2);
+              std=sqrt(abs(sum(w*c^2+1/3*w*r^2)-(sum(w*c))^2))
               std=as.numeric(std)
               return(std)
             }  else
@@ -888,89 +888,7 @@ setMethod("show",
 setMethod("plot",
           signature(x = "distributionH" ),
           function (x,  type="HISTO",col="green",border="black") 
-          {
-            xlabel=paste("m= ",x@m," std= ",x@s)
-            if (type=="HISTO"){
-              lowers=x@x[1:(length(x@x)-1)]
-              uppers=x@x[2:length(x@x)]
-              ampl=uppers-lowers
-              #ampl[which(ampl==0)]=1
-              dens=(x@p[2:length(x@p)]-x@p[1:(length(x@p)-1)])/ampl
-              plot(c(lowers[1],uppers[length(uppers)]), c(0,max(dens[dens<Inf]))*1.1, type= "n", xlab = xlabel, ylab = "density")
-              for (i in 1:length(lowers)){
-                if (ampl[i]==0){
-                  segments(lowers[i],0,lowers[i],1,lwd=2)
-                }
-                else{
-                  rect(lowers[i], 0, uppers[i], dens[i], col = col, border = border)
-                }
-              }
-              title("Histogram")
-              
-            }
-            if (type=="CDF"){
-              xs=x@x
-              ps=x@p
-              plot(c(min(xs),max(xs)), c(0,1), type= "n", xlab = "", ylab = "")
-              plot(xs,ps,type="l",col=border,xlab=xlabel, ylab="Prob")
-              title("Cumulative distribution function")
-              
-            }
-            if (type=="QF"){
-              xs=x@p
-              ps=x@x
-              plot(c(min(xs),max(xs)), c(0,1), type= "n", xlab = "", ylab = "")
-              plot(xs,ps,type="l",col=border,xlab=xlabel, ylab="domain")
-              title("Quantile function")
-              
-            }
-            if (type=="DENS"){
-              #generate 200 random points according to the QF
-              rn=200
-              
-              
-              xn=c(rep(0,rn))
-              random_no=c(0:rn)/rn
-              
-              for (i in 1:rn){
-                xn[i]=compQ(x,random_no[i])
-              }
-              d <- density(xn)
-              plot(c(d$x[1],d$x[length(d$x)]), c(0,max(d$y)), type= "n",  xlab = xlabel, ylab = "density")
-              polygon(d$x,d$y, col=col, border=border)
-              title("Density plot (kde)")
-            }
-            if (type=="HBOXPLOT"){
-              qua=c(0,0.25,0.5,0.75,1)
-              xn=c(0,0,0,0,0)
-              for (i in 1:5){
-                xn[i]=compQ(x,qua[i])
-              }
-              plot(c(xn[1],xn[5]), c(0.7,2.3), type= "n", xlab = xlabel, yaxt="n",ylab="")
-              
-              rect(xn[2], 1, xn[3], 2, col = col, border = border)
-              rect(xn[3], 1, xn[4], 2, col = col, border = border)
-              segments(xn[1], 1.5, xn[2], 1.5,col="black")
-              segments(xn[4], 1.5, xn[5], 1.5,col="black")
-              segments(xn[1], 1, xn[1], 2,col="black")
-              segments(xn[5], 1, xn[5], 2,col="black")
-              title("Horizontal Box-plot")
-            }
-            if (type=="VBOXPLOT"){
-              qua=c(0,0.25,0.5,0.75,1)
-              xn=c(0,0,0,0,0)
-              for (i in 1:5){
-                xn[i]=compQ(x,qua[i])
-              }
-              plot( c(0.7,2.3), c(xn[1],xn[5]),, type= "n", xaxt="n", xlab = xlabel,ylab="")
-              
-              rect(1, xn[2], 2, xn[3], col = col, border = border)
-              rect(1, xn[3], 2, xn[4],  col = col, border = border)
-              segments(1.5, xn[1], 1.5, xn[2],col="black")
-              segments(1.5, xn[4], 1.5, xn[5],col="black")
-              segments(1, xn[1], 2, xn[1],col="black")
-              segments(1, xn[5], 2, xn[5],col="black")
-              title("Vertical Box-plot")
-            }
+          { 
+            plot.gg(x,  type=type,col=col,border=border)
           }
 )

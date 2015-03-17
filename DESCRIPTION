@@ -1,8 +1,8 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 0.1
-Date: 2015-02-17
+Version: 0.1.2
+Date: 2015-03-04
 Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
   	     email = "antonio.irpino@unina2.it"))
 Author: Antonio Irpino [aut, cre]
@@ -16,11 +16,14 @@ Description: In the framework of Symbolic Data Analysis, a relatively new approa
           least square regression and tools for histogram-valued data and for histogram time series.
 License: GPL (>=2)
 Imports:
-    methods,
+    graphics,
     FactoMineR,
-    class
+    class,
+    ggplot2,
+    grid, histogram
 Depends:
-    graphics
+      R(>= 3.0),
+      methods
 LazyData: true
 Collate:     'All_classes.R'
     'Fuzzy_cmeans.R'
@@ -34,3 +37,4 @@ Collate:     'All_classes.R'
     'principal_components.R'
     'regression.R'
     'unsuperv_classification.R'
+    'Plotting_with_ggplot.R'

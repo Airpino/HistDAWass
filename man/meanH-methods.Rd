@@ -4,7 +4,7 @@
 \name{meanH}
 \alias{meanH}
 \alias{meanH,distributionH-method}
-\title{Method \code{meanH}}
+\title{Method \code{meanH}: computes the mean of a distribution}
 \usage{
 meanH(object)
 
@@ -17,7 +17,7 @@ meanH(object)
 the mean of the distribution
 }
 \description{
-Method \code{meanH}
+Method \code{meanH}: computes the mean of a distribution
 
 Mean of a histogram (First moment of the distribution)
 }

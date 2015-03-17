@@ -34,24 +34,25 @@ MatH=function(x=list(new('distributionH')), nrows=1, ncols=1,rownames=NULL,varna
 }
 
 # overriding of "[" operator for MatH object ----
-#' Method [
-#' @name [
-#' @rdname extract-methods
-#' @aliases [,MatH,ANY,ANY,ANY-method
-#' @description This method overrides the "[" operator for a  \code{matH} object.
-#' @param x a \code{matH} object
-#' @param i  a set of integer values identifying the rows
-#' @param j  a set of integer values identifying the columns
-#' @param ... not useful
-#' @param drop a logical value iherited from the basic method "[" but not used (default=TRUE)
-#' @return A \code{matH} object
-#' @examples
-#' D=BLOOD #the BLOOD dataset
-#' SUB_D=BLOOD[c(1,2,5),c(1,2)]
-#' @export
+ #' extract from a MatH Method [
+ #' @name [
+ #' @rdname extract-methods
+ #' @aliases [,MatH,ANY,ANY,ANY-method
+ #' [,MatH-method
+  #' @description This method overrides the "[" operator for a  \code{matH} object.
+ #' @param x a \code{matH} object
+ #' @param i  a set of integer values identifying the rows
+ #' @param j  a set of integer values identifying the columns
+ #' @param ... not useful
+ #' @param drop a logical value inherited from the basic method "[" but not used (default=TRUE)
+ #' @return A \code{matH} object
+ #' @examples
+ #' D=BLOOD #the BLOOD dataset
+ #' SUB_D=BLOOD[c(1,2,5),c(1,2)]
+ #' @export
 setMethod("[",
           signature(x = "MatH"),
-          function (x, i, j, drop) 
+          function (x, i, j, ..., drop=TRUE) 
           {
             if (missing(i) &&  missing(j)) {
               i=c(1:nrow(x@M))
@@ -1105,6 +1106,38 @@ setMethod(f="registerMH",signature=c(object="MatH"),
             return(NEWMAT)
           }
 )
+
+
+
+
+#' Method Center.cell.MatH Centers all the cells of a matrix of distributions
+#' @name Center.cell.MatH
+#' @rdname Center.cell.MatH-methods
+#' @exportMethod Center.cell.MatH
+setGeneric("Center.cell.MatH",function(object) standardGeneric("Center.cell.MatH"))#OK
+#' @rdname Center.cell.MatH-methods
+#' @aliases Center.cell.MatH,MatH-method
+#' @description The function transform a MatH object (i.e. a matrix of distributions), 
+#' such that each distribution is shifted and has a mean equal to zero 
+#' @param object a MatH object, a matrix of distributions.
+#' @return A \code{MatH} object, having each distribution with a zero mean.
+#' @examples
+#' CEN_BLOOD=Center.cell.MatH(BLOOD)
+#' get.MatH.stats(BLOOD, stat="mean")
+setMethod(f="Center.cell.MatH",signature=c(object="MatH"),
+          function(object){
+            nr=get.MatH.nrows(object)
+            nc=get.MatH.ncols(object)
+            NM=object
+            for (i in 1:nr){
+              for (j in 1:nc){
+                NM@M[i,j][[1]]@x=NM@M[i,j][[1]]@x-NM@M[i,j][[1]]@m
+                NM@M[i,j][[1]]@m=0
+              }
+            }
+            return(NM)
+          }
+)
 ## Show overridding ----
 #' Method show for MatH
 #' @name show-MatH
@@ -1183,127 +1216,18 @@ setMethod("show",
 #'  Other allowed types are \cr
 #'  "DENS"=a density approximation, \cr
 #'  "BOXPLOT"=l boxplot
-#'  @param col (optional) a string the color of the plot, default="green".
 #'  @param border (optional) a string the color of the border of the plot, default="black".
 #' @examples
 #'  plot(BLOOD) #plots BLOOD dataset
-#'  plot(BLOOD, type="HISTO", col="red", border="blue") #plots a matrix of histograms
-#'  plot(BLOOD, type="DENS", col="red", border="blue") #plots a matrix of densities
+#'  plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
+#'  plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
 #'  plot(BLOOD, type="BOXPLOT") #plots a  boxplots
 #'  @export
 
 setMethod("plot",
           signature(x = "MatH"),
-          function (x, y="missing", type="HISTO",col="green",border="black") 
-          {
-            parold=par(no.readonly=TRUE)
-            varsno=ncol(x@M)
-            indno=nrow(x@M)
-            lims=matrix(c(Inf,-Inf),2,varsno)
-            if (varsno==1 && indno==1){
-              tmpo=x@M[1,1][[1]]
-              plot(tmpo,type=type,col=col,border=border)
-            }
-            else{
-              for (i in 1:indno){
-                for (j  in 1:varsno){
-                  if (x@M[i,j][[1]]@x[1]<lims[1,j]) {
-                    lims[1,j]=x@M[i,j][[1]]@x[1]
-                  }
-                  if (x@M[i,j][[1]]@x[length(x@M[i,j][[1]]@x)]>lims[2,j]) {
-                    lims[2,j]=x@M[i,j][[1]]@x[length(x@M[i,j][[1]]@x)]
-                  }
-                }
-              }
-              
-              par(mfrow=c(indno+2,varsno+1),mar=c(0.1,0.1,0.1,0.1),oma=(c(0,0,0,0)))
-              plot(0:5,0:5,type="n",yaxt="n",xaxt="n")
-              text(2,2,"Objects")
-              for (j  in 1:varsno){
-                plot(0:5,0:5,type="n",yaxt="n",xaxt="n")
-                text(2,2,variable.names(x@M)[j])
-              }
-              for (i in 1:indno){
-                plot(0:5,0:5,type="n",yaxt="n",xaxt="n")
-                text(2,2,row.names(x@M)[i])
-                for (j  in 1:varsno){
-                  tmpo=x@M[i,j][[1]]
-                  xlabel=paste("m= ",tmpo@m," std= ",tmpo@s)
-                  
-                  if (type=="HISTO"){
-                    lowers=tmpo@x[1:(length(tmpo@x)-1)]
-                    uppers=tmpo@x[2:length(tmpo@x)]
-                    ampl=uppers-lowers
-                    dens=(tmpo@p[2:length(tmpo@p)]-tmpo@p[1:(length(tmpo@p)-1)])/ampl
-                    plot(c(lims[1,j],lims[2,j]), c(0,max(dens[dens<Inf]))*1.1, type= "n", xlab = "", ylab = "",yaxt="n",xaxt="n")
-#                     if (length(ampl[ampl==0])>0){
-#                     ampl[ampl==0]=1
-#                     dens=(tmpo@p[2:length(tmpo@p)]-tmpo@p[1:(length(tmpo@p)-1)])/ampl}
-                    for (r in 1:length(lowers)){
-                      if (ampl[r]==0){segments(lowers[r],0,lowers[r],1)}else{
-                      rect(lowers[r], 0, uppers[r], dens[r], col = col, border = border)}
-                    }
-                  }
-                  
-                  if (type=="DENS"){
-                    #generate 100 random points according to the QF
-                    rn=100
-                    
-                   
-                    xn=c(rep(0,rn))
-                    random_no=c(0:rn)/rn
-                    for (k in 1:rn){
-                      xn[k]=compQ(tmpo,random_no[k])
-                    }
-                    d <- density(xn)
-                    plot(c(lims[1,j],lims[2,j]), c(0,max(d$y)), type= "n",  xlab ="", ylab = "",yaxt="n",xaxt="n")
-                    polygon(d$x,d$y, col=col, border=border)
-                  }
-                  if (type=="BOXPLOT"){
-                    qua=c(0,0.25,0.5,0.75,1)
-                    xn=c(0,0,0,0,0)
-                    for (k in 1:5){
-                      xn[k]=compQ(tmpo,qua[k])
-                    }
-                    plot(c(lims[1,j],lims[2,j]), c(0.7,2.3), type= "n", xlab ="", ylab = "",yaxt="n",xaxt="n")
-                    
-                    rect(xn[2], 1, xn[3], 2, col = col, border = border)
-                    rect(xn[3], 1, xn[4], 2, col = col, border = border)
-                    segments(xn[1], 1.5, xn[2], 1.5,col="black")
-                    segments(xn[4], 1.5, xn[5], 1.5,col="black")
-                    segments(xn[1], 1, xn[1], 2,col="black")
-                    segments(xn[5], 1, xn[5], 2,col="black")
-                  }
-                  if (type=="CDF"){
-                    xs=tmpo@x
-                    ps=tmpo@p
-                    plot(c(lims[1,j],lims[2,j]), c(0,1), type= "n", xlab = "", ylab = "",yaxt="n",xaxt="n")
-                    lines(xs,ps,col=border)
-                  }    
-                }
-              }
-              plot(0:5,0:5,type="n",yaxt="n",xaxt="n", axes=F)
-              text(2,2,"")
-              for (j  in 1:varsno){
-                plot(c(lims[1,j],lims[2,j]), c(0,2), type= "n", xlab = "", ylab = "",yaxt="n",xaxt="n", axes=F)
-                segments(lims[1,j],1.2, lims[1,j],1.4,col="black")
-                text(lims[1,j],0.7,format(lims[1,j]))
-                segments(0.5*lims[1,j]+0.5*lims[2,j],1.2, 
-                         0.5*lims[1,j]+0.5*lims[2,j],1.4,col="black")
-                text(0.5*lims[1,j]+0.5*lims[2,j],0.7,format(0.5*lims[1,j]+0.5*lims[2,j]))
-                segments(0.25*lims[1,j]+0.75*lims[2,j],1.2, 
-                         0.25*lims[1,j]+0.75*lims[2,j],1.4,col="black")
-                text(0.25*lims[1,j]+0.75*lims[2,j],0.7,format(0.25*lims[1,j]+0.75*lims[2,j]))
-                segments(0.75*lims[1,j]+0.25*lims[2,j],1.2, 
-                         0.75*lims[1,j]+0.25*lims[2,j],1.4,col="black")
-                text(0.75*lims[1,j]+0.25*lims[2,j],0.7,format(0.75*lims[1,j]+0.25*lims[2,j]))
-                segments(lims[2,j],1.2, lims[2,j],1.4,col="black")
-                text(lims[2,j],0.7,format(lims[2,j]))
-                
-                segments(lims[1,j],1.3, lims[2,j],1.3,col="black")
-                
-              }
-              par(parold)
-            }
+          function (x, y="missing", type="HISTO",border="black") 
+          {plot.M(x, type=type, border=border)
+
           }
 )

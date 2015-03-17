@@ -2,3 +2,9 @@
 ^\.Rproj\.user$
 ^packrat/
 ^\.Rprofile$
+^\.md$
+^README\.Rmd$
+^README-*\.png$
+^NEWS\.Rmd$
+^NEWS\.md$
+^NEWS-*\.png$

@@ -4,7 +4,7 @@
 \name{stdH}
 \alias{stdH}
 \alias{stdH,distributionH-method}
-\title{Method \code{stdH}}
+\title{Method \code{stdH}: computes the standard deviation of a distribution}
 \usage{
 stdH(object)
 
@@ -17,7 +17,7 @@ stdH(object)
 A value for the standard deviation
 }
 \description{
-Method \code{stdH}
+Method \code{stdH}: computes the standard deviation of a distribution
 
 Standard deviation of a histogram (i.e., the square root of the centered
 second moment)
