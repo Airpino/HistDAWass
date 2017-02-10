@@ -19,9 +19,6 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
       xlab(xlabel) + ylab("density") +
       ggtitle("Histogram")
     )
-    print(p)
-    
-    
   }
   if (type=="CDF"){
     xs=x@x
@@ -29,18 +26,17 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     df=data.frame(x=xs,cdf=ps)
     
     p=with(df,ggplot(df, aes(x=x, y=cdf))+geom_line(colour=border) +
-      xlab(xlabel) + ylab("density") +
+      xlab("x") + ylab("p") +
       ggtitle("Cumulative Distribution Function")
     )
-    print(p)
   }
   if (type=="QF"){
     xs=x@x
     ps=x@p
     df=data.frame(x=xs,cdf=ps)
     
-    with(df,ggplot(df, aes(x=cdf, y=x))+geom_line(colour=border) +
-      xlab(xlabel) + ylab("x") +
+    p=with(df,ggplot(df, aes(x=cdf, y=x))+geom_line(colour=border) +
+      xlab("p") + ylab("x") +
       ggtitle("Quantile Function")
     )
     
@@ -48,21 +44,18 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
   if (type=="DENS"){
     #generate 200 random points according to the QF
     rn=200
-    
-    
     xn=c(rep(0,rn+1))
     random_no=c(0:rn)/rn
-
     for (i in 0:rn){
       xn[i+1]=compQ(x,random_no[i+1])
     }
     
     df=data.frame(x=xn)
     p=with(df,ggplot(df, aes(x=x))+geom_density(alpha=0.7, fill=col, colour=border) +
-            xlab(xlabel) + ylab("x") +
+            xlab(xlabel) + ylab("density") +
       ggtitle("Density plot (KDE)"))
     p=p+geom_vline(xintercept=x@m,  colour="black", linetype="dashed", size=0.5)
-    print(p)
+    
   }
   if (type=="HBOXPLOT"){
     qua=c(0,0.25,0.5,0.75,1)
@@ -71,7 +64,7 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
       xn[i]=compQ(x,qua[i])
     }
     df=data.frame(x=xn)
-    with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
       geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
       ylab(xlabel) +xlab("")+
       ggtitle("Horizontal Boxplot")+coord_flip()
@@ -85,14 +78,16 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
       xn[i]=compQ(x,qua[i])
     }
     df=data.frame(x=xn)
-    with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
       geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
-      ylab(" ") +xlab(xlabel)+
+      ylab("x") +xlab(xlabel)+
       ggtitle("Vertical Boxplot")
     )
   }
+  print(p)
+  return(p)
 }
-#OK aasigned
+#OK assigned
 plot.M=function (x, type="HISTO", border="black") 
 {
   varsno=ncol(x@M)
@@ -234,7 +229,7 @@ plot.M=function (x, type="HISTO", border="black")
       print(p)
     }
   }
-  #return(df)
+  return(p)
 }
 
 #OK assigned
@@ -288,32 +283,27 @@ plot.HTS.1v=function (x, type="BOXPLOT", border="black", maxno.perplot=15){
       }
       p <- with(df, ggplot(df, aes(factor(t), x,fill=grad)) + geom_violin() +
         geom_point(data = df2,aes(factor(t),x))+
-        geom_line(data = df2,aes(x=factor(t),y=x,group=factor(0)),size=0.5,aplha=0.7,linetype="dashed")+
+        geom_line(data = df2,aes(x=factor(t),y=x,group=factor(0)),size=0.5,alpha=0.7,linetype="dashed")+
         scale_fill_gradient2(limits=c(0,1),low = 'red', mid = 'white', high = 'green', midpoint = 0.5) +
         theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
               legend.position="none",
               axis.title.x = element_blank(), 
               axis.title.y = element_blank(),
               axis.text.x  = element_text( angle= 330,vjust=0.5, size=10)))
-      # print(p)
-      #scale_fill_gradient(low=gray(min(df$grad)), high=gray(max(df$grad)))+
-      #      geom_line(data = df2,aes(x=factor(t),y=q1,group=factor(0)),size=0.5,aplha=0.7,linetype="dashed")+
-      #        geom_line(data = df2,aes(x=factor(t),y=q3,group=factor(0)),size=0.5,aplha=0.7,linetype="dashed")+
-      #        geom_line(data = df2,aes(x=factor(t),y=minn,group=factor(0)),size=0.5,aplha=0.7,linetype="dashed")+
-      #        geom_line(data = df2,aes(x=factor(t),y=MAXX,group=factor(0)),size=0.5,aplha=0.7,linetype="dashed")+
-      
-      
+            
       listofP[[plo]]=p
       
     }
   }
   #return(listofP)
   multiplot(listofP)
+  
 }
 
 
 multiplot <- function( plotlist=NULL,..., file, cols=1, layout=NULL) {
   #require(grid)
+  #require(ggplot2)
   
   # Make a list from the ... arguments and plotlist
   plots <- c(list(...), plotlist)
@@ -370,7 +360,7 @@ multiplot <- function( plotlist=NULL,..., file, cols=1, layout=NULL) {
 #' plotPredVsObs(PRED,OBS,"DENS")
 #' @export
 plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
- # require ("Vioplot")
+  #require ("vioplot")
   nobj=get.MatH.nrows(PRED)
   maxpercol=ceiling(nobj/ncolu)
   ListofP=list()
@@ -406,11 +396,7 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
                      colu=rep(cc,length(lowers)))
       M=rbind(M,df,df2)
     }
-  
     if (type=="CDF"){
-      
-      
-      
       x=PRED@M[ind,1][[1]]
       xs=x@x
       ps=x@p
@@ -426,15 +412,10 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
                     NameO=rep(rownames(OBS@M)[ind],length(xs)),
                     colu=rep(cc,length(xs)))
       M=rbind(M,df,df2)
-      
-      
     }
-    
-
-  if (type=="DENS"){
+    if (type=="DENS"){
       #generate 200 random points according to the QF
       rn=200
-            
       xn1=c(rep(0,rn))
       xn2=c(rep(0,rn))
       random_no=c(0:rn)/rn
@@ -457,21 +438,7 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
       
       
     }
-#     if (type=="HBOXPLOT"){
-#       qua=c(0,0.25,0.5,0.75,1)
-#       xn=c(0,0,0,0,0)
-#       for (i in 1:5){
-#         xn[i]=compQ(x,qua[i])
-#       }
-#       df=data.frame(x=xn)
-#       with(df, ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
-#         geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
-#         ylab(xlabel) +xlab("")+
-#         ggtitle("Horizontal Boxplot")+coord_flip()
-#         )
-#       
-#       
-#     }
+
   }
   ListofP=list()
   levels(M$Type)=c("OBS","PRED")
@@ -488,18 +455,15 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
                                     legend.title=element_blank()))
     }
     if (type=="DENS"){
-      p=with(M,ggplot(subset(M, colu==CC), aes(x = x, fill=Type)) + geom_density(alpha=0.6, colour=gray)+
-        facet_grid(NameO ~ .)+theme(legend.position="bottom",
-                                    axis.title.x = element_blank(),
-                                    axis.title.y = element_blank(),
-                                    legend.title=element_blank()))
+      p=with(M,ggplot(subset(M, colu==CC), aes(x = x, fill=Type)) + geom_density(alpha=0.6, colour="gray")+
+               facet_grid(NameO ~ .)+theme(legend.position="bottom",
+                                           axis.title.x = element_blank(),
+                                           axis.title.y = element_blank(),
+                                           legend.title=element_blank()))
     }
-      ListofP=c(ListofP,list(p))
-    }
-  
+    ListofP=c(ListofP,list(p))
+  }
   multiplot(ListofP, cols = ncolu)
-  
-  
 }
 
 #' A function for plotting functions of errors
@@ -527,7 +491,6 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
 #' @export
 plot_errors<-function(PRED,OBS,type="HISTO_QUA", np=200){
   RMS_W=0
-  
   nobj=get.MatH.nrows(PRED)
   dists=rep(0,nobj)
   #maxpercol=ceiling(nobj/ncolu)

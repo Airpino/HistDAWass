@@ -1,13 +1,17 @@
 {
-    "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/Examples",
+    "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/APPLICAZIONI",
     "sortOrder" : [
         {
             "ascending" : false,
-            "columnIndex" : 2
+            "columnIndex" : 4
+        },
+        {
+            "ascending" : true,
+            "columnIndex" : 3
         },
         {
             "ascending" : false,
-            "columnIndex" : 4
+            "columnIndex" : 2
         }
     ]
 }

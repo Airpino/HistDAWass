@@ -25,12 +25,15 @@ setClass(
         object@p=c(0,1)
       }
       nv=length(object@x)
-      
       if ( !is.na(object@x) && min(object@x[2:nv]-object@x[1:(nv-1)])<0){
+        print(object@x)
+        print(object@p)
         return("the x must be in not descending order")
       }
       if (!is.na(object@p) && (min(object@p[2:nv]-object@p[1:(nv-1)])<0 || object@p[1]<0 || object@p[nv]>1 || object@p[1]!=0 || object@p[nv]!=1))
-      {return("the p must be in not descending order from 0 to 1")}
+      {print(object@x)
+        print(object@p)
+        return("the p must be in not descending order from 0 to 1")}
       return(TRUE)
     }
   }

@@ -15,6 +15,66 @@
                 "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/HistDAWass/Ex/GILGEN_and_noise.R",
                 "state" : 1,
                 "type" : 1
+            },
+            {
+                "editor_line_number" : 13,
+                "editor_state" : 1,
+                "function_name" : "intradataYahoo",
+                "function_steps" : "6",
+                "id" : 5,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : false,
+                "line_number" : 13,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/Examples/downfromyahoo.R",
+                "state" : 1,
+                "type" : 0
+            },
+            {
+                "editor_line_number" : 16,
+                "editor_state" : 1,
+                "function_name" : "toplevel",
+                "function_steps" : "",
+                "id" : 10,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : false,
+                "line_number" : 16,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/HistDAWass/R/USA_temp_data.R",
+                "state" : 1,
+                "type" : 1
+            },
+            {
+                "editor_line_number" : 51,
+                "editor_state" : 1,
+                "function_name" : "WH_QPI",
+                "function_steps" : "28",
+                "id" : 13,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : false,
+                "line_number" : 51,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/APPLICAZIONI/Qual_of_Part_DCA.R",
+                "state" : 1,
+                "type" : 0
+            },
+            {
+                "editor_line_number" : 42,
+                "editor_state" : 1,
+                "function_name" : "toplevel",
+                "function_steps" : "",
+                "id" : 14,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : false,
+                "line_number" : 42,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "C:/Users/Antonio/Desktop/HISTO_R_PACK/APPLICAZIONI/USA_SHAPE_GEO.R",
+                "state" : 1,
+                "type" : 1
             }
         ]
     }

@@ -63,17 +63,23 @@ HTS.moving.averages=function(HTS, k=3, weights=rep(1,k)){
 #' @export
 HTS.exponential.smoothing=function(HTS, alpha=0.9){
   if ((alpha<0)||(alpha>1)) {stop("The smoothing parameter alpha must be between 0 and 1")}
-  epocs=length(HTS@data)-1
+  epocs=length(HTS@data)
   SmoothHTS=new("HTS",epocs=epocs)
   s=HTS@data[[1]]
+  SmoothHTS@data[[1]]@tstamp=HTS@data[[1]]@tstamp
+  SmoothHTS@data[[1]]@period=HTS@data[[1]]@period
+  SmoothHTS@data[[1]]@x=s@x
+  SmoothHTS@data[[1]]@p=s@p
+  SmoothHTS@data[[1]]@m=s@m
+  SmoothHTS@data[[1]]@s=s@s
   for (i in 2:epocs){
-    SmoothHTS@data[[i-1]]@tstamp=HTS@data[[i]]@tstamp
-    SmoothHTS@data[[i-1]]@period=HTS@data[[i]]@period
+    SmoothHTS@data[[i]]@tstamp=HTS@data[[i]]@tstamp
+    SmoothHTS@data[[i]]@period=HTS@data[[i]]@period
     s=(1-alpha)*s+alpha*HTS@data[[i]]
-    SmoothHTS@data[[i-1]]@x=s@x
-    SmoothHTS@data[[i-1]]@p=s@p
-    SmoothHTS@data[[i-1]]@m=s@m
-    SmoothHTS@data[[i-1]]@s=s@s
+    SmoothHTS@data[[i]]@x=s@x
+    SmoothHTS@data[[i]]@p=s@p
+    SmoothHTS@data[[i]]@m=s@m
+    SmoothHTS@data[[i]]@s=s@s
   }
   return(list(smoothing.alpha=alpha, SmoothedHTS=SmoothHTS))
 }

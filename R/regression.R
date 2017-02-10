@@ -28,6 +28,7 @@
 #'  histogram variables.
 #' @examples
 #' model.parameters=WH.regression.two.components(data = BLOOD,Yvar = 1, Xvars= c(2:3))
+#' @importFrom stats as.formula lm
 #' @export
 WH.regression.two.components=function(data,Yvar,Xvars,simplify=FALSE,qua=20){
   #check input

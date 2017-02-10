@@ -31,9 +31,9 @@ setMethod("show",
 #' @param type (optional) a string describing the type of plot, default="HISTO".\cr Other allowed types are 
 #' \cr"CDF"=Cumulative distribution function, \cr"QF"= quantile function, \cr"DENS"=a density approximation, 
 #' \cr"HBOXPLOT"=horizontal boxplot, \cr"VBOXPLOT"= vertical boxplot,
-#'  @param col (optional) a string the color of the plot, default="green".
-#'  @param border (optional) a string the color of the border of the plot, default="black".
-#'  @export
+#' @param col (optional) a string the color of the plot, default="green".
+#' @param border (optional) a string the color of the border of the plot, default="black".
+#' @export
 setMethod("plot",
           signature(x = "TdistributionH"),
           function (x,  type="HISTO",col="green",border="black") 
@@ -62,18 +62,18 @@ setMethod("plot",
 #' @param type (optional) a string describing the type of plot, default="BOXPLOT".\cr
 #'  Other allowed types are \cr
 #'  "VIOLIN"=a violin-plot representation, 
-#'  @param border (optional) a string the color of the border of the plot, default="black".
-#'  @param maxno.perplot An integer (DEFAULT=30). Maximum number of timestamps per row. 
+#' @param border (optional) a string the color of the border of the plot, default="black".
+#' @param maxno.perplot An integer (DEFAULT=30). Maximum number of timestamps per row. 
 #'  It allows a plot organized by rows, each row of the plot contains a max number of time stamps
 #'   indicated by maxno.perplot.  
 #' @examples
-#'  plot(RetHTS) #plots RetHTS dataset
+#'  plot(subsetHTS(RetHTS,from=1,to=40)) #plots RetHTS dataset
 #' \dontrun{
-#'  plot(RetHTS, type="BOXPLOT",  border="blue", maxno.perplot=40) 
-#'  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=40)
+#'  plot(RetHTS, type="BOXPLOT",  border="blue", maxno.perplot=20) 
 #'  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=20)
+#'  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=10)
 #'  }
-#'  @export
+#' @export
  setMethod("plot",
            signature(x = "HTS"),
            function (x, y="missing", type="VIOLIN",border="black",maxno.perplot=30) 

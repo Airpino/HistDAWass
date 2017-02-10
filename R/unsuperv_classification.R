@@ -168,6 +168,7 @@ WH_kmeans =function (x,k, rep=5,
 #' results=WH_hclust(x = BLOOD,simplify = TRUE, method="complete")
 #' plot(results) # it plots the dendrogram
 #' cutree(results,k = 5) # it returns the labels for 5 clusters
+#' @importFrom stats hclust quantile as.dist
 #' @export
 WH_hclust =function (x, 
                      simplify=FALSE,
@@ -238,6 +239,7 @@ WH_hclust =function (x,
 #' ISSN: 0957-4174, doi: http://dx.doi.org/10.1016/j.eswa.2013.12.001
 #' @examples
 #' results=WH_adaptive.kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
+#' @importFrom stats runif
 #' @export
 WH_adaptive.kmeans =function (x,k,
                               schema=1, #1=VariableGLOBAL 2=componentGLOBAL 3=Variable x Cluster 4=Components x cluster 
@@ -262,7 +264,7 @@ WH_adaptive.kmeans =function (x,k,
   }
   ind=nrow(x@M)
   vars=ncol(x@M)
-  
+  if (weight.sys=='PROD'){theta=1}
   ## we homogeneize data for speeding up the code if required
   tmp=Prepare(x,simplify,qua,standardize)
   MM=tmp$MM
@@ -528,7 +530,10 @@ WH_adaptive.kmeans =function (x,k,
       if (empty){repet=repet-1}
       memb=matrix(0,ind,k)
       for(indiv in 1:ind){memb[indiv,IDX[indiv]]=1}
-      TMP_SSQ=WH.ADPT.FCMEANS.SSQ(x,memb,1,lambdas,proto)
+      #browser()
+      
+      TMP_SSQ=WH.ADPT.FCMEANS.SSQ_FAST(MM,x,memb,1,lambdas,proto,theta=theta)
+      #TMP_SSQ=WH.ADPT.FCMEANS.SSQ(x,memb,1,lambdas,proto,theta)
       GenCrit=TMP_SSQ
       if(is.na(GenCrit)){
         cat('isNAN')

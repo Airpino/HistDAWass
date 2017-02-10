@@ -49,6 +49,7 @@ MatH=function(x=list(new('distributionH')), nrows=1, ncols=1,rownames=NULL,varna
  #' @examples
  #' D=BLOOD #the BLOOD dataset
  #' SUB_D=BLOOD[c(1,2,5),c(1,2)]
+ #' @importFrom stats variable.names
  #' @export
 setMethod("[",
           signature(x = "MatH"),
@@ -623,11 +624,11 @@ setMethod(f="WH.SSQ",signature=c(object="MatH"),
             for (v1 in 1:ncols){
               for (v2 in v1:ncols){
                 for (indiv in 1:nrows){
-                  if (v1==v2){
-                    DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
-                  }else{
+                   if (v1==v2){
+                     DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
+                   }else{
                     DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*dotpW(object@M[indiv,v1][[1]],object@M[indiv,v2][[1]])
-                  }
+                   }
                 }
                 if (v2>v1){
                   DEV_MAT[v1,v2]=DEV_MAT[v1,v2]-sum(w)*dotpW(MEANS@M[1,v1][[1]],MEANS@M[1,v2][[1]])
@@ -739,8 +740,8 @@ setMethod(f="WH.correlation",signature=c(object="MatH"),
 #'  It returns a rectangular a matrix of numbers, consistent with 
 #' a set of distributions equipped with a L2 wasserstein metric.
 #' @param object1  a \code{MatH} object
-#'  @param object2  a \code{MatH} object
-#'  @param ... some optional parameters 
+#' @param object2  a \code{MatH} object
+#' @param ... some optional parameters 
 #' @param w it is possible to add a vector of weights (positive numbers) 
 #' having the same size of the rows of the \code{MatH object}, 
 #' default = equal weight for each row
@@ -809,7 +810,7 @@ setMethod(f="WH.SSQ2",signature=c(object1="MatH",object2="MatH"),
 #'  It returns a rectangular a matrix of numbers, consistent with 
 #' a set of distributions equipped with a L2 wasserstein metric.
 #' @param object1  a \code{MatH} object
-#'  @param object2  a \code{MatH} object
+#' @param object2  a \code{MatH} object
 #' @param ... some optional parameters 
 #' @param w it is possible to add a vector of weights (positive numbers) 
 #' having the same size of the rows of the \code{MatH object}, 
@@ -879,7 +880,7 @@ setMethod(f="WH.var.covar2",signature=c(object1="MatH",object2="MatH"),
 #'  It returns a rectangular a matrix of numbers, consistent with 
 #' a set of distributions equipped with a L2 wasserstein metric.
 #' @param object1  a \code{MatH} object
-#'  @param object2  a \code{MatH} object
+#' @param object2  a \code{MatH} object
 #' @param ... some optional parameters 
 #' @param w it is possible to add a vector of weights (positive numbers) 
 #' having the same size of the rows of the \code{MatH object}, 
@@ -1209,20 +1210,22 @@ setMethod("show",
 #' @aliases plot,MatH-method
 #' @description An overloading plot function for a \code{MatH} object. The method returns a graphical representation 
 #' of the matrix of histograms. 
-
 #' @param x a \code{distributionH} object
 #' @param y not used in this implementation
 #' @param type (optional) a string describing the type of plot, default="HISTO".\cr
 #'  Other allowed types are \cr
 #'  "DENS"=a density approximation, \cr
 #'  "BOXPLOT"=l boxplot
-#'  @param border (optional) a string the color of the border of the plot, default="black".
+#' @param border (optional) a string the color of the border of the plot, default="black".
 #' @examples
-#'  plot(BLOOD) #plots BLOOD dataset
-#'  plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
-#'  plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
-#'  plot(BLOOD, type="BOXPLOT") #plots a  boxplots
-#'  @export
+#' plot(BLOOD) #plots BLOOD dataset
+#' \dontrun{
+#' plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
+#' plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
+#' plot(BLOOD, type="BOXPLOT") #plots a  boxplots
+#' }
+#' @importFrom utils write.table
+#' @export
 
 setMethod("plot",
           signature(x = "MatH"),
@@ -1231,3 +1234,62 @@ setMethod("plot",
 
           }
 )
+#' Method get.cell.MatH Returns the histogram in a cell of a matrix of distributions
+#' @name get.cell.MatH
+#' @rdname get.cell.MatH-methods
+#' @exportMethod get.cell.MatH
+setGeneric("get.cell.MatH",function(object,r,c) standardGeneric("get.cell.MatH"))#OK
+#' @rdname get.cell.MatH-methods
+#' @aliases get.cell.MatH,MatH-method
+#' @description Returns the histogram data in the r-th row and the c-th column. 
+#' @param object a MatH object, a matrix of distributions.
+#' @param r an integer, the row index.
+#' @param c an integer, the column index
+#' 
+#' @return A \code{distributionH} object.
+#' @examples
+#' get.cell.MatH(BLOOD, r=1,c=1)
+setMethod(f="get.cell.MatH",signature=c(object="MatH",r="numeric",c="numeric"),
+          function(object,r,c){
+            nr=get.MatH.nrows(object)
+            nc=get.MatH.ncols(object)
+            r=as.integer(r)
+            c=as.integer(c)
+            if (r>nr | r<1 | c<1 | c>nc){print('Indices out of range')
+              return(NULL)}else{Dist=object@M[r,c][[1]]}
+            return(Dist)
+          }
+)
+
+
+#' Method set.cell.MatH assign a histogram to a cell of a matrix of histograms
+#' @name set.cell.MatH
+#' @rdname set.cell.MatH-methods
+#' @exportMethod set.cell.MatH
+setGeneric("set.cell.MatH",function(object,mat,r,c) standardGeneric("set.cell.MatH"))#OK
+#' @rdname set.cell.MatH-methods
+#' @aliases set.cell.MatH,MatH-method
+#' @description Assign a histogram data to the r-th row and the c-th column of a matrix of histograms. 
+#' @param object a distributionH object, a matrix of distributions.
+#' @param mat a MatH object, a matrix of distributions.
+#' @param r an integer, the row index.
+#' @param c an integer, the column index
+#' 
+#' @return A \code{MatH} object.
+#' @examples
+#' mydist=distributionH(x=c(0,1,2,3,4), p=c(0,0.1,0.6,0.9,1))
+#' MAT=set.cell.MatH(mydist,BLOOD, r=1,c=1)
+setMethod(f="set.cell.MatH",signature=c(object="distributionH",mat="MatH",r="numeric",c="numeric"),
+          function(object,mat,r,c){
+            nr=get.MatH.nrows(mat)
+            nc=get.MatH.ncols(mat)
+            r=as.integer(r)
+            c=as.integer(c)
+            if (r>nr | r<1 | c<1 | c>nc){print('Indices out of range')
+              return(NULL)}else{mat@M[r,c][[1]]=object}
+            return(mat)
+          }
+)
+
+
+

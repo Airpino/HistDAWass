@@ -1,31 +1,39 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 0.1.2
-Date: 2015-03-04
+Version: 0.1.6
+Date: 2017-02-01
 Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
   	     email = "antonio.irpino@unina2.it"))
 Author: Antonio Irpino [aut, cre]
 Maintainer: Antonio Irpino <antonio.irpino@unina2.it>
-Description: In the framework of Symbolic Data Analysis, a relatively new approach 
-          to the statistical analysis of multi-valued data, we consider histogram-valued data, i.e.,
-          data described by univariate histograms. The  methods and the basic statistics for 
-          histogram-valued data are mainly based 
-          on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric 
-          between quantile functions. The package contains unsupervised classification techniques, 
-          least square regression and tools for histogram-valued data and for histogram time series.
+Description: In the framework of Symbolic Data Analysis, a relatively new
+    approach to the statistical analysis of multi-valued data, we consider
+    histogram-valued data, i.e., data described by univariate histograms. The
+    methods and the basic statistics for histogram-valued data are mainly based
+    on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric
+    between quantile functions. The package contains unsupervised classification
+    techniques, least square regression and tools for histogram-valued data and for
+    histogram time series.
 License: GPL (>=2)
 Imports:
-    graphics,
+    graphics, 
+    class,  
     FactoMineR,
-    class,
     ggplot2,
-    grid, histogram
+    grid,
+    histogram,
+    grDevices,
+    stats,
+    colorspace,
+    utils
 Depends:
-      R(>= 3.0),
-      methods
+    R(>= 3.1),
+    methods
 LazyData: true
-Collate:     'All_classes.R'
+Collate:
+    'All_classes.R'
+    'Utility.R'
     'Fuzzy_cmeans.R'
     'H_time_series.R'
     'HistDAWass-package.R'
@@ -33,8 +41,8 @@ Collate:     'All_classes.R'
     'Met_HTS.R'
     'Met_MatH.R'
     'Met_distributionH.R'
-    'Utility.R'
     'principal_components.R'
     'regression.R'
     'unsuperv_classification.R'
     'Plotting_with_ggplot.R'
+RoxygenNote: 6.0.1

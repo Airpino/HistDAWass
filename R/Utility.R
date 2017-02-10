@@ -145,11 +145,6 @@ WH.ADPT.KMEANS.TOTALSSQ=function(x,memb,m,lambdas,proto){
         tmpD_centered=as.numeric(tmpD[1]-tmpD[2])
         TSQ_clu[1,variables,cluster]=TSQ_clu[1,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
         TSQ_clu[2,variables,cluster]=TSQ_clu[2,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        #         TSQ[1,variables]=TSQ[1,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
-        #         TSQ[2,variables]=TSQ[2,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        #         TSQ_clu[1,variables,cluster]=TSQ_clu[1,variables,cluster]+((memb[indiv,cluster])^m)*tmpD_mean
-        #         TSQ_clu[2,variables,cluster]=TSQ_clu[2,variables,cluster]+((memb[indiv,cluster])^m)*tmpD_centered
-        
       }
     }
   }
@@ -162,9 +157,6 @@ WH.ADPT.KMEANS.TOTALSSQ=function(x,memb,m,lambdas,proto){
         tmpD_centered=as.numeric(tmpD[1]-tmpD[2])
         TSQ_clu2[1,variables,cluster]=TSQ_clu2[1,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
         TSQ_clu2[2,variables,cluster]=TSQ_clu2[2,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        #         TSQ[1,variables]=TSQ[1,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
-        #         TSQ[2,variables]=TSQ[2,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        
       }
     }
   }
@@ -230,7 +222,7 @@ for (variable in 1:var){
 return(list(SSQ=sum(SSQ_det),SSQ_det=SSQ_det,ProtoGEN=GP))
 }
 
-ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
+ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas,theta){
   ind=ncol(MM[[1]])-1
   var=length(MM)
   k=ncol(memb)
@@ -242,9 +234,9 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
     ci=(MM[[variable]][2:rr,1:ind]+MM[[variable]][1:(rr-1),1:ind])/2
     ri=(MM[[variable]][2:rr,1:ind]-MM[[variable]][1:(rr-1),1:ind])/2
     wi=(MM[[variable]][2:rr,(ind+1)]-MM[[variable]][1:(rr-1),(ind+1)])
-    LMc=memb^m*matrix(lambdas[(variable*2-1),],ind,k, byrow=TRUE)
+    LMc=memb^m*matrix(lambdas[(variable*2-1),]^theta,ind,k, byrow=TRUE)
     LMc=LMc/sum(LMc)
-    LMv=memb^m*matrix(lambdas[(variable*2),],ind,k, byrow=TRUE)
+    LMv=memb^m*matrix(lambdas[(variable*2),]^theta,ind,k, byrow=TRUE)
     LMv=LMv/sum(LMv)
     Cen=MM[[variable]][,1]*0
     MG=0
@@ -252,9 +244,9 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
     RcG=ri[,1]*0
     for (clu in 1:k){
       for (i in 1:ind){
-      mui=sum(ci[,i]*wi)
-      MG=MG+LMc[i,clu]*mui
-      Cen=Cen+(MM[[variable]][,i]-mui)*LMv[i,clu]
+        mui=sum(ci[,i]*wi)
+        MG=MG+LMc[i,clu]*mui
+        Cen=Cen+(MM[[variable]][,i]-mui)*LMv[i,clu]
       }
     }
     Cen=Cen+MG
@@ -262,24 +254,6 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
     GP@M[1,variable][[1]]=tmp
   }
   #compute G by protos
-#   GP2=new('MatH',1,var)
-#   for (v in 1:var){
-#     LMc=memb^m*matrix(lambdas[(v*2-1),],ind,k, byrow=TRUE)
-#     LMc=LMc/sum(LMc)
-#     LWc=apply(LMc,2,sum)
-#     LMv=memb^m*matrix(lambdas[(v*2),],ind,k, byrow=TRUE)
-#     LMv=LMv/sum(LMv)
-#     LWv=apply(LMv,2,sum)
-#     CG=proto@M[1,v][[1]]@m*LWc[1]
-#     CEN=(proto@M[1,v][[1]]-proto@M[1,v][[1]]@m)*LWv[1]
-#     for (clu in 2:k){
-#       CG=CG+proto@M[clu,v][[1]]@m*LWc[clu]
-#       CEN=CEN+(proto@M[clu,v][[1]]-proto@M[clu,v][[1]]@m)*LWv[clu]
-#     }
-#     GP2@M[1,v][[1]]=CEN+CG
-# 
-#   
-#   }
   
   
   #compute TOTALSSQ
@@ -296,8 +270,10 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
       dc=(sum(p1*ci)-GP@M[1,variable][[1]]@m)^2
       dv=dist-dc
       for (clu in 1:k){
-        SSQ_det[1,variable,clu]=SSQ_det[1,variable,clu]+lambdas[(variable*2-1),clu]*(memb[indiv,clu]^m)*dc
-        SSQ_det[2,variable,clu]=SSQ_det[2,variable,clu]+lambdas[(variable*2),clu]*(memb[indiv,clu]^m)*dv
+        SSQ_det[1,variable,clu]=SSQ_det[1,variable,clu]+
+          lambdas[(variable*2-1),clu]^theta*(memb[indiv,clu]^m)*dc
+        SSQ_det[2,variable,clu]=SSQ_det[2,variable,clu]+
+          lambdas[(variable*2),clu]^theta*(memb[indiv,clu]^m)*dv
       }
     }
   }
@@ -327,6 +303,7 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
 #' @param epsilon a number between 0 and 1 to provide if \code{algo="PolyLine"} is chosen. Default=0.01.
 #' @return A \code{distributionH} object, i.e. a distribution.
 #' @importFrom histogram histogram
+#' @importFrom stats quantile sd
 #' @export
 #' @examples
 #' data=rnorm(n = 1000,mean = 2,sd = 3)
@@ -402,6 +379,8 @@ data2hist<-function(data,
     x=as.vector(resu[,1])*stdev
     p=as.vector(resu[,2])
   }
+  p[1]=0
+  p[length(p)]=1
   mydist<- distributionH(x,p)
   return(mydist)
 }
@@ -459,4 +438,303 @@ ShortestDistance=function(p, line){
   y0=p[2]
   d=abs((y2-y1)*x0-(x2-x1)*y0+x2*y1-y2*x1)/sqrt((y2-y1)^2+(x2-x1)^2)
   return(as.numeric(d))
+}
+
+##Adaptive distance computation
+DISTA_ADA=function(x,MM,proto,vars,ind,k,memb,m,schema){ 
+  distances=array(0,dim=c(vars,k,2))
+  diINDtoPROT=array(0,dim=c(ind,vars,k,2))
+  #####################################
+  
+  DM=array(0,c(ind,vars,k))
+  DV=DM
+  for (cl in 1:k){
+    tmp=ComputeFast_L2_SQ_WASS_DMAT(MM,proto[cl,],DETA=T)
+    DM[,,cl]=tmp$DM
+    DV[,,cl]=tmp$DV
+  }
+  #  ComputeFast_L2_SQ_WASS_DMAT(MM,prot,DETA=T)
+  
+  for (cluster in 1:k){
+    for (variables in (1:vars)){
+      for (indiv in 1:ind){
+        #         tmpD=ComputeFast_L2_SQ_WASS_D(cbind(MM[[variables]][,indiv],proto@M[cluster,variables][[1]]@x,
+        #                                             MM[[variables]][,(ind+1)]))
+        tmpD=(DM[indiv,variables,cluster]+DV[indiv,variables,cluster])
+        
+        if (schema==1){#one weigth for one variable
+          distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD*memb[indiv,cluster]^m
+          diINDtoPROT[indiv,variables,cluster,1]=tmpD
+        }
+        if (schema==2|schema==5){#two weigths for the two components for each variable
+          #tmpD_mean=(x@M[indiv,variables][[1]]@m-proto@M[cluster,variables][[1]]@m)^2
+          tmpD_mean=DM[indiv,variables,cluster]
+          #tmpD_centered=tmpD-tmpD_mean
+          tmpD_centered=DV[indiv,variables,cluster]
+          distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD_mean*memb[indiv,cluster]^m
+          distances[variables,cluster,2]=distances[variables,cluster,2]+tmpD_centered*memb[indiv,cluster]^m
+          diINDtoPROT[indiv,variables,cluster,1]=tmpD_mean
+          diINDtoPROT[indiv,variables,cluster,2]=tmpD_centered
+        }
+        if (schema==3){#a weigth for one variable and for each cluster
+          distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD*memb[indiv,cluster]^m
+          diINDtoPROT[indiv,variables,cluster,1]=tmpD
+        }
+        if (schema==4|schema==6){#two weigths for the two components for each variable and each cluster
+          #tmpD_mean=(x@M[indiv,variables][[1]]@m-proto@M[cluster,variables][[1]]@m)^2
+          tmpD_mean=DM[indiv,variables,cluster]
+          #tmpD_centered=tmpD-tmpD_mean
+          tmpD_centered=DV[indiv,variables,cluster]
+          
+          distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD_mean*memb[indiv,cluster]^m
+          distances[variables,cluster,2]=distances[variables,cluster,2]+tmpD_centered*memb[indiv,cluster]^m
+          diINDtoPROT[indiv,variables,cluster,1]=tmpD_mean
+          diINDtoPROT[indiv,variables,cluster,2]=tmpD_centered
+        }
+      }
+    }
+  }
+  
+  return(res=list(distances=distances,diINDtoPROT=diINDtoPROT))
+}
+
+###############################################################
+ComputeFast_L2_SQ_WASS_DMAT=function(MM,prot,DETA=FALSE){
+  ind=ncol(MM[[1]])-1
+  rr=nrow(MM[[1]])
+  Dist=matrix(0,length(MM),ind)
+  DM=Dist
+  DV=Dist
+  for (v in 1:length(MM)){
+    rr=nrow(MM[[v]])
+    MPro=t(t(prot@M[1,v][[1]]@x))%*%matrix(1,1,ind)
+    p1=MM[[v]][2:rr,ind+1]-MM[[v]][1:(rr-1),ind+1]
+    
+    c1=(MM[[v]][2:rr,1:ind]+MM[[v]][1:(rr-1),1:ind])/2
+    r1=(MM[[v]][2:rr,1:ind]-MM[[v]][1:(rr-1),1:ind])/2
+    c2=(MPro[2:rr,]+MPro[1:(rr-1),])/2
+    r2=(MPro[2:rr,]-MPro[1:(rr-1),])/2
+    
+    Dist[v,]=p1%*%(((c1-c2)^2)+ 1/3*((r1-r2)^2))
+    if (DETA==TRUE){
+      DM[v,]=(p1%*%(c1-c2))^2
+      DV[v,]=Dist[v,]-DM[v,]
+    }
+  }
+  if (DETA==FALSE){
+    return(t(Dist))}
+  else{
+    return(list(Dist=t(Dist), DM=t(DM),DV=t(DV)))
+  }
+}
+
+########################
+# compute fast DIST
+ComputeFast_L2_SQ_WASS_D=function(subMM){
+  ind=ncol(subMM)-1
+  rr=nrow(subMM)
+  p1=subMM[2:rr,ind+1]-subMM[1:(rr-1),ind+1]
+  
+  c1=(subMM[2:rr,1]+subMM[1:(rr-1),1])/2
+  r1=(subMM[2:rr,1]-subMM[1:(rr-1),1])/2
+  c2=(subMM[2:rr,2]+subMM[1:(rr-1),2])/2
+  r2=(subMM[2:rr,2]-subMM[1:(rr-1),2])/2
+  
+  Dist=sum(p1*((c1-c2)^2)+ p1/3*((r1-r2)^2))
+  
+  return(Dist)
+}
+
+##  Weights computation
+ADA_F_DIST=function(distances,k,vars,ind,schema,weight.sys,theta=2,m=1.6){
+  lambdas=matrix(0,2*vars,k)
+  for (variables in (1:vars)){
+    for (cluster in 1:k){
+      #product
+      if (weight.sys=='PROD'){
+        if (schema==1){#one weigth for one variable
+          if (cluster<=1){
+            num=(prod(apply(distances[,,1],MARGIN=c(1),sum)))^(1/vars)
+            denom=max(sum(distances[variables,,1]),1e-10)
+            if ((num==0)&(denom==0)){browser()}
+            lambdas[(variables*2-1),cluster]=num/denom
+            lambdas[(variables*2),cluster]=num/denom
+          }else{
+            lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
+            lambdas[(variables*2),cluster]=lambdas[(variables*2),1]
+          }
+        }
+        if (schema==2){#two weigths for the two components for each variable
+          if (cluster<=1){
+            num=(prod(apply(distances[,,1],MARGIN=c(1),sum)))^(1/vars)
+            denom=max(sum(distances[variables,,1]),1e-10)
+            if ((num==0)&(denom==0)){browser()}
+            lambdas[(variables*2-1),cluster]=num/denom
+            num=(prod(apply(distances[,,2],MARGIN=c(1),sum)))^(1/vars)
+            denom=max(sum(distances[variables,,2]),1e-10)
+            if ((num==0)&(denom==0)){browser()}
+            lambdas[(variables*2),cluster]=num/denom}
+          else{
+            lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
+            lambdas[(variables*2),cluster]=lambdas[(variables*2),1]
+          }
+        }
+        if (schema==3){#a weigth for one variable and for each cluster
+          num=(prod(distances[,cluster,1]))^(1/vars)
+          denom=max(distances[variables,cluster,1],1e-10)
+          if ((num==0)&(denom==0)){browser()}
+          lambdas[(variables*2-1),cluster]=num/denom
+          lambdas[(variables*2),cluster]=num/denom
+        }
+        if (schema==4){#two weigths for the two components for each variable and each cluster
+          num=(prod(distances[,cluster,1]))^(1/vars)
+          denom=max(distances[variables,cluster,1],1e-10)
+          if ((num==0)&(denom==0)){browser()}
+          lambdas[(variables*2-1),cluster]=num/denom
+          num=(prod(distances[,cluster,2]))^(1/vars)
+          denom=max(distances[variables,cluster,2],1e-10)
+          if ((num==0)&(denom==0)){browser()}
+          lambdas[(variables*2),cluster]=num/denom
+        }
+        if (schema==5){#two weigths for the two components for each variable 
+          #multiplied all equal one
+          if (cluster<=1){
+            num1=(prod(apply(distances[,,1],MARGIN=c(1),sum)))^(1/(2*vars))
+            denom1=max(sum(distances[variables,,1]),1e-10)
+            if ((num1==0)&(denom1==0)){browser()}
+            num2=(prod(apply(distances[,,2],MARGIN=c(1),sum)))^(1/(2*vars))
+            denom2=max(sum(distances[variables,,2]),1e-10)
+            if ((num2==0)&(denom2==0)){browser()}
+            lambdas[(variables*2-1),cluster]=(num1*num2)/denom1
+            lambdas[(variables*2),cluster]=(num1*num2)/denom2}
+          else{
+            lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
+            lambdas[(variables*2),cluster]=lambdas[(variables*2),1]
+          }
+        }
+        if (schema==6){#two weigths for the two components for each variable and each cluster
+          #multiplied all equal one
+          num=(prod(distances[,cluster,1])*prod(distances[,cluster,2]))^(1/(2*vars))
+          denom=max(distances[variables,cluster,1],1e-10)
+          if ((num==0)&(denom==0)){browser()}
+          lambdas[(variables*2-1),cluster]=num/denom
+          #num=(prod(distances[,cluster,2]))^(1/vars)
+          denom=max(distances[variables,cluster,2],1e-10)
+          if ((num==0)&(denom==0)){browser()}
+          lambdas[(variables*2),cluster]=num/denom
+          
+        }
+      }else{
+        #sum ugual to 1
+        if (schema==1){#one weigth for one variable 1W GS Global-sum
+          if (cluster<=1){
+            num=rep(sum(distances[variables,,1]),vars)
+            den=apply(distances[,,1],1,sum)
+            if ((num==0)&(den==0)){browser()}
+            lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
+            lambdas[(variables*2),cluster]=lambdas[(variables*2-1),cluster]
+          }else{lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
+          lambdas[(variables*2),cluster]=lambdas[(variables*2),1]}
+        }
+        if (schema==2){#two weigths for the two components for each variable 2W GS Global-sum
+          if (cluster<=1){
+            num=rep(sum(distances[variables,,1]),vars)
+            den=apply(distances[,,1],1,sum)
+            if ((num==0)&(den==0)){browser()}
+            lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
+            num=rep(sum(distances[variables,,2]),vars)
+            den=apply(distances[,,2],1,sum)
+            if ((num==0)&(den==0)){browser()}
+            lambdas[(variables*2),cluster]=1/sum((num/den)^(1/(theta-1)))
+          }
+          else{
+            lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
+            lambdas[(variables*2),cluster]=lambdas[(variables*2),1]
+          }
+        }
+        if (schema==3){#a weigth for one variable and for each cluster 1W LS Local-sum
+          num=rep(distances[variables,cluster,1],vars)
+          den=distances[,cluster,1]
+          if ((num==0)&(den==0)){browser()}
+          lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
+          lambdas[(variables*2),cluster]=lambdas[(variables*2-1),cluster]
+        }
+        if (schema==4){#two weigths for the two components for each variable and each cluster 2W LS Local-sum
+          num=rep(distances[variables,cluster,1],vars)
+          den=distances[,cluster,1]
+          if ((num==0)&(den==0)){browser()}
+          lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
+          
+          num=rep(distances[variables,cluster,2],vars)
+          den=distances[,cluster,2]
+          if ((num==0)&(den==0)){browser()}
+          lambdas[(variables*2),cluster]=1/sum((num/den)^(1/(theta-1)))
+        }
+        if (schema==5){#two weigths for the two components for each variable 2W GS Global-sum
+          if (cluster<=1){
+            unonum=sum(distances[variables,,1])
+            unoden=apply(distances[,,1],MARGIN=c(1),sum)
+           # if ((unonum==0)&(unoden==0)){browser()}
+            uno=sum((unonum/unoden)^(1/(theta-1)))
+            dueden=apply(distances[,,2],MARGIN=c(1),sum)
+            due=sum((unonum/dueden)^(1/(theta-1)))
+            lambdas[(variables*2-1),cluster]=1/(uno+due)
+            
+            unonum=sum(distances[variables,,2])
+            tre=sum((unonum/unoden)^(1/(theta-1)))
+            quattro=sum((unonum/dueden)^(1/(theta-1)))
+            lambdas[(variables*2),cluster]=1/(tre+quattro)
+          }
+          else{
+            lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
+            lambdas[(variables*2),cluster]=lambdas[(variables*2),1]
+          }
+        }
+        if (schema==6){#two weigths for the two components for each variable and each cluster 2W LS Local-sum
+          unonum=distances[variables,cluster,1]
+          unoden=distances[,cluster,1]
+          uno=sum((unonum/unoden)^(1/(theta-1)))
+          dueden=distances[,cluster,2]
+          due=sum((unonum/dueden)^(1/(theta-1)))
+          lambdas[(variables*2-1),cluster]=1/(uno+due)
+          
+          unonum=distances[variables,cluster,2]
+          tre=sum((unonum/unoden)^(1/(theta-1)))
+          quattro=sum((unonum/dueden)^(1/(theta-1)))
+          lambdas[(variables*2),cluster]=1/(tre+quattro)
+        }
+      }
+    }
+  }
+  return(lambdas=lambdas)
+}
+WH.ADPT.FCMEANS.SSQ_FAST=function(MM,x,memb,m,lambdas,proto,theta){
+  ind=ncol(MM[[1]])-1
+  vars=length(MM)
+  k=ncol(memb)
+  lambdas[is.na(lambdas)]=0
+  
+  DM=array(0,c(ind,vars,k))
+  DV=DM
+  for (cl in 1:k){
+    tmp=ComputeFast_L2_SQ_WASS_DMAT(MM,proto[cl,],DETA=T)
+    DM[,,cl]=tmp$DM
+    DV[,,cl]=tmp$DV
+  }
+  
+  SSQ=0
+  for (indiv in 1:ind){
+    for (cluster in 1:k){
+      for (variables in (1:vars)){
+        
+        #   tmpD=WassSqDistH(x@M[indiv,variables][[1]],proto@M[cluster,variables][[1]],details=T)
+        tmpD_mean=DM[indiv,variables,cluster]
+        tmpD_centered=DV[indiv,variables,cluster]
+        SSQ=SSQ+((memb[indiv,cluster])^m)*(lambdas[(variables*2-1),cluster]^theta*tmpD_mean
+                                           +lambdas[(variables*2),cluster]^theta*tmpD_centered)
+        
+      }
+    }
+  }
+  return(SSQ)
 }

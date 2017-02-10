@@ -871,8 +871,8 @@ setMethod("show",
 #' @param type (optional) a string describing the type of plot, default="HISTO".\cr Other allowed types are 
 #' \cr"CDF"=Cumulative distribution function, \cr"QF"= quantile function, \cr"DENS"=a density approximation, 
 #' \cr"HBOXPLOT"=horizontal boxplot, \cr"VBOXPLOT"= vertical boxplot,
-#'  @param col (optional) a string the color of the plot, default="green".
-#'  @param border (optional) a string the color of the border of the plot, default="black".
+#' @param col (optional) a string the color of the plot, default="green".
+#' @param border (optional) a string the color of the border of the plot, default="black".
 #' @examples
 #' ##---- initialize a distributionH
 #'  mydist<-distributionH(x=c(7,8,10,15),p=c(0, 0.2, 0.7, 1))
@@ -884,6 +884,7 @@ setMethod("show",
 #'  plot(mydist, type="VBOXPLOT") #plots a vertical boxplot for mydist
 #'  plot(mydist, type="CDF") #plots the cumulative distribution function of mydist
 #'  plot(mydist, type="QF") #plots the quantile function of mydist
+#' @importFrom utils write.table
 #' @export
 setMethod("plot",
           signature(x = "distributionH" ),

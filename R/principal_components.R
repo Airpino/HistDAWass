@@ -31,7 +31,9 @@
 #' @examples
 #' results=WH.1d.PCA(data = BLOOD,var = 1, listaxes=c(1:2))
 #' @importFrom FactoMineR PCA
-#' @importFrom graphics plot
+#' @importFrom graphics plot abline axis hist plot.new plot.window polygon segments text title
+#' @importFrom grDevices dev.new rgb
+#' @importFrom stats density quantile
 #' @export
 WH.1d.PCA=function(data,var, quantiles=10, plots=TRUE, listaxes=c(1:4),axisequal=FALSE,qcut=1){
   if (is(data)[1]!="MatH"){stop("Input data must be a MatH object (A matrix of histograms)")}
@@ -81,6 +83,7 @@ WH.1d.PCA=function(data,var, quantiles=10, plots=TRUE, listaxes=c(1:4),axisequal
   }
   namec=c(namec, "Max")
   
+
   for (i in 1:INDIV)
   {
     for (j in 1:(quantiles+1))
@@ -93,7 +96,7 @@ WH.1d.PCA=function(data,var, quantiles=10, plots=TRUE, listaxes=c(1:4),axisequal
   # do a PCA
   vmeans=numeric(0)
   vstds=numeric(0)
-  
+   
   for (ind in 1:INDIV){
     vmeans=c(vmeans,data@M[ind,1][[1]]@m)
     vstds=c(vstds,data@M[ind,1][[1]]@s)
@@ -105,11 +108,9 @@ WH.1d.PCA=function(data,var, quantiles=10, plots=TRUE, listaxes=c(1:4),axisequal
   
   MATF=cbind(MATQ/sqrt((quantiles+1)),vmeans,vstds)
   res.pca = PCA(MATF,quanti.sup = c((ncol(MATF)-1),ncol(MATF)), scale.unit=FALSE,  graph=F)
-  #Sparse.pca.res = SPC(MATF[,1:(quantiles+1)],sumabsv=3, K=4, orth=TRUE)
-  #Sparse2.pca.res = spca(MATF[,1:(quantiles+1)], K=3,para=c(0.9,0.5,0.3))
-  VARW=WH.var.covar(data)
+ 
+  VARW=0#WH.var.covar(data)
   TOTINE=sum(res.pca$eig[,1])
-  
   ## plotting PCA results ----------------
   if (plots){
     #par(mfrow=c(1,1))
@@ -365,12 +366,13 @@ WH.1d.PCA=function(data,var, quantiles=10, plots=TRUE, listaxes=c(1:4),axisequal
 #' @param data A MatH object (a matrix of distributionH).
 #' @param list.of.vars A list of  integers, the active variables.
 #' @param quantiles An integer, it is the number of quantiles used in the analysis.
-#' Default=1, all the densities are considered.
+#' Default=10, all the densities are considered.
 
 #' @return a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA
 #' @details It is a first tentative of extending WH.1d.PCA to the multiple case.All plotting functions must be defined
 #' in order to have interpretable results. This is an ongoing function, even if the numerical results are methodologically verified.
 #' @importFrom FactoMineR MFA
+#' @importFrom stats rnorm
 #' @export
 ## MFA PCA for quantiles -------
 WH.MultiplePCA=function(data, list.of.vars, quantiles=10){
@@ -395,11 +397,18 @@ WH.MultiplePCA=function(data, list.of.vars, quantiles=10){
       }
     }
   }
+  #browser()
   rownames(MATQ)=rownames(data@M)
   colnames(MATQ)=COLnames
   
   # do a MFA
   MATF=cbind(MATQ/sqrt((quantiles+1)))
+  #check all columns
+  for(cc in 1:ncol(MATF)){
+    if (sd(MATF[,cc])<1e-100){
+      MATF[,cc]=MATF[,cc]+rnorm(nrow(MATF),0,1e-20)
+    }
+  }
   MFA.res= MFA(MATF,group=c(rep(quantiles+1,length(list.of.vars))),type=c(rep("c",length(list.of.vars))),
                ncp=3,name.group=colnames(data@M),graph=TRUE)
   # do Plots!!!!

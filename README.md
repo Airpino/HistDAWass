@@ -11,18 +11,48 @@ In this document we describe the main features of the HistDAWass package. The na
 
 What is the L2 Wasserstein metric?
 
-given two probability density functions \(f\) and \(g\), each one has a cumulative distribution function \(F\) and \(G\) and thei respectively quantile functions (the inverse of a cumulative distribution function) \(Q_f\) and \(Q_g\). The L2 Wasserstein distance is
+given two probability density functions *f* and *g*, each one has a cumulative distribution function *F* and *G* and thei respectively quantile functions (the inverse of a cumulative distribution function) *Q*<sub>*f*</sub> and *Q*<sub>*g*</sub>. The L2 Wasserstein distance is
 
-\[d_W(f,g)=\sqrt{\int\limits_0^1{(Q_f(p) - Q_g(p))^2 dp}}\]
+$$d\_W(f,g)=\\sqrt{\\int\\limits\_0^1{(Q\_f(p) - Q\_g(p))^2 dp}}$$
 
 The implemented classes are those described in the following table
 
-| Class            | wrapper function for initializing                  | Description                                                                   |
-|------------------|----------------------------------------------------|-------------------------------------------------------------------------------|
-| `distributionH`  | `distributionH(x,p)`                               | A class describing a histogram distibution                                    |
-| `MatH`           | `MatH(x, nrows, ncols,rownames,varnames, by.row )` | A class describing a matrix of distributions                                  |
-| `TdistributionH` | `TdistributionH()`                                 | A class derived from distributionH equipped with a timestamp or a time window |
-| `HTS`            | `HTS()`                                            | A class describing a Histgram-valued time series                              |
+<table>
+<colgroup>
+<col width="22%" />
+<col width="45%" />
+<col width="31%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Class</th>
+<th>wrapper function for initializing</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>distributionH</code></td>
+<td><code>distributionH(x,p)</code></td>
+<td>A class describing a histogram distibution</td>
+</tr>
+<tr class="even">
+<td><code>MatH</code></td>
+<td><code>MatH(x, nrows, ncols,rownames,varnames, by.row )</code></td>
+<td>A class describing a matrix of distributions</td>
+</tr>
+<tr class="odd">
+<td><code>TdistributionH</code></td>
+<td><code>TdistributionH()</code></td>
+<td>A class derived from distributionH equipped with a timestamp or a time window</td>
+</tr>
+<tr class="even">
+<td><code>HTS</code></td>
+<td><code>HTS()</code></td>
+<td>A class describing a Histgram-valued time series</td>
+</tr>
+</tbody>
+</table>
 
 ``` r
 library(HistDAWass)
@@ -50,16 +80,16 @@ Basic statistics for a MatH (A matrix of histogrm-valued data)
 ==============================================================
 
 -   The average hisogram of a column
-     + It is an average **histogram** that minimizes the sum of squared Wasserstein distances.
+    + It is an average **histogram** that minimizes the sum of squared Wasserstein distances.
 
 -   The standard deviation of a variable
-     + It is a number that measures the dispersion of a set of histograms.
+    + It is a number that measures the dispersion of a set of histograms.
 
 -   The covarince matrix of a MatH
-     + It is a matrix that measures the covariances into a set of hitogram variables.
+    + It is a matrix that measures the covariances into a set of hitogram variables.
 
 -   The correlation matrix of a MatH
-     + It is a matrix that measures the correlation into a set of hitogram variables.
+    + It is a matrix that measures the correlation into a set of hitogram variables.
 
 Visualization
 =============
