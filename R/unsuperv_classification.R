@@ -37,7 +37,8 @@ WH_kmeans =function (x,k, rep=5,
   init="RPART"
   ind=nrow(x@M)
   vars=ncol(x@M)
-  
+  NAMER=get.MatH.rownames(x)
+  NAMEV=get.MatH.varnames(x)
   ## we homogeneize data for speeding up the code if required
   tmp=Prepare(x,simplify,qua,standardize)
   MM=tmp$MM
@@ -133,11 +134,15 @@ WH_kmeans =function (x,k, rep=5,
       if (abs(GenCrit-OldCrit)<treshold){OK=0}
     }
     cardinality=table(IDX)
+    names(IDX)=NAMER
     dimnames(cardinality)$IDX=paste("Cl",dimnames(cardinality)$IDX,sep=".")
-    solutions=c(solutions,list(solution=list(IDX=IDX,cardinality=cardinality,centers=proto,Crit=GenCrit)))
+    row.names(proto@M)=paste("Cl",c(1:k),sep=".")
+    colnames(proto@M)=NAMEV
+    solutions=c(solutions,list(solution=list(IDX=IDX,cardinality=cardinality,
+                                             centers=proto,Crit=GenCrit)))
     criteria=c(criteria,GenCrit)
-    plot(proto,type="DENS")
   }
+  plot(solutions[[which.min(criteria)]]$centers,type="DENS")
   return(best.solution=list(solution=solutions[[which.min(criteria)]],
                             quality=1-min(criteria)/TOTSSQ))
 }

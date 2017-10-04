@@ -17,7 +17,7 @@ distributionH=function(x=numeric(0),p=numeric(0)){
   return(object)
 }
 
-#Get
+#Get methods -----
 
 #' Method \code{get.m}: the mean of a distribution 
 #' @name get.m
@@ -157,15 +157,16 @@ setGeneric("crwtransform", function(object) standardGeneric("crwtransform"))
 #' ##---- Compute the mean of mydist ----
 #' meanH(mydist) #---> 4.4
 #'
-setMethod("meanH","distributionH",
+setMethod("meanH","distributionH", # Mean of a distr --------
           function(object){
             if (!is.null(object@x)||!is.null(object@p)){
-              resu=crwtransform(object)
-              c=resu[[1]]
-              w=resu[[3]]
-              m=t(w)%*%c
-              m=as.numeric(m)
-              return(m)
+              m=M_STD_H(object)
+              # resu=crwtransform(object)
+              # c=resu[[1]]
+              # w=resu[[3]]
+              # m=t(w)%*%c
+              # m=as.numeric(m)
+              return(m[1])
             }  else
               stop('Something wrong, null domain or cdf')
           }
@@ -186,16 +187,17 @@ setMethod("meanH","distributionH",
 #' ##---- Compute the standard deviation of mydist ----
 #' stdH(mydist) #---> 2.563851
 #'
-setMethod("stdH","distributionH",
+setMethod("stdH","distributionH", # Std of a distr --------
           function(object){
             if (!is.null(object@x)||!is.null(object@p)){
-              resu=crwtransform(object)
-              c=resu[[1]]
-              r=resu[[2]]
-              w=resu[[3]]
-              std=sqrt(abs(sum(w*c^2+1/3*w*r^2)-(sum(w*c))^2))
-              std=as.numeric(std)
-              return(std)
+              m=M_STD_H(object)
+            #   #resu=crwtransform(object)
+            #   c=0.5*(object@x[2:length(object@x)]+object@x[1:(length(object@x)-1)])
+            #   r=0.5*(object@x[2:length(object@x)]-object@x[1:(length(object@x)-1)]) # resu[[2]]
+            #   w=(object@p[2:length(object@p)]-object@p[1:(length(object@p)-1)])#resu[[3]]
+            #   std=sqrt(abs(sum(w*c^2+1/3*w*r^2)-(sum(w*c))^2))
+            # #  std=as.numeric(std)
+              return(m[2])
             }  else
               stop('Something wrong, null domain or cdf')
           }
@@ -215,7 +217,7 @@ setMethod("stdH","distributionH",
 #' ##---- Compute the skewness of mydist ----
 #' skewH(mydist) #---> -1.186017
 #'
-setMethod("skewH","distributionH",
+setMethod("skewH","distributionH", # skewness of a distr --------
           function(object){
             if (!is.null(object@x)||!is.null(object@p)){
               resu=crwtransform(object)
@@ -245,7 +247,7 @@ setMethod("skewH","distributionH",
 #' kurtH(mydist) #---> 1.473242
 #' 
 
-setMethod("kurtH","distributionH",
+setMethod("kurtH","distributionH", # Kurtosis of a distr --------
           function(object){
             if (!is.null(object@x)||!is.null(object@p)){
               resu=crwtransform(object)
@@ -282,10 +284,10 @@ setMethod("kurtH","distributionH",
 #' ##---- Compute the cfd value for q=5 (not observed) ----
 #' crwtransform(mydist)
 
-setMethod("crwtransform","distributionH",
+setMethod("crwtransform","distributionH", # crw transform -----
           function(object){
             if (!is.null(object@x)||!is.null(object@p)){
-              resu=list()
+              
               nv=length(object@x)
               c=(object@x[2:nv]+object@x[1:(nv-1)])/2
               r=(object@x[2:nv]-object@x[1:(nv-1)])/2
@@ -312,9 +314,20 @@ setMethod("+",
           signature(e1 = "distributionH",e2="distributionH"),
           function (e1, e2) 
           {
-            tmp=register(e1,e2)
-            x=callGeneric(tmp[[1]]@x,tmp[[2]]@x)
-            OBJ_NEW=new("distributionH",x,tmp[[1]]@p,(tmp[[1]]@m+tmp[[2]]@m))
+            if (!identical(e1@p,e2@p)){
+              tmp=register(e1,e2)
+              x=callGeneric(tmp[[1]]@x,tmp[[2]]@x)
+              e1@p=tmp[[1]]@p
+            }else{
+              x=callGeneric(e1@x,e2@x)
+            }
+            
+            e1@x=x
+            
+            e1@m=e1@m+e2@m
+            e1@s=stdH(e1)
+            return(e1)
+#            OBJ_NEW=new("distributionH",x,tmp[[1]]@p,(tmp[[1]]@m+tmp[[2]]@m))
           }
 )
 #' Method +
@@ -358,9 +371,15 @@ setMethod("-",
           signature(e1 = "distributionH",e2="distributionH"),
           function (e1, e2) 
           {
-            tmp=register(e1,e2)
+            if (!identical(e1@p,e2@p)){
+              tmp=register(e1,e2)
+              x=callGeneric(tmp[[1]]@x,tmp[[2]]@x)
+              e1@p=tmp[[1]]@p
+            }else{
+              x=callGeneric(e1@x,e2@x)
+            }
             x=callGeneric(tmp[[1]]@x,tmp[[2]]@x)
-            OBJ_NEW=new("distributionH",x,tmp[[1]]@p)
+            OBJ_NEW=new("distributionH",x,e1@p)
           }
 )
 #' Method -
@@ -415,7 +434,12 @@ setMethod("*",
           function (e1, e2) 
           {
             x=callGeneric(rep(e1,length(e2@x)),e2@x)
-            OBJ_NEW=new("distributionH",x,e2@p,e1*e2@m,e1*e2@s)
+            
+            e2@x=x
+            e2@p=e2@p
+            e2@m=e1*e2@m
+            e2@s=abs(e1)*e2@s
+            return(e2)
           }
 )
 #' Method *
@@ -427,7 +451,11 @@ setMethod("*",
           function (e1, e2) 
           {
             x=callGeneric(rep(e2,length(e1@x)),e1@x)
-            OBJ_NEW=new("distributionH",x,e1@p,e2*e1@m,e2*e1@s)
+            e1@x=x
+            e1@p=e1@p
+            e1@m=e2*e1@m
+            e1@s=abs(e2)*e1@s
+            return(e1)
           }
 )
 
@@ -490,29 +518,61 @@ setGeneric("register", function(object1,object2) standardGeneric("register"))
 #' ## Slot "x": [1] 7.0 8.0 8.8 10.0 15.0
 #' ## Slot "p": [1] 0.0 0.2 0.4  0.7  1.0
 #' ## ...
-#' 
+# The REGISTER function ----
 setMethod(f="register",signature=c(object1="distributionH",object2="distributionH"),
           function(object1,object2){
-            if (!identical(object1@p,object2@p)){
-              commoncdf=sort(unique(c(object1@p,object2@p)))
-              nr=length(commoncdf)
-              result=matrix(0,nr,3)
-              result[,3]=commoncdf
-              result[1,1:2]=c(object1@x[1],object2@x[1])
-              result[nr,1:2]=c(object1@x[length(object1@x)],object2@x[length(object2@x)])
-              if (nr>2) {
-                for (i in c(2:(nr-1))){
-                  result[i,1] =compQ(object1,result[i,3])
-                  result[i,2] =compQ(object2,result[i,3])
-                }
-              } 
-              o1=new("distributionH",as.vector(result[,1]),as.vector(commoncdf))
-              o2=new("distributionH",as.vector(result[,2]),as.vector(commoncdf))
-              return(c(o1,o2))
-            }
-            else{
-              return(c(object1,object2))
-            }
+            res=REGISTER3(object1,object2)
+            return(res)
+            # DIG=14
+            # #if (!identical(object1@p,object2@p)){
+            #   #object1@p=round(object1@p,digits = DIG)
+            #   if (min(
+            #       object1@p[2:length(object1@p)]-object1@p[1:(length(object1@p)-1)]
+            #       )<((1e-1)^DIG)
+            #       ){
+            #     diffs=object1@p[2:length(object1@p)]-object1@p[1:(length(object1@p)-1)]
+            #     diffs[which(diffs<((1e-1)^DIG))]=(1e-1)^DIG
+            #     p=c(0,cumsum(diffs))/sum(diffs)
+            #     object1@p=p
+            #   }
+            #   #object2@p=round(object2@p,digits = DIG)
+            #   if (
+            #     min(
+            #       object2@p[2:length(object2@p)]-object2@p[1:(length(object2@p)-1)]
+            #     )<((1e-1)^DIG)
+            #     
+            #   ){
+            #    # browser()
+            #     diffs=object2@p[2:length(object2@p)]-object2@p[1:(length(object2@p)-1)]
+            #     diffs[which(diffs<((1e-1)^DIG))]=(1e-1)^DIG
+            #     p=c(0,cumsum(diffs))/sum(diffs)
+            #     object2@p=p
+            #   }
+            #   
+            #   commoncdf=sort(unique(c(object1@p,object2@p)))
+            #   nr=length(commoncdf)
+            #   commoncdf[1]=0
+            #   commoncdf[nr]=1
+            #  
+            #   tmp00=setdiff(commoncdf,object1@p)
+            #   if (length(tmp00)>0){
+            #     tmp1=compQ_vect(object1,vp=tmp00)
+            #     object1@x=sort(c(object1@x,tmp1))
+            #   }              
+            #   tmp01=setdiff(commoncdf,object2@p)
+            #   if (length(tmp01)>0){
+            #     tmp2=compQ_vect(object2,vp=tmp01)
+            #   object2@x=sort(c(object2@x,tmp2))
+            #   }
+            #  # if(length(object1@x)!=length(object2@x)){browser()}
+            #   object1@p=commoncdf
+            #   object2@p=commoncdf
+            #   
+            #   return(c(object1,object2))
+            # # }
+            # # else{
+            # #   return(c(object1,object2))
+            # # }
             
           }
 )
@@ -536,9 +596,9 @@ setMethod(f="register",signature=c(object1="distributionH",object2="distribution
 #' newdist<-checkEmptyBins(mydist)
 #'
 setMethod(f="checkEmptyBins",signature="distributionH",
-            function(object){
-            w=object@p[2:length(object@p)]-object@p[1:(length(object@p)-1)]
-            TOL=1e-08
+          function(object){
+            w=diff(object@p)
+            TOL=1e-14
             if (length(which(w<=TOL))){
               w[which(w<TOL)]=10*TOL
               object@p=c(0,cumsum(w))/sum(w)
@@ -583,15 +643,15 @@ setMethod(f="compQ",signature=c(object="distributionH",p="numeric"),
             if (p<=0) return(q=object@x[1])
             if (p>=1) return (q=object@x[length(object@x)])
             
-            ini=max(object@x[object@p<=p])
+#            ini=max(object@x[object@p<=p])
             pos1=which.max(object@x[object@p<=p])
-            pos2=pos1+1
-            fin=object@x[pos2];
+            ini=object@x[pos1]
+            fin=object@x[pos1+1];
             if (ini==fin){
               q=ini
             }
             else{
-              q=ini+(object@x[pos2]-object@x[pos1])*(p-object@p[pos1])/(object@p[pos2]-object@p[pos1])
+              q=ini+(fin-ini)*(p-object@p[pos1])/(object@p[pos1+1]-object@p[pos1])
             }
             return(q)
           }
@@ -673,20 +733,23 @@ setMethod(f="WassSqDistH",signature=c(object1="distributionH",object2="distribut
           #INPUT: object1 and object2 - two distributionH objects
           #OUTPUT: A list containing the distance and its decomposition in three parts (position, size and shape)
           function(object1=object1,object2=object2,details=FALSE){
-            tmp=register(object1,object2)
+            
+              tmp=register(object1,object2)
+            
             nv=length(tmp[[1]]@p)
-            w=tmp[[1]]@p[2:nv]-tmp[[1]]@p[1:(nv-1)]
+            w=diff(tmp[[1]]@p)
             c1=0.5*(tmp[[1]]@x[2:nv]+tmp[[1]]@x[1:(nv-1)])
             c2=0.5*(tmp[[2]]@x[2:nv]+tmp[[2]]@x[1:(nv-1)])
-            r1=0.5*(tmp[[1]]@x[2:nv]-tmp[[1]]@x[1:(nv-1)])
-            r2=0.5*(tmp[[2]]@x[2:nv]-tmp[[2]]@x[1:(nv-1)])
+            r1=0.5*diff(tmp[[1]]@x)
+            r2=0.5*diff(tmp[[2]]@x)
+            
             D=t(w)%*%((c1-c2)^2+1/3*(r1-r2)^2)
             if (details) {
               DC=(object1@m-object2@m)^2
               DS=(object1@s-object2@s)^2
               if(abs(D-DC-DS)<1e-10) DR=0 else DR=abs(D-DC-DS)
               
-              rho=1-abs(D-DC-DS)/(2*object1@s*object2@s)
+              rho=1-(D-DC-DS)/(2*object1@s*object2@s)
               if (rho<0) rho=0
               resu=c(D,DC,DS,DR,rho)
               names(resu)=c("SQ_W_dist", "POSITION", "SIZE", "SHAPE", "rQQ")
@@ -726,18 +789,29 @@ setGeneric("dotpW", function(e1,e2) standardGeneric("dotpW"))#dotproduct from L2
 #' dotpW(3,mydist1)  #---> 13.2
 #' 
 #' 
-
+# DOTPW method -----
 setMethod("dotpW",
           signature(e1 = "distributionH",e2="distributionH"),
           definition = function (e1, e2) 
           {
-            tmp=register(e1,e2)
-            w=tmp[[1]]@p[2:length(tmp[[1]]@p)]-tmp[[1]]@p[1:(length(tmp[[1]]@p)-1)]
-            c1=(tmp[[1]]@x[2:length(tmp[[1]]@p)]+tmp[[1]]@x[1:(length(tmp[[1]]@p)-1)])/2
-            c2=(tmp[[2]]@x[2:length(tmp[[1]]@p)]+tmp[[2]]@x[1:(length(tmp[[1]]@p)-1)])/2
-            r1=(tmp[[1]]@x[2:length(tmp[[1]]@p)]-tmp[[1]]@x[1:(length(tmp[[1]]@p)-1)])/2
-            r2=(tmp[[2]]@x[2:length(tmp[[1]]@p)]-tmp[[2]]@x[1:(length(tmp[[1]]@p)-1)])/2              
-            dprod=sum(w*(c1*c2+1/3*r1*r2))
+            if (!identical(e1@p,e2@p)){
+              tmp=register(e1,e2)
+              w=tmp[[1]]@p[2:length(tmp[[1]]@p)]-tmp[[1]]@p[1:(length(tmp[[1]]@p)-1)]
+              c1=(tmp[[1]]@x[2:length(tmp[[1]]@p)]+tmp[[1]]@x[1:(length(tmp[[1]]@p)-1)])/2
+              c2=(tmp[[2]]@x[2:length(tmp[[1]]@p)]+tmp[[2]]@x[1:(length(tmp[[1]]@p)-1)])/2
+              r1=(tmp[[1]]@x[2:length(tmp[[1]]@p)]-tmp[[1]]@x[1:(length(tmp[[1]]@p)-1)])/2
+              r2=(tmp[[2]]@x[2:length(tmp[[1]]@p)]-tmp[[2]]@x[1:(length(tmp[[1]]@p)-1)])/2              
+              dprod=sum(w*(c1*c2+1/3*r1*r2))
+            }else{
+              nq=length(e1@p)
+              w=e1@p[2:nq]-e1@p[1:(nq-1)]
+              c1=(e1@x[2:nq]+e1@x[1:(nq-1)])/2
+              c2=(e2@x[2:nq]+e2@x[1:(nq-1)])/2
+              r1=(e1@x[2:nq]-e1@x[1:(nq-1)])/2
+              r2=(e2@x[2:nq]-e2@x[1:(nq-1)])/2              
+              dprod=sum(w*(c1*c2+1/3*r1*r2))
+            }
+            
             return(dprod)
           }
 )
@@ -808,51 +882,55 @@ setMethod("rQQ",
 setMethod("show",
           signature(object="distributionH"),
           definition=function(object){
-            if(length(object@p)>2){
-            mymat=matrix(0,length(object@p)-1,2)
-            if (length(object@p)>11){
-              cat("Output shows the first five and the last five bins due to eccesive length \n")
-              mymat=matrix(0,12,2)
-              mymat[1,1]="X"
-              mymat[1,2]="p"
-              count=0
-              for (i in 2:6){
+            if(length(object@p)>1){
+              mymat=matrix(0,length(object@p)-1,2)
+              if (length(object@p)>11){
+                cat("Output shows the first five and the last five bins due to eccesive length \n")
+                mymat=matrix(0,12,2)
+                mymat[1,1]="X"
+                mymat[1,2]="p"
+                count=0
+                for (i in 2:6){
+                  count=count+1
+                  mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5),"-",format(object@x[i],digits=5),")",sep="") 
+                  mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                }
                 count=count+1
-                mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5),"-",format(object@x[i],digits=5),")",sep="") 
-                mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                mymat[count+1,1]=paste("...") 
+                mymat[count+1,2]=paste("...")
+                for (i in (length(object@p)-4):length(object@p)){
+                  count=count+1
+                  mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5),")",sep="")  
+                  mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                }
+                rownames(mymat)=c("", paste("Bin",1:5,sep="_"),"...",
+                                  paste("Bin",(length(object@p)-5):(length(object@p)-1),sep="_"))
+                write.table(format(mymat, justify="right",digits=5),
+                            row.names=T, col.names=F, quote=F)  
               }
-              count=count+1
-              mymat[count+1,1]=paste("...") 
-              mymat[count+1,2]=paste("...")
-              for (i in (length(object@p)-4):length(object@p)){
-                count=count+1
-                mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5),")",sep="")  
-                mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+              else{
+                mymat=matrix(0,length(object@p),2)
+                mymat[1,1]="X"
+                mymat[1,2]="p"
+                if(length(object@p)>2){
+                  for (i in 2:(length(object@p)-1)){
+                    mymat[i,1]=paste("[ ",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5)," )",sep="")  
+                    mymat[i,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                  }
+                }
+                mymat[length(object@p),1]=paste("[ ",format(object@x[(length(object@p)-1)],digits=5),
+                                                " ; ",format(object@x[length(object@p)],digits=5)," ]",sep="")  
+                mymat[length(object@p),2]=paste(format(object@p[length(object@p)]-object@p[length(object@p)-1],digits=4))
+                
+                rownames(mymat)=c(" ", paste("Bin",1:(length(object@p)-1),sep="_"))
+                write.table(format(mymat, justify="right"),
+                            row.names=T, col.names=F, quote=F)
               }
-              rownames(mymat)=c("", paste("Bin",1:5,sep="_"),"...",
-                                paste("Bin",(length(object@p)-5):(length(object@p)-1),sep="_"))
-              write.table(format(mymat, justify="right",digits=5),
-                          row.names=T, col.names=F, quote=F)  
-            }
-            else{
-              mymat=matrix(0,length(object@p),2)
-              mymat[1,1]="X"
-              mymat[1,2]="p"
-              for (i in 2:(length(object@p)-1)){
-                mymat[i,1]=paste("[ ",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5)," )",sep="")  
-                mymat[i,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
-              }
-              mymat[length(object@p),1]=paste("[ ",format(object@x[(length(object@p)-1)],digits=5),
-                                              " ; ",format(object@x[length(object@p)],digits=5)," ]",sep="")  
-              mymat[length(object@p),2]=paste(format(object@p[length(object@p)]-object@p[length(object@p)-1],digits=4))
+              cat(paste("\n mean = ",object@m, "  std  = ",object@s,"\n "))
               
-              rownames(mymat)=c(" ", paste("Bin",1:(length(object@p)-1),sep="_"))
-              write.table(format(mymat, justify="right"),
-                          row.names=T, col.names=F, quote=F)
+            } else {
+              (cat("Empty distributionH\n"))
             }
-            cat(paste("\n mean = ",object@m, "  std  = ",object@s,"\n "))
-            
-            } else (cat("Empty distributionH\n"))
           }
 )
 

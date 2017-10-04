@@ -6,7 +6,8 @@
 \alias{plot,MatH-method}
 \title{Method plot for a matrix  of histograms}
 \usage{
-\S4method{plot}{MatH}(x, y = "missing", type = "HISTO", border = "black")
+\S4method{plot}{MatH}(x, y = "missing", type = "HISTO", border = "black",
+  angL = 330)
 }
 \arguments{
 \item{x}{a \code{distributionH} object}
@@ -19,6 +20,8 @@ Other allowed types are \cr
 "BOXPLOT"=l boxplot}
 
 \item{border}{(optional) a string the color of the border of the plot, default="black".}
+
+\item{angL}{(optional) angle of labels of rows (DEFAULT=330).}
 }
 \description{
 An overloading plot function for a \code{MatH} object. The method returns a graphical representation 

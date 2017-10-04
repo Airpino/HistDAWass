@@ -30,7 +30,7 @@ setClass(
         print(object@p)
         return("the x must be in not descending order")
       }
-      if (!is.na(object@p) && (min(object@p[2:nv]-object@p[1:(nv-1)])<0 || object@p[1]<0 || object@p[nv]>1 || object@p[1]!=0 || object@p[nv]!=1))
+      if (!is.na(object@p) && (min(object@p[2:nv]-object@p[1:(nv-1)])<0 || object@p[1]<0 || object@p[nv]>1 || object@p[1]>1e-14 || object@p[nv]<1-1e-14))
       {print(object@x)
         print(object@p)
         return("the p must be in not descending order from 0 to 1")}
@@ -146,11 +146,11 @@ setMethod("initialize", "MatH",
           definition=function(
             .Object,nrows=1,ncols=1,ListOfDist=NULL, names.rows=NULL, names.cols=NULL,by.row=FALSE)
             {
-            tt=new("list");
+            tt=list(new("distributionH"))
             .Object@M=matrix(tt,nrows,ncols)
             
             if (length(ListOfDist)>0){
-              nOBJ=length(ListOfDist);
+              nOBJ=length(ListOfDist)
               if (by.row){
                 count=0;
                 for (i in 1:nrows){
@@ -173,14 +173,14 @@ setMethod("initialize", "MatH",
                 }
               }
             }
-            else
-            {
-              for (i in 1:nrows){
-                for (j in 1:ncols){
-                  .Object@M[i,j][[1]]=new("distributionH")
-                }
-              }
-            }
+            # else
+            # { tmpd=new("distributionH")
+            #   for (i in 1:nrows){
+            #     for (j in 1:ncols){
+            #       .Object@M[i,j][[1]]=tmpd
+            #     }
+            #   }
+            # }
           
             if (length(names.rows)>0){
               

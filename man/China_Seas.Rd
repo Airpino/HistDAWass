@@ -6,7 +6,7 @@
 \title{A seasonal climatic dataset of China}
 \format{a \code{MatH} object, a matrix of distributions.}
 \source{
-raw data are available here: \url{http://cdiac.ornl.gov/ndps/tr055.html}. 
+raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ndps/tr055.html}. 
 Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 DOI: 10.3334/CDIAC/cli.tr055
 }

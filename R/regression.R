@@ -36,8 +36,10 @@ WH.regression.two.components=function(data,Yvar,Xvars,simplify=FALSE,qua=20){
   if(length(Yvar)>1){stop("Multiple choice not allowed for Y variable")}
   #check for missing values and set up working data
   selected=c(1:nrow(data@M))
+  
   Y=data[selected,Yvar]
   X=data[selected,Xvars]
+ 
   n=length(selected)
   d=ncol(X@M)
   #simplify, i.e. use a fixed number of quantiles for a rapid computation
@@ -68,6 +70,7 @@ WH.regression.two.components=function(data,Yvar,Xvars,simplify=FALSE,qua=20){
       MatAver[i,(j+1)]=X@M[i,j][[1]]@m
     }
   }
+ 
   colnames(MatAver)=paste0("AV_",c(colnames(Y@M), colnames(X@M)))
   rownames(MatAver)=rownames(Y@M)
   MatAver=as.data.frame(MatAver)

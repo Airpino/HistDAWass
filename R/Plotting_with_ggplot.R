@@ -84,11 +84,10 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
       ggtitle("Vertical Boxplot")
     )
   }
-  print(p)
   return(p)
 }
 #OK assigned
-plot.M=function (x, type="HISTO", border="black") 
+plot.M=function (x, type="HISTO", border="black",angL=330) 
 {
   varsno=ncol(x@M)
   indno=nrow(x@M)
@@ -132,9 +131,10 @@ plot.M=function (x, type="HISTO", border="black")
         scale_y_continuous(breaks=NULL)+
         theme(legend.position="none",
               strip.text.x = element_text(size=12),
-              strip.text.y = element_text(size=10, face="bold",angle=330))
+              strip.text.y = element_text(size=10, face="bold",angle=angL))
+      
       )
-      print(p)
+     # print(p)
     }
     if (type=="DENS"){
       df=data.frame(x=numeric(), y=numeric(), indiv=character(), vars=character(), stringsAsFactors=FALSE)
@@ -184,7 +184,7 @@ plot.M=function (x, type="HISTO", border="black")
               strip.text.y = element_text(size=10, face="bold",angle=330))
       )
       
-      print(p)
+#      print(p)
               
       
     }
@@ -226,7 +226,7 @@ plot.M=function (x, type="HISTO", border="black")
               strip.text.x = element_text(size=12,face="bold",angle=30),
               strip.text.y = element_text(size=12, face="bold"))
       )
-      print(p)
+      #print(p)
     }
   }
   return(p)

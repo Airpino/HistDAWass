@@ -5,7 +5,7 @@
 \title{Principal components analysis  of histogram variable based on Wasserstein distance}
 \usage{
 WH.1d.PCA(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4),
-  axisequal = FALSE, qcut = 1)
+  axisequal = FALSE, qcut = 1, outl = 0)
 }
 \arguments{
 \item{data}{A MatH object (a matrix of distributionH).}
@@ -20,8 +20,12 @@ WH.1d.PCA(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4),
 
 \item{axisequal}{A logical value. Default TRUE, the plot have the same scale for the x and the y axes.}
 
-\item{qcut}{a number between 0.5 and 1, it is used for the representation of densities for avoiding very peaked densities in the plot. 
+\item{qcut}{a number between 0.5 and 1, it is used for the plot of densities, and avoids very peaked densities. 
 Default=1, all the densities are considered.}
+
+\item{outl}{a number between 0 (default)  and 0.5. For each distribution, is the amount of mass removed from the tails 
+of the distribution. For example, if 0.1, from each distribution is cut away a left tail and a right one each containing 
+the 0.1 of mass.}
 }
 \value{
 a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA

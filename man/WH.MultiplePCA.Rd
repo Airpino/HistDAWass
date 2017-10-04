@@ -2,9 +2,9 @@
 % Please edit documentation in R/principal_components.R
 \name{WH.MultiplePCA}
 \alias{WH.MultiplePCA}
-\title{(Preliminary version) Principal components analysis  of a set of histogram variable based on Wasserstein distance}
+\title{Principal components analysis  of a set of histogram variable based on Wasserstein distance}
 \usage{
-WH.MultiplePCA(data, list.of.vars, quantiles = 10)
+WH.MultiplePCA(data, list.of.vars, quantiles = 10, outl = 0)
 }
 \arguments{
 \item{data}{A MatH object (a matrix of distributionH).}
@@ -12,7 +12,11 @@ WH.MultiplePCA(data, list.of.vars, quantiles = 10)
 \item{list.of.vars}{A list of  integers, the active variables.}
 
 \item{quantiles}{An integer, it is the number of quantiles used in the analysis.
-Default=10, all the densities are considered.}
+Default=10.}
+
+\item{outl}{a number between 0 (default)  and 0.5. For each distribution, is the amount of mass removed from the tails 
+of the distribution. For example, if 0.1, from each distribution is cut away a left tail and a right one each containing 
+the 0.1 of mass.}
 }
 \value{
 a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA
@@ -24,6 +28,5 @@ Being a distribution a multivalued description, the analysis performs a dimensio
 It is a 1d (one dimension) becuse it is considered just one histogram variable.
 }
 \details{
-It is a first tentative of extending WH.1d.PCA to the multiple case.All plotting functions must be defined
-in order to have interpretable results. This is an ongoing function, even if the numerical results are methodologically verified.
+It is an extension of WH.1d.PCA to the multiple case.
 }

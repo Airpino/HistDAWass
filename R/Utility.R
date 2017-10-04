@@ -1,9 +1,10 @@
-
 # res=Prepare(x,simplify,qua,standardize)
 Prepare =function (x, simplify, qua, standardize){
+ 
   ind=nrow(x@M)
   vars=ncol(x@M)
   MM=list()
+  tmpo=new("distributionH")
   if (simplify){
     p=(0:qua)/qua
     for (j in 1:vars){
@@ -11,14 +12,20 @@ Prepare =function (x, simplify, qua, standardize){
       MM[[j]][,(ind+1)]=p
       for (i in 1:ind){
         dom=numeric(0)
-        for (q in 0:qua){
-          dom=c(dom, compQ(x@M[i,j][[1]],q/qua))
-        }
+        dom=compQ_vect(x@M[i,j][[1]],p)
+        # for (q in 0:qua){
+        #   dom=c(dom, compQ(x@M[i,j][[1]],q/qua))
+        # }
         
-        tmp=new("distributionH",dom,p) 
-        tmp=(tmp-tmp@m)*(x@M[i,j][[1]]@s/tmp@s)+x@M[i,j][[1]]@m #transformation with invariance with respect mean and std
-        x@M[i,j][[1]]=tmp
-        MM[[j]][,i]=tmp@x
+        tmpo@x=dom
+        tmpo@p=p
+        vc=M_STD_H(tmpo)
+        tmpo@m=vc[1]
+        tmpo@s=vc[2]
+        tmp0=(tmpo-tmpo@m)*(x@M[i,j][[1]]@s/tmpo@s)+x@M[i,j][[1]]@m #transformation with invariance with respect mean and std
+        x@M[i,j][[1]]@x=tmpo@x
+        x@M[i,j][[1]]@p=tmpo@p
+        MM[[j]][,i]=tmpo@x
       }
     } 
   }
@@ -45,6 +52,7 @@ Prepare =function (x, simplify, qua, standardize){
       Mc[v]=(WH.vec.mean(x[,v]))@m
       for (i in 1:ind){
         if (STAND[v]>0){
+          
           x@M[i,v][[1]]=new("distributionH",x=(x@M[i,v][[1]]@x-Mc[v])/STAND[v],p=x@M[i,v][[1]]@p)
           MM[[v]][,i]=(MM[[v]][,i]-Mc[v])/STAND[v]
           #x@M[i,v][[1]]@x=(x@M[i,v][[1]]@x-Mc[v])/STAND[v]
@@ -738,3 +746,23 @@ WH.ADPT.FCMEANS.SSQ_FAST=function(MM,x,memb,m,lambdas,proto,theta){
   }
   return(SSQ)
 }
+
+#compute a vector of quantiles faster----
+compQ_vect=function(object,vp){
+  if(is.unsorted(vp)) vp=sort(vp)
+  x=object@x
+  pro=object@p
+  q=COMP_Q_VECT(object@x, object@p, vp) 
+  return(q)
+}
+
+
+REGISTER3=function(a,b){
+res=REGISTER2(a,b)
+return(res)}
+
+MEAN_VA=function(MAT,wei){
+  
+res=MEDIA_V(MAT, wei)
+return(res)
+  }
