@@ -16,6 +16,24 @@ knitr::opts_chunk$set(
 )
 
 ```
+#HistDAWass 0.1.8 What's new
+##(Histogram-valued Data analysis using Wasserstein metric)
+
+Now, a set of methods for MatH (WH.SSQ, WH.vec.mean, and all the methods using them) are much faster. We are using Rcpp and RcppArmadillo for improving execution time and precision of results. 
+
+#HistDAWass 0.1.7 What's new
+##(Histogram-valued Data analysis using Wasserstein metric)
+
+Some general improvements have been added for reducing elaboration times.
+ 
+> unsupervised learning
+
+WH_kmeans now returns more informative outputs
+
+> principal components analysis
+
+Multiple factor analysis has new functions for plotting results
+
 #HistDAWass 0.1.6 What's new
 ##(Histogram-valued Data analysis using Wasserstein metric)
 
