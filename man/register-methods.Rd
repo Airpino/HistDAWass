@@ -21,8 +21,6 @@ The two \code{distributionH} objects in input sharing the same cdf (the \code{p}
 slot)
 }
 \description{
-Method \code{register}
-
 Given two \code{distributionH} objects, it returns two equivalent distributions such that 
 they share the same cdf values. This function is useful for computing basic statistics.
 }

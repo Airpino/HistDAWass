@@ -17,7 +17,5 @@ get.MatH.rownames(object)
 A vector of char, the label of the rows.
 }
 \description{
-Method get.MatH.rownames
-
 It returns the labels of the rows of a \code{MatH} object
 }

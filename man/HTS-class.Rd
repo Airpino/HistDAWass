@@ -19,6 +19,4 @@
 }
 \description{
 Class \code{HTS} defines a histogram time series, i.e. a set of histograms observed along time
-
-Constructor method of HTS Class (Histogram Time Series)
 }

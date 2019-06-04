@@ -17,8 +17,6 @@ get.s(object)
 A numeric positive value, the standard deviation.
 }
 \description{
-Method \code{get.s}: the standard deviation of a distribution
-
 This functon return the standard deviation of a \code{distributionH} object.
 }
 \examples{

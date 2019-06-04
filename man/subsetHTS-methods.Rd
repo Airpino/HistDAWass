@@ -21,8 +21,6 @@ subsetHTS(object, from, to)
 a \code{HTS} object. A histogram 1d time series
 }
 \description{
-Method \code{subsetHTS}: extract a subset of a histogram time series
-
 This functon return the mean of a \code{distributionH} object.
 }
 \examples{

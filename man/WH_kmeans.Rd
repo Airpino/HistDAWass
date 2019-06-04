@@ -5,7 +5,7 @@
 \title{K-means of a dataset of histogram-valued data}
 \usage{
 WH_kmeans(x, k, rep = 5, simplify = FALSE, qua = 10,
-  standardize = FALSE)
+  standardize = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}
@@ -20,6 +20,8 @@ WH_kmeans(x, k, rep = 5, simplify = FALSE, qua = 10,
 
 \item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, 
 using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
+
+\item{verbose}{A logic value (default is FALSE). If TRUE, details on computations are shown.}
 }
 \value{
 a list with the results of the k-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
@@ -47,7 +49,8 @@ from the centers) value at the end of the run.}
 }}
 
 \examples{
-results=WH_kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
+results=WH_kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,
+qua = 10,standardize = TRUE,verbose=TRUE)
 }
 \references{
 Irpino A., Verde R., Lechevallier Y. (2006). Dynamic clustering of histograms using Wasserstein 

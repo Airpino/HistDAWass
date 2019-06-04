@@ -5,15 +5,14 @@
 \alias{MatH-class}
 \alias{MatH}
 \alias{initialize,MatH-method}
-\alias{MatH}
 \title{Class MatH.}
 \usage{
 \S4method{initialize}{MatH}(.Object, nrows = 1, ncols = 1,
   ListOfDist = NULL, names.rows = NULL, names.cols = NULL,
   by.row = FALSE)
 
-MatH(x = NULL, nrows = 1, ncols = 1, rownames = NULL, varnames = NULL,
-  by.row = FALSE)
+MatH(x = NULL, nrows = 1, ncols = 1, rownames = NULL,
+  varnames = NULL, by.row = FALSE)
 }
 \arguments{
 \item{.Object}{the object type "MatH"}
@@ -46,8 +45,6 @@ A \code{matH} object
 }
 \description{
 Class \code{MatH} defines a matrix of \code{distributionH} objects
-
-Constructor method for MatH class
 
 This function create a matrix of histogram data, i.e. a \code{MatH}
 object

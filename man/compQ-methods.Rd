@@ -21,8 +21,6 @@ compQ(object, p)
 histogram \env{object} at level \env{p}.
 }
 \description{
-Method \code{compQ}
-
 Compute the quantile value of a histogram for a given probability.
 }
 \examples{

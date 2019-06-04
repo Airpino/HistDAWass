@@ -17,8 +17,6 @@ Center.cell.MatH(object)
 A \code{MatH} object, having each distribution with a zero mean.
 }
 \description{
-Method Center.cell.MatH Centers all the cells of a matrix of distributions
-
 The function transform a MatH object (i.e. a matrix of distributions), 
 such that each distribution is shifted and has a mean equal to zero
 }

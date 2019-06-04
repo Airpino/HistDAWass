@@ -27,8 +27,6 @@ If \code{details=TRUE}, the function returns list containing the squared distanc
 decomposition in three parts (position, size and shape) and the correlation coefficient between the quantile functions.
 }
 \description{
-Method \code{WassSqDistH}
-
 Computes the squared L2 Wasserstein distance between two \code{distributionH} objects.
 }
 \examples{

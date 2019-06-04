@@ -27,8 +27,6 @@ WH.mat.prod(object1, object2, ...)
 a matrix of numbers
 }
 \description{
-Method WH.mat.prod
-
 It is the matrix product of two \code{MatH} objects, i.e. two matrices of distributions, 
 by using the dot product of two histograms that is consistent with 
  a set of distributions equipped with a L2 wasserstein metric.

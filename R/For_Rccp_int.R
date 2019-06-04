@@ -1,3 +1,3 @@
-#' @useDynLib HistDAWass 
+#' @useDynLib HistDAWass
 #' @importFrom Rcpp evalCpp
 NULL

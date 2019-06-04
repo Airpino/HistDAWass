@@ -4,9 +4,7 @@
 \name{minus}
 \alias{minus}
 \alias{-,distributionH,distributionH-method}
-\alias{minus}
 \alias{-,numeric,distributionH-method}
-\alias{minus}
 \alias{-,distributionH,numeric-method}
 \title{Method -}
 \usage{

@@ -22,8 +22,6 @@ get.cell.MatH(object, r, c)
 A \code{distributionH} object.
 }
 \description{
-Method get.cell.MatH Returns the histogram in a cell of a matrix of distributions
-
 Returns the histogram data in the r-th row and the c-th column.
 }
 \examples{

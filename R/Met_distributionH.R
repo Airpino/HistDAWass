@@ -521,7 +521,7 @@ setGeneric("register", function(object1,object2) standardGeneric("register"))
 # The REGISTER function ----
 setMethod(f="register",signature=c(object1="distributionH",object2="distributionH"),
           function(object1,object2){
-            res=REGISTER3(object1,object2)
+            res=REGISTER2(object1,object2)
             return(res)
             # DIG=14
             # #if (!identical(object1@p,object2@p)){
@@ -733,26 +733,21 @@ setMethod(f="WassSqDistH",signature=c(object1="distributionH",object2="distribut
           #INPUT: object1 and object2 - two distributionH objects
           #OUTPUT: A list containing the distance and its decomposition in three parts (position, size and shape)
           function(object1=object1,object2=object2,details=FALSE){
+            cp=c_dotpW(object1,object2)
+            x2=object1@s^2+object1@m^2
+            y2=object2@s^2+object2@m^2
+            D=x2+y2-2*cp
             
-              tmp=register(object1,object2)
             
-            nv=length(tmp[[1]]@p)
-            w=diff(tmp[[1]]@p)
-            c1=0.5*(tmp[[1]]@x[2:nv]+tmp[[1]]@x[1:(nv-1)])
-            c2=0.5*(tmp[[2]]@x[2:nv]+tmp[[2]]@x[1:(nv-1)])
-            r1=0.5*diff(tmp[[1]]@x)
-            r2=0.5*diff(tmp[[2]]@x)
+          if (details) {
+            DC=(object1@m-object2@m)^2
+            DS=(object1@s-object2@s)^2
             
-            D=t(w)%*%((c1-c2)^2+1/3*(r1-r2)^2)
-            if (details) {
-              DC=(object1@m-object2@m)^2
-              DS=(object1@s-object2@s)^2
-              if(abs(D-DC-DS)<1e-10) DR=0 else DR=abs(D-DC-DS)
-              
-              rho=1-(D-DC-DS)/(2*object1@s*object2@s)
-              if (rho<0) rho=0
-              resu=c(D,DC,DS,DR,rho)
-              names(resu)=c("SQ_W_dist", "POSITION", "SIZE", "SHAPE", "rQQ")
+            DR=ifelse(abs(D-DC-DS)<1e-30,yes = 0,no = abs(D-DC-DS))
+            rho=(cp-object1@m*object2@m)/(object1@s*object2@s)
+            if (rho<0) rho=0
+            resu=c(D,DC,DS,DR,rho)
+            names(resu)=c("SQ_W_dist", "POSITION", "SIZE", "SHAPE", "rQQ")
               return(resu)}
             else return(as.numeric(D))
           }
@@ -793,26 +788,8 @@ setGeneric("dotpW", function(e1,e2) standardGeneric("dotpW"))#dotproduct from L2
 setMethod("dotpW",
           signature(e1 = "distributionH",e2="distributionH"),
           definition = function (e1, e2) 
-          {
-            if (!identical(e1@p,e2@p)){
-              tmp=register(e1,e2)
-              w=tmp[[1]]@p[2:length(tmp[[1]]@p)]-tmp[[1]]@p[1:(length(tmp[[1]]@p)-1)]
-              c1=(tmp[[1]]@x[2:length(tmp[[1]]@p)]+tmp[[1]]@x[1:(length(tmp[[1]]@p)-1)])/2
-              c2=(tmp[[2]]@x[2:length(tmp[[1]]@p)]+tmp[[2]]@x[1:(length(tmp[[1]]@p)-1)])/2
-              r1=(tmp[[1]]@x[2:length(tmp[[1]]@p)]-tmp[[1]]@x[1:(length(tmp[[1]]@p)-1)])/2
-              r2=(tmp[[2]]@x[2:length(tmp[[1]]@p)]-tmp[[2]]@x[1:(length(tmp[[1]]@p)-1)])/2              
-              dprod=sum(w*(c1*c2+1/3*r1*r2))
-            }else{
-              nq=length(e1@p)
-              w=e1@p[2:nq]-e1@p[1:(nq-1)]
-              c1=(e1@x[2:nq]+e1@x[1:(nq-1)])/2
-              c2=(e2@x[2:nq]+e2@x[1:(nq-1)])/2
-              r1=(e1@x[2:nq]-e1@x[1:(nq-1)])/2
-              r2=(e2@x[2:nq]-e2@x[1:(nq-1)])/2              
-              dprod=sum(w*(c1*c2+1/3*r1*r2))
-            }
-            
-            return(dprod)
+          { 
+            return(c_dotpW(e1,e2))
           }
 )
 #' @rdname dotpW-methods

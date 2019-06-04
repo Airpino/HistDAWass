@@ -22,8 +22,6 @@ WH.bind(object1, object2, byrow)
 a \code{MatH} object,
 }
 \description{
-Method WH.bind
-
 It attaches two \code{MatH} objects with the same columns by row, or the same rows by colum.
 }
 \examples{

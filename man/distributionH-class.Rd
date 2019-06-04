@@ -5,7 +5,6 @@
 \alias{distributionH-class}
 \alias{distributionH}
 \alias{initialize,distributionH-method}
-\alias{distributionH}
 \title{Class distributionH.}
 \usage{
 \S4method{initialize}{distributionH}(.Object, x = numeric(0),
@@ -29,8 +28,6 @@ extremes of bins).}
 A \code{distributionH} object
 }
 \description{
-Class distributionH.
-
 Class \code{"distributionH"} desfines an histogram object
 The class describes a histogram by means of its cumulative distribution
 function. The methods are develoved accordingly to the L2 Wasserstein

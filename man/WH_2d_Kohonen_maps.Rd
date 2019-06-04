@@ -4,9 +4,10 @@
 \alias{WH_2d_Kohonen_maps}
 \title{Batch Kohonen self-organizing 2d maps for  histogram-valued data}
 \usage{
-WH_2d_Kohonen_maps(x, net = list(xdim = 4, ydim = 3, topo = c("rectangular")),
-  kern.param = 2, TMAX = 2, Tmin = 0.2, niter = 30, repetitions = 5,
-  simplify = FALSE, qua = 10, standardize = FALSE)
+WH_2d_Kohonen_maps(x, net = list(xdim = 4, ydim = 3, topo =
+  c("rectangular")), kern.param = 2, TMAX = 2, Tmin = 0.2,
+  niter = 30, repetitions = 5, simplify = FALSE, qua = 10,
+  standardize = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}
@@ -31,6 +32,9 @@ default \code{net=list(xdim=4,ydim=3,topo=c('rectangular'))}}
 
 \item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, 
 using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
+
+\item{verbose}{a logical parameter (default=FALSE). If TRUE details of 
+computation are shown during the execution.}
 }
 \value{
 a list with the results of the Batch Kohonen map
@@ -74,10 +78,10 @@ from the centers) value at the end of the run.}
 
 \examples{
 \dontrun{
-results=WH_2d_Kohonen_maps(x = BLOOD,k = 2,
-                                   net=list(xdim=2,ydim=3,topo=c('rectangular')), 
-                                   repetitions = 2,simplify = TRUE,
-                                   qua = 10,standardize = TRUE)
+results=WH_2d_Kohonen_maps(x = BLOOD,
+                           net=list(xdim=2,ydim=3,topo=c('rectangular')), 
+                           repetitions = 2,simplify = TRUE,
+                           qua = 10,standardize = TRUE)
                                    }
 }
 \references{

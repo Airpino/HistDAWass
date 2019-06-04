@@ -20,8 +20,6 @@ WH.mat.sum(object1, object2)
 a \code{MatH} object,
 }
 \description{
-Method WH.mat.sum
-
 It sums two \code{MatH} objects, i.e. two matrices of distributions, 
 by summing the quantile functions of histograms. This sum is consistent with 
 a set of distributions equipped with a L2 wasserstein metric.

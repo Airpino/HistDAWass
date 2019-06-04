@@ -68,41 +68,25 @@ setMethod("[",
               stop("negative indexes are not allowed in subsetting [,] a MatH object")
               }
             
-            if (length(i)>1&length(j)>1){
-              x@M=as.matrix(x@M[i,j])
-            }else{
-              if (length(i)==1 & length(j)==1){
-                namerow=row.names(x@M)[i]
-                namecol=variable.names(x@M)[j]
-                x@M=as.matrix(x@M[i,j])
-                rownames(x@M)=namerow
-                colnames(x@M)=namecol
-              }else{
-                if(length(i)==1){
-                  namerow=row.names(x@M)[i]
-                  x@M=t(as.matrix(x@M[i,j]))
-                  rownames(x@M)=namerow
-                }else{
-                  namecol=variable.names(x@M)[j]
-                  x@M=as.matrix(x@M[i,j])
-                  colnames(x@M)=namecol
-                }
-              }  
-            } 
+           
+              x@M=matrix(x@M[i,j], nrow=length(i),ncol=length(j),
+                         dimnames = list(row.names(x@M)[i],colnames(x@M)[j]))
+            
             return(x)
           }
 )
 # methods for getting information from a MatH
+
+setGeneric("get.MatH.nrows",function(object) standardGeneric("get.MatH.nrows"))
 #' Method get.MatH.nrows
 #' @name get.MatH.nrows
-#' @rdname get.MatH.nrows-methods
-#' @exportMethod get.MatH.nrows
-setGeneric("get.MatH.nrows",function(object) standardGeneric("get.MatH.nrows"))
-#' @rdname get.MatH.nrows-methods
-#' @aliases get.MatH.nrows,MatH-method
 #' @description It returns the number of rows of a \code{MatH} object
 #' @param object  a \code{MatH} object
 #' @return An integer, the number of rows.
+#' @exportMethod get.MatH.nrows
+#' @rdname get.MatH.nrows-methods
+#' @aliases get.MatH.nrows,MatH-method
+
 setMethod(f="get.MatH.nrows",signature=c(object="MatH"),
           function(object){
             return(nrow(object@M))

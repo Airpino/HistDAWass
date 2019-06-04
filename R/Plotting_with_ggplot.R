@@ -1,7 +1,11 @@
+#' @importFrom ggridges geom_density_ridges
+NULL
 #OK assigned
+
 plot.gg<-function (x,  type="HISTO",col="green",border="black") 
 {
   xlabel=paste("m= ",format(x@m,nsmall=4)," std= ",format(x@s,nsmall=4))
+  
   if (type=="HISTO"){
     
     lowers=x@x[1:(length(x@x)-1)]
@@ -9,15 +13,16 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     maxdens=10/(max(uppers)-lowers[1])
     ampl=uppers-lowers
     #ampl[which(ampl==0)]=1
+
     dens=(x@p[2:length(x@p)]-x@p[1:(length(x@p)-1)])/ampl
     dens[which(dens>maxdens)]=maxdens
     df=data.frame(xm=lowers, xM=uppers, ym=dens*0, yM=dens)
     
     p=with(df,ggplot(df, aes(xmin = xm, xmax = xM, ymin = ym, ymax = yM)) + 
-      geom_rect(alpha=0.7, fill=col, colour=border) + 
-      geom_vline(xintercept=x@m,  colour=col, linetype="dashed", size=0.5)+
-      xlab(xlabel) + ylab("density") +
-      ggtitle("Histogram")
+             geom_rect(alpha=0.7, fill=col, colour=border) + 
+             geom_vline(xintercept=x@m,  colour=col, linetype="dashed", size=0.5)+
+             xlab(xlabel) + ylab("density") +
+             ggtitle("Histogram")
     )
   }
   if (type=="CDF"){
@@ -26,8 +31,8 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     df=data.frame(x=xs,cdf=ps)
     
     p=with(df,ggplot(df, aes(x=x, y=cdf))+geom_line(colour=border) +
-      xlab("x") + ylab("p") +
-      ggtitle("Cumulative Distribution Function")
+             xlab("x") + ylab("p") +
+             ggtitle("Cumulative Distribution Function")
     )
   }
   if (type=="QF"){
@@ -36,8 +41,8 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     df=data.frame(x=xs,cdf=ps)
     
     p=with(df,ggplot(df, aes(x=cdf, y=x))+geom_line(colour=border) +
-      xlab("p") + ylab("x") +
-      ggtitle("Quantile Function")
+             xlab("p") + ylab("x") +
+             ggtitle("Quantile Function")
     )
     
   }
@@ -52,40 +57,144 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     
     df=data.frame(x=xn)
     p=with(df,ggplot(df, aes(x=x))+geom_density(alpha=0.7, fill=col, colour=border) +
-            xlab(xlabel) + ylab("density") +
-      ggtitle("Density plot (KDE)"))
+             xlab(xlabel) + ylab("density") +
+             ggtitle("Density plot (KDE)"))
     p=p+geom_vline(xintercept=x@m,  colour="black", linetype="dashed", size=0.5)
     
   }
   if (type=="HBOXPLOT"){
     qua=c(0,0.25,0.5,0.75,1)
-    xn=c(0,0,0,0,0)
+    df = data.frame(ymin = 0, lower = 0, middle = 0, upper = 0, ymax = 0)
     for (i in 1:5){
-      xn[i]=compQ(x,qua[i])
+      df[[i]]=compQ(x,qua[i])
     }
-    df=data.frame(x=xn)
-    p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    df$x = factor(0)
+    
+    p=with(df,ggplot(df, aes_all(names(df)))+
       geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
       ylab(xlabel) +xlab("")+
       ggtitle("Horizontal Boxplot")+coord_flip()
     )
+    # xn=c(0,0,0,0,0)
+    # for (i in 1:5){
+    #   xn[i]=compQ(x,qua[i])
+    # }
+    # df=data.frame(x=xn)
+    # p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    #          geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
+    #          ylab(xlabel) +xlab("")+
+    #          ggtitle("Horizontal Boxplot")+coord_flip()
+    # )
     
   }
   if (type=="VBOXPLOT"){
     qua=c(0,0.25,0.5,0.75,1)
-    xn=c(0,0,0,0,0)
+    df = data.frame(ymin = 0, lower = 0, middle = 0, upper = 0, ymax = 0)
     for (i in 1:5){
-      xn[i]=compQ(x,qua[i])
+      df[[i]]=compQ(x,qua[i])
     }
-    df=data.frame(x=xn)
-    p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    df$x = factor(0)
+    
+    p=with(df,ggplot(df, aes_all(names(df)))+
       geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
-      ylab("x") +xlab(xlabel)+
-      ggtitle("Vertical Boxplot")
+        ylab("x") +xlab(xlabel)+
+        ggtitle("Vertical Boxplot")
     )
+    
+    # p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    #          geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
+    #          ylab("x") +xlab(xlabel)+
+    #          ggtitle("Vertical Boxplot")
+    #)
   }
+  
   return(p)
 }
+
+WH.joy=function(DATA,var){
+  n=get.MatH.nrows(DATA)
+  n_names=get.MatH.rownames(DATA)
+  vp=c(0:200)/200
+  vec1=numeric()
+  labs=character()
+  
+  for (i in 1:n){
+    tmp=COMP_Q_VECT(DATA@M[i,var][[1]]@x,DATA@M[i,var][[1]]@p,vp)
+    vec1=c(vec1,tmp)
+    labs=c(labs,rep(n_names[i],length(tmp)))
+  }
+  vname=rep(get.MatH.varnames(DATA)[var],length(labs))
+  
+  DF=data.frame(x=vec1,y=as.factor(labs),z=vname)
+  return(DF)
+}
+WH.joymult=function(DATA,list_of_vars){##AS SUBSTUTE OF PLOT MATH DENS
+  
+  DF=WH.joy(DATA,list_of_vars[1])
+  if(length(list_of_vars)>1){
+    for (i in 2:length(list_of_vars)){
+      
+      tmp=WH.joy(DATA,list_of_vars[i])
+      DF=rbind(DF,tmp)
+      
+    }
+  }
+  DF$y=factor(DF$y, levels=rev(get.MatH.rownames(DATA)))
+#  levels(DF$y)=rev(levels(DF$y))
+  return(DF)
+}
+
+WH.joy.HIST=function(DATA,var,tr=1){
+  n=get.MatH.nrows(DATA)
+  n_names=get.MatH.rownames(DATA)
+  vec1=numeric()
+  vec2=numeric()
+  vec3=numeric()
+  labs=character()
+  for (i in 1:n){
+    dom=DATA@M[i,var][[1]]@x
+    widths=diff(dom)
+    widths[which(widths==0)]=1e-16
+    p=diff(DATA@M[i,var][[1]]@p)
+    densit=p/widths
+    tmpx=numeric()#sort(c(dom,dom))
+    tmpy=numeric()
+    for (j in 1:length(densit)){
+      tmpx=c(tmpx,dom[j],dom[j],dom[j+1],dom[j+1])
+      tmpy=c(tmpy,0,densit[j],densit[j],0)
+    }
+    #    tmpy=c(tmpy,0)
+    
+    vec1=c(vec1,tmpx)
+    vec2=c(vec2,tmpy)
+    vec3=c(vec3,rep(i,length(tmpx)))
+    labs=c(labs,rep(n_names[i],length(tmpx)))
+  }
+  vname=rep(get.MatH.varnames(DATA)[var],length(labs))
+  if (tr==1){
+    treshold=quantile(vec2,probs=0.8)}else{
+      treshold=1.5*diff(quantile(vec2,probs = c(0.25,0.75)))+quantile(vec2,probs = c(0.75))}
+  vec2[vec2>treshold]=treshold
+  DF=data.frame(X=vec1,Y=vec3,H=vec2, y=labs,z=as.factor(vname))
+  
+  return(DF)
+}
+WH.joymult.HISTO=function(DATA,list_of_vars,tr=1){
+  
+  DF=WH.joy.HIST(DATA,list_of_vars[1],tr=tr)
+  if(length(list_of_vars)>1){
+    for (i in 2:length(list_of_vars)){
+      
+      tmp=WH.joy.HIST(DATA,list_of_vars[i],tr=tr)
+      DF=rbind(DF,tmp)
+      
+    }
+  }
+  DF$y=factor(DF$y, levels=rev(get.MatH.rownames(DATA)))
+  return(DF)
+}
+
+
 #OK assigned
 plot.M=function (x, type="HISTO", border="black",angL=330) 
 {
@@ -93,100 +202,37 @@ plot.M=function (x, type="HISTO", border="black",angL=330)
   indno=nrow(x@M)
   if (varsno==1 && indno==1){
     tmpo=x@M[1,1][[1]]
-    plot.gg(tmpo,type=type,col=col,border=border)
+    p=plot.gg(tmpo,type=type,col="green",border=border)
   }
   else{
     if (type=="HISTO"){
-      df=data.frame(xm=numeric(), xM=numeric(), ym=numeric(), yM=numeric(), 
-                    indiv=character(), vars=character(), stringsAsFactors=FALSE)
-      for (i in 1:indno){
-        for (j  in 1:varsno){
-          tmpo=x@M[i,j][[1]]
-          lowers=tmpo@x[1:(length(tmpo@x)-1)]
-          uppers=tmpo@x[2:length(tmpo@x)]
-          ampl=uppers-lowers
-          dens=(tmpo@p[2:length(tmpo@p)]-tmpo@p[1:(length(tmpo@p)-1)])/ampl
-          maxdens=10/(max(uppers)-lowers[1])
-          dens[which(dens>maxdens)]=maxdens
-          newrow=data.frame(xm=lowers, xM=uppers, ym=0, yM=dens, 
-                            indiv=rep(rownames(x@M)[i],length(lowers)), 
-                            vars=rep(colnames(x@M)[j],length(lowers)), stringsAsFactors=FALSE)
-          df=rbind(df,newrow)
-          
-        }
-      }
-      df$indiv=as.factor(df$indiv)
-      df$indiv = factor(df$indiv, levels = rownames(x@M))
-      df$vars=as.factor(df$vars)
-      df$vars = factor(df$vars, levels = colnames(x@M))
-      for (l in 1:varsno){
-        minV=min(df$xm[df$vars==colnames(x@M)[l]])
-        maxV=max(df$xM[df$vars==colnames(x@M)[l]])
-        df$yM[which(df$vars==colnames(x@M)[l])]=df$yM[which(df$vars==colnames(x@M)[l])]*(maxV-minV)
-      }
-      p=with(df,
-      ggplot(df, aes(xmin = xm, xmax = xM, ymin = ym, ymax = yM,fill=vars)) + 
-        geom_rect(alpha=0.7, colour=border)+
-        facet_grid(indiv ~ vars, scales="free_x")+ 
-        scale_y_continuous(breaks=NULL)+
-        theme(legend.position="none",
-              strip.text.x = element_text(size=12),
-              strip.text.y = element_text(size=10, face="bold",angle=angL))
       
-      )
-     # print(p)
+      
+      df=WH.joymult.HISTO(DATA=x,list_of_vars=c(1:get.MatH.ncols(x)),tr=1)
+      CC=get.MatH.ncols(x)
+      p=with(df,
+             ggplot(df, aes(x=X,y=y,height=H,group=y,fill=z))+
+               geom_density_ridges(stat="identity",scale=1.1,alpha=0.7,color=border) +
+               facet_wrap(~z,scales="free_x",ncol=CC)+
+               theme(strip.text.x= element_text(face="bold"),
+                     axis.text.x = element_text(size=6),
+                     axis.text.y = element_text(face="bold",vjust = 0),
+                     legend.position="none",
+                     axis.title.x = element_blank(),axis.title.y = element_blank()))
+      
     }
     if (type=="DENS"){
-      df=data.frame(x=numeric(), y=numeric(), indiv=character(), vars=character(), stringsAsFactors=FALSE)
-      for (i in 1:indno){
-        for (j  in 1:varsno){
-          rn=200
-          tmpo=x@M[i,j][[1]]
-          xn=c(rep(0,rn))
-          random_no=c(0:rn)/rn
-          for (k in 1:rn){
-            xn[k]=compQ(tmpo,random_no[k])
-          }
-          d = density(xn,n=100)
-          newrow=data.frame(x=d$x[1],  y=0,  
-                            indiv=rownames(x@M)[i], vars=as.character(colnames(x@M)[j]), stringsAsFactors=FALSE)
-          df=rbind(df,newrow)
-          
-          newrow=data.frame(x=d$x, y=d$y, 
-                            indiv=rep(rownames(x@M)[i],length(d$x)), 
-                            vars=rep(colnames(x@M)[j],length(d$x)), stringsAsFactors=FALSE)
-          df=rbind(df,newrow)
-          newrow=data.frame(x=d$x[length(d$x)],  y=d$y[length(d$x)],  
-                            indiv=rownames(x@M)[i], vars=as.character(colnames(x@M)[j]), stringsAsFactors=FALSE)
-          df=rbind(df,newrow)
-          newrow=data.frame(x=d$x[1],  y=0,  
-                            indiv=rownames(x@M)[i], vars=as.character(colnames(x@M)[j]), stringsAsFactors=FALSE)
-          df=rbind(df,newrow)
-        }
-      }
-      df$indiv=as.factor(df$indiv)
-      df$indiv = factor(df$indiv, levels = rownames(x@M))
-      df$vars=as.factor(df$vars)
-      df$vars = factor(df$vars, levels = colnames(x@M))
-      for (l in 1:varsno){
-        minV=min(df$x[df$vars==colnames(x@M)[l]])
-        maxV=max(df$x[df$vars==colnames(x@M)[l]])
-        df$y[which(df$vars==colnames(x@M)[l])]=df$y[which(df$vars==colnames(x@M)[l])]*(maxV-minV)
-      }
-
-      p=with(df,ggplot(df, aes(x= x, y=y,fill=vars)) + 
-        geom_polygon(alpha=1, colour=border)+
-       facet_grid(indiv ~ vars, scales="free_x")+ scale_y_continuous(breaks=NULL)+
-        theme(legend.position="none",
-              axis.title.x = element_blank(), 
-              axis.title.y = element_blank(),
-              strip.text.x = element_text(size=12),
-              strip.text.y = element_text(size=10, face="bold",angle=330))
-      )
-      
-#      print(p)
-              
-      
+      df=WH.joymult(DATA=x,list_of_vars=c(1:get.MatH.ncols(x)))
+      CC=get.MatH.ncols(x)
+      p=with(df,
+             ggplot(df, aes(x = x, y = y,fill=z))+
+               geom_density_ridges(scale = 1.3,rel_min_height = 0.01,alpha=0.7) +
+               facet_wrap(~z,scales="free_x",ncol=CC)+
+               theme(strip.text.x= element_text(face="bold"),
+                     axis.text.x = element_text(size=6),
+                     axis.text.y = element_text(face="bold",vjust = 0),
+                     legend.position="none",
+                     axis.title.x = element_blank(),axis.title.y = element_blank()))
     }
     if (type=="BOXPLOT"){
       df=data.frame(ymin=numeric(), 
@@ -219,12 +265,12 @@ plot.M=function (x, type="HISTO", border="black",angL=330)
       df$vars=as.factor(df$vars)
       df$vars = factor(df$vars, levels = colnames(x@M))
       p=with(df,ggplot(df, aes(x=factor(0), ymin = ymin, lower = yQ1, middle =yME, upper =yQ3, ymax =ymax, fill=vars)) +
-        geom_boxplot(stat = "identity", size=0.5, colour=border)+
-      facet_grid(vars ~ indiv, scales="free_y")+ scale_x_discrete(breaks=NULL)+
-        theme(legend.position="none",
-              axis.title.x = element_blank(),
-              strip.text.x = element_text(size=12,face="bold",angle=30),
-              strip.text.y = element_text(size=12, face="bold"))
+               geom_boxplot(stat = "identity", size=0.5, colour=border)+
+               facet_grid(vars ~ indiv, scales="free_y")+ scale_x_discrete(breaks=NULL)+
+               theme(legend.position="none",
+                     axis.title.x = element_blank(),
+                     strip.text.x = element_text(size=12,face="bold",angle=30),
+                     strip.text.y = element_text(size=12, face="bold"))
       )
       #print(p)
     }
@@ -247,11 +293,11 @@ plot.HTS.1v=function (x, type="BOXPLOT", border="black", maxno.perplot=15){
     if (type=="BOXPLOT"){
       df=df1[(selected[1]:selected[2]),]
       p=with(df,ggplot(df, aes(x=as.factor(Tstamp), ymin = min, lower = Q1, middle =MED, 
-                       upper =Q3, ymax =Max, fill=as.factor(Tstamp))) + geom_boxplot(stat="identity") +
-        guides(fill=FALSE)+theme(legend.position="none",
-                                 axis.title.x = element_blank(), 
-                                 axis.title.y = element_blank(),
-                                 axis.text.x  = element_text( vjust=0.5, size=8)))
+                               upper =Q3, ymax =Max, fill=as.factor(Tstamp))) + geom_boxplot(stat="identity") +
+               guides(fill=FALSE)+theme(legend.position="none",
+                                        axis.title.x = element_blank(), 
+                                        axis.title.y = element_blank(),
+                                        axis.text.x  = element_text( vjust=0.5, size=8)))
       #   print(p)
       listofP[[plo]]=p
     }
@@ -282,15 +328,15 @@ plot.HTS.1v=function (x, type="BOXPLOT", border="black", maxno.perplot=15){
         df2=rbind(df2,newrow2)
       }
       p <- with(df, ggplot(df, aes(factor(t), x,fill=grad)) + geom_violin() +
-        geom_point(data = df2,aes(factor(t),x))+
-        geom_line(data = df2,aes(x=factor(t),y=x,group=factor(0)),size=0.5,alpha=0.7,linetype="dashed")+
-        scale_fill_gradient2(limits=c(0,1),low = 'red', mid = 'white', high = 'green', midpoint = 0.5) +
-        theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
-              legend.position="none",
-              axis.title.x = element_blank(), 
-              axis.title.y = element_blank(),
-              axis.text.x  = element_text( angle= 330,vjust=0.5, size=10)))
-            
+                  geom_point(data = df2,aes(factor(t),x))+
+                  geom_line(data = df2,aes(x=factor(t),y=x,group=factor(0)),size=0.5,alpha=0.7,linetype="dashed")+
+                  scale_fill_gradient2(limits=c(0,1),low = 'red', mid = 'white', high = 'green', midpoint = 0.5) +
+                  theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
+                        legend.position="none",
+                        axis.title.x = element_blank(), 
+                        axis.title.y = element_blank(),
+                        axis.text.x  = element_text( angle= 330,vjust=0.5, size=10)))
+      
       listofP[[plo]]=p
       
     }
@@ -354,10 +400,12 @@ multiplot <- function( plotlist=NULL,..., file, cols=1, layout=NULL) {
 #' ## predict data
 #' PRED=WH.regression.two.components.predict(data = BLOOD[,2:3],parameters = pars)
 #' ## define observed data
+#' \dontrun{
 #' OBS=BLOOD[,1]
 #' plotPredVsObs(PRED,OBS,"HISTO")
 #' plotPredVsObs(PRED,OBS,"CDF")
 #' plotPredVsObs(PRED,OBS,"DENS")
+#' }
 #' @export
 plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
   #require ("vioplot")
@@ -408,9 +456,9 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
       xs=x@x
       ps=x@p
       df2=data.frame(x=xs,cdf=ps,
-                    Type=rep("OBS",length(xs)),
-                    NameO=rep(rownames(OBS@M)[ind],length(xs)),
-                    colu=rep(cc,length(xs)))
+                     Type=rep("OBS",length(xs)),
+                     NameO=rep(rownames(OBS@M)[ind],length(xs)),
+                     colu=rep(cc,length(xs)))
       M=rbind(M,df,df2)
     }
     if (type=="DENS"){
@@ -438,21 +486,21 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
       
       
     }
-
+    
   }
   ListofP=list()
   levels(M$Type)=c("OBS","PRED")
   for (CC in 1:ncolu){
     if (type=="HISTO"){
       p=with(M,ggplot(subset(M, colu==CC), aes(xmin = xm, xmax = xM, ymin = ym, ymax = yM, fill=Type)) + 
-        geom_rect(alpha=0.5)+facet_grid(NameO ~ .)+
-          theme(legend.position="bottom",legend.title=element_blank()))
-      }
+               geom_rect(alpha=0.5)+facet_grid(NameO ~ .)+
+               theme(legend.position="bottom",legend.title=element_blank()))
+    }
     if (type=="CDF"){
       p=with(M,ggplot(subset(M, colu==CC), aes(x = x, y=cdf)) + geom_line(aes(linetype=Type))+
-        facet_grid(NameO ~ .)+theme(legend.position="bottom",
-                                    axis.title.x = element_blank(),
-                                    legend.title=element_blank()))
+               facet_grid(NameO ~ .)+theme(legend.position="bottom",
+                                           axis.title.x = element_blank(),
+                                           legend.title=element_blank()))
     }
     if (type=="DENS"){
       p=with(M,ggplot(subset(M, colu==CC), aes(x = x, fill=Type)) + geom_density(alpha=0.6, colour="gray")+
@@ -517,8 +565,8 @@ plot_errors<-function(PRED,OBS,type="HISTO_QUA", np=200){
       for (j in 0:np){
         p[j+1]=j/np
         x[j+1]=compQ(xo,p[j+1])-compQ(xp,p[j+1])
-#       x=xo@x-xp@x
-#       p=xo@p
+        #       x=xo@x-xp@x
+        #       p=xo@p
       }
       df=data.frame(quantile=x,p=p,NameO=rep(rownames(OBS@M)[i],length(x)))
       M=rbind(M,df)
@@ -555,23 +603,24 @@ plot_errors<-function(PRED,OBS,type="HISTO_QUA", np=200){
   }
   if (type=='HISTO_QUA'){
     p=with(M,ggplot(data=M, aes(x=p, y=quantile, group=NameO, colour=NameO)) + 
-           geom_line()+geom_point()+ggtitle("Plot of quantile differences"))
+             geom_line()+geom_point()+ggtitle("Plot of quantile differences"))
     
   }
   if (type=='HISTO_DEN'){
     p=with(M,ggplot(data=M, aes(x=x, y=density, group=NameO, colour=NameO)) + 
-           geom_line()+ggtitle("Plot of density differences")
+             geom_line()+ggtitle("Plot of density differences")
     )
   }
   if (type=="DENS_KDE"){
     p=with(M,ggplot(data=M, aes(x=x, y=density, group=NameO, colour=NameO)) + 
-           geom_line()+ggtitle("Plot of smoothed (KDE) \n density differences")
+             geom_line()+ggtitle("Plot of smoothed (KDE) \n density differences")
     )
   }
-print(p)
-RMS_W=sqrt(RMS_W)
-print(RMS_W)
-# print(RMS_W/range)
-# print(sqrt(dists))
-# summary(sqrt(dists))
+  print(p)
+  RMS_W=sqrt(RMS_W)
+  print(RMS_W)
+  # print(RMS_W/range)
+  # print(sqrt(dists))
+  # summary(sqrt(dists))
 }
+

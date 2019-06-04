@@ -23,6 +23,4 @@ instead of timestamps}
 }
 \description{
 Class \code{TMatH} defines a matrix of histograms, a \code{TMatH} object, with a time (a timepoint or a time window).
-
-Constructor method of TdistributionH Class
 }

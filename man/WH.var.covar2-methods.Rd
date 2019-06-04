@@ -26,8 +26,6 @@ default = equal weight for each row}
 a rectangular \code{matrix} with the weighted sum of squares
 }
 \description{
-Method WH.var.covar2
-
 Compute the covariance matrix using two  \code{MatH} objects having the same number of rows,
  It returns a rectangular a matrix of numbers, consistent with 
 a set of distributions equipped with a L2 wasserstein metric.

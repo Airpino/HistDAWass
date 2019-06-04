@@ -18,8 +18,6 @@ A \code{MatH} object, a matrix of distributions sharing the same
 \code{p} slot (i.e. the same cdf).
 }
 \description{
-Method registerMH
-
 \code{registerMH} method registers a set of distributions of a \code{MatH} object
 All the
 distribution are recomputed to obtain distributions sharing the same

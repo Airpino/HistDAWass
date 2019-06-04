@@ -17,8 +17,6 @@ get.distr(object)
 A data frame: the first column contains the domain the second the CDF values.
 }
 \description{
-Method \code{get.distr}: show the distribution
-
 This functon return the cumulative distribution function of a \code{distributionH} object.
 }
 \examples{

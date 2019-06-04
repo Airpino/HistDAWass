@@ -6,8 +6,8 @@
 \alias{plot,HTS-method}
 \title{Method plot for a histogram time series}
 \usage{
-\S4method{plot}{HTS}(x, y = "missing", type = "VIOLIN", border = "black",
-  maxno.perplot = 30)
+\S4method{plot}{HTS}(x, y = "missing", type = "VIOLIN",
+  border = "black", maxno.perplot = 30)
 }
 \arguments{
 \item{x}{a \code{distributionH} object}
@@ -29,7 +29,7 @@ An overloading plot function for a \code{HTS} object. The method returns a graph
 of a histogram time series.
 }
 \examples{
- plot(subsetHTS(RetHTS,from=1,to=40)) #plots RetHTS dataset
+ plot(subsetHTS(RetHTS,from=1,to=10)) #plots RetHTS dataset
 \dontrun{
  plot(RetHTS, type="BOXPLOT",  border="blue", maxno.perplot=20) 
  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=20)

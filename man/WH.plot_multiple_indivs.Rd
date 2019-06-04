@@ -4,8 +4,9 @@
 \alias{WH.plot_multiple_indivs}
 \title{Plot histograms of individuals after a  Multiple factor analysis of Histogram Variables}
 \usage{
-WH.plot_multiple_indivs(data, res, axes = c(1, 2), indiv = 0, var = 1,
-  strx = 0.1, stry = 0.1, HISTO = TRUE, coor = 0, stat = "mean")
+WH.plot_multiple_indivs(data, res, axes = c(1, 2), indiv = 0,
+  var = 1, strx = 0.1, stry = 0.1, HISTO = TRUE, coor = 0,
+  stat = "mean")
 }
 \arguments{
 \item{data}{a MatH object}
@@ -40,7 +41,8 @@ variable on a factorial palne after a Multiple factor analysis.
 }
 \examples{
 #Do a MultiplePCA on the BLOOD dataset
-results=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3)) 
+\dontrun{
+#' results=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3)) 
 #Plot histograms of variable 1 of BLOOD dataset on the first 
 #factorial plane showing histograms
 WH.plot_multiple_indivs(BLOOD,results,axes=c(1,2),var=1,strx=0.1,
@@ -49,4 +51,5 @@ WH.plot_multiple_indivs(BLOOD,results,axes=c(1,2),var=1,strx=0.1,
 #factorial plane showing densities
 WH.plot_multiple_indivs(BLOOD,results,axes=c(1,2),var=1,strx=0.1,
  stry=0.1, HISTO=FALSE)
+ }
 }

@@ -26,8 +26,6 @@ default = equal weight for each row}
 a rectangular \code{matrix} with the weighted sum of squares
 }
 \description{
-Method WH.SSQ2
-
 Compute the sum-of-squares-deviations (from the mean) matrix using two  \code{MatH} objects having the same number of rows,
  It returns a rectangular a matrix of numbers, consistent with 
 a set of distributions equipped with a L2 wasserstein metric.

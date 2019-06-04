@@ -6,8 +6,6 @@
 \alias{get.MatH.nrows,MatH-method}
 \title{Method get.MatH.nrows}
 \usage{
-get.MatH.nrows(object)
-
 \S4method{get.MatH.nrows}{MatH}(object)
 }
 \arguments{
@@ -17,7 +15,5 @@ get.MatH.nrows(object)
 An integer, the number of rows.
 }
 \description{
-Method get.MatH.nrows
-
 It returns the number of rows of a \code{MatH} object
 }

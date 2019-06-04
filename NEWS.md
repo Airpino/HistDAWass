@@ -1,11 +1,36 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-HistDAWass 0.1.8 What's new
+HistDAWass 1.0.3 What's new
 ===========================
 
 (Histogram-valued Data analysis using Wasserstein metric)
 ---------------------------------------------------------
 
-Now, a set of methods for MatH (WH.SSQ, WH.vec.mean, and all the methods using them) are much faster. We are using Rcpp and RcppArmadillo for improving execution time and precision of results.
+Fixed some visualizations accordingly to the new ggplot2 release.
+
+
+HistDAWass 1.0.2 What's new
+===========================
+
+(Histogram-valued Data analysis using Wasserstein metric)
+---------------------------------------------------------
+
+Self Organizing maps have been improved for speed and options.
+
+HistDAWass 1.0.1 What's new
+===========================
+
+(Histogram-valued Data analysis using Wasserstein metric)
+---------------------------------------------------------
+
+Some bugs have been resolved when processing data with a single variable.
+
+HistDAWass 1.0.0 What's new
+===========================
+
+(Histogram-valued Data analysis using Wasserstein metric)
+---------------------------------------------------------
+
+Now, a set of methods for MatH (WH.SSQ, WH.vec.mean, and all the methods using them) are much faster due to RCPP implementation.
 
 HistDAWass 0.1.7 What's new
 ===========================

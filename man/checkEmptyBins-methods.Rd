@@ -17,8 +17,6 @@ checkEmptyBins(object)
 A \code{distributionH} object without empty bins
 }
 \description{
-Method \code{checkEmptyBins}
-
 The method checking for empty bins in a distribution, i.e. if two cdf consecutive
 values are equal. In that case a probability value of \code{1e-7} is
 assigned to the empty bin and the cdf is recomputed. This methods is useful

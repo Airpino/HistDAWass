@@ -6,7 +6,7 @@
 \title{Age pyramids of all the countries of the World in 2014}
 \format{a \code{MatH} object, a matrix of distributions.}
 \source{
-United States Census Bureau \url{http://www.census.gov/data.html}
+United States Census Bureau \url{https://www.census.gov/data.html}
 }
 \description{
 The dataset contains a MatH (matrix of histogram-valued data) object, with three 

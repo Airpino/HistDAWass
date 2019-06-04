@@ -18,8 +18,6 @@ a \code{logical} value \code{TRUE} if the distributions share the
 same cdf, \code{FALSE} otherwise.
 }
 \description{
-Method is.registeredMH
-
 Checks if a \code{MatH} contains histograms described by the same number of
 bins and the same cdf.
 }

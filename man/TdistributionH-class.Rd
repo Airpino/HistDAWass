@@ -8,8 +8,8 @@
 \title{Class TdistributionH}
 \usage{
 \S4method{initialize}{TdistributionH}(.Object, tstamp = numeric(0),
-  period = list(start = -Inf, end = -Inf), x = numeric(0), p = numeric(0),
-  m = numeric(0), s = numeric(0))
+  period = list(start = -Inf, end = -Inf), x = numeric(0),
+  p = numeric(0), m = numeric(0), s = numeric(0))
 }
 \arguments{
 \item{.Object}{the type of object ("TdistributionH") a \code{"distributionH"} object with a time reference}
@@ -30,6 +30,4 @@ the CDF of the distribution (the same of \code{distributionH} object)}
 }
 \description{
 Class \code{TdistributionH} defines a histogram with a time (point or period)
-
-Constructor method of TdistributionH Class
 }

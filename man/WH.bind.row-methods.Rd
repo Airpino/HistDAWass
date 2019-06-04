@@ -20,8 +20,6 @@ WH.bind.row(object1, object2)
 a \code{MatH} object,
 }
 \description{
-Method WH.bind.row
-
 It attaches two \code{MatH} objects with the same columns by row.
 }
 \examples{

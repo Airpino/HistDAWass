@@ -1,101 +1,21 @@
 # res=Prepare(x,simplify,qua,standardize)
 Prepare =function (x, simplify, qua, standardize){
- 
-  ind=nrow(x@M)
-  vars=ncol(x@M)
-  MM=list()
-  tmpo=new("distributionH")
-  if (simplify){
-    p=(0:qua)/qua
-    for (j in 1:vars){
-      MM[[j]]=matrix(0,(qua+1),(ind+1))
-      MM[[j]][,(ind+1)]=p
-      for (i in 1:ind){
-        dom=numeric(0)
-        dom=compQ_vect(x@M[i,j][[1]],p)
-        # for (q in 0:qua){
-        #   dom=c(dom, compQ(x@M[i,j][[1]],q/qua))
-        # }
-        
-        tmpo@x=dom
-        tmpo@p=p
-        vc=M_STD_H(tmpo)
-        tmpo@m=vc[1]
-        tmpo@s=vc[2]
-        tmp0=(tmpo-tmpo@m)*(x@M[i,j][[1]]@s/tmpo@s)+x@M[i,j][[1]]@m #transformation with invariance with respect mean and std
-        x@M[i,j][[1]]@x=tmpo@x
-        x@M[i,j][[1]]@p=tmpo@p
-        MM[[j]][,i]=tmpo@x
-      }
-    } 
-  }
-  else{
-    
-    for (j in 1:vars){
-      tmp=registerMH(x[,j])
-      MM[[j]]=matrix(0,length(tmp@M[1,1][[1]]@x),ind+1)
-      MM[[j]][,ind+1]=tmp@M[1,1][[1]]@p
-      for (i in 1:ind){
-        x@M[i,j][[1]]=tmp@M[i,1][[1]]
-        MM[[j]][,i]=tmp@M[i,1][[1]]@x
-      }
-    }
-  }
-  ## standardize data if required
-  if (standardize){
-    cat("Standardizing data...\n")
-    STAND=rep(0,vars)
-    Mc=rep(0,vars)
-    # compute varianaces
-    for (v in 1:vars){
-      STAND[v]=sqrt(WH.var.covar(x[,v]))
-      Mc[v]=(WH.vec.mean(x[,v]))@m
-      for (i in 1:ind){
-        if (STAND[v]>0){
-          
-          x@M[i,v][[1]]=new("distributionH",x=(x@M[i,v][[1]]@x-Mc[v])/STAND[v],p=x@M[i,v][[1]]@p)
-          MM[[v]][,i]=(MM[[v]][,i]-Mc[v])/STAND[v]
-          #x@M[i,v][[1]]@x=(x@M[i,v][[1]]@x-Mc[v])/STAND[v]
-        }
-      }
-    }
-    
-  }
-  return(list(MM=MM,x=x))
+ resu=c_Prepare(x,simplify,qua,standardize)
+  return(resu)
 }
 
 # compute fast SSQ
 ComputeFastSSQ=function(subMM){
-  ind=ncol(subMM)-1
-  rr=nrow(subMM)
-  SSQ=0
-  m1=apply(as.matrix(subMM[,1:ind]),1,mean)
-  p1=subMM[2:rr,ind+1]-subMM[1:(rr-1),ind+1]
-  cm=(m1[2:rr]+m1[1:(rr-1)])/2
-  rm=(m1[2:rr]-m1[1:(rr-1)])/2
-  for (indiv in 1:ind){
-    ci=(subMM[2:rr,indiv]+subMM[1:(rr-1),indiv])/2
-    ri=(subMM[2:rr,indiv]-subMM[1:(rr-1),indiv])/2
-    SSQ=SSQ+sum(p1*((ci-cm)^2)+ p1/3*((ri-rm)^2))
-  }
-  return(list(SSQ=SSQ,mx=m1, mp=subMM[,ind+1]))
+  resu=c_ComputeFASTSSQ(subMM)
+  return(resu)
 }
 
 # compute fast DIST
 ComputeFast_L2_SQ_WASS_D=function(subMM){
-  ind=ncol(subMM)-1
-  rr=nrow(subMM)
-  p1=subMM[2:rr,ind+1]-subMM[1:(rr-1),ind+1]
-  
-  c1=(subMM[2:rr,1]+subMM[1:(rr-1),1])/2
-  r1=(subMM[2:rr,1]-subMM[1:(rr-1),1])/2
-  c2=(subMM[2:rr,2]+subMM[1:(rr-1),2])/2
-  r2=(subMM[2:rr,2]-subMM[1:(rr-1),2])/2
-  
-  Dist=sum(p1*((c1-c2)^2)+ p1/3*((r1-r2)^2))
-  
+  Dist=c_MM_L2_SQ_WASS_D(subMM)
   return(Dist)
 }
+
 
 WH.ADPT.KMEANS.TOTALSSQ=function(x,memb,m,lambdas,proto){
   vars=ncol(x@M)
@@ -214,7 +134,7 @@ for (variable in 1:var){
   rr=nrow(MM[[variable]])
   p1=MM[[variable]][2:rr,ind+1]-MM[[variable]][1:(rr-1),ind+1]
   cm=(GP@M[1,variable][[1]]@x[2:rr]+GP@M[1,variable][[1]]@x[1:(rr-1)])/2
-  rm=(GP@M[1,variable][[1]]@p[2:rr]-GP@M[1,variable][[1]]@p[1:(rr-1)])/2
+  rm=(GP@M[1,variable][[1]]@x[2:rr]-GP@M[1,variable][[1]]@x[1:(rr-1)])/2
   for (indiv in 1:ind){
     ci=(MM[[variable]][2:rr,indiv]+MM[[variable]][1:(rr-1),indiv])/2
     ri=(MM[[variable]][2:rr,indiv]-MM[[variable]][1:(rr-1),indiv])/2
@@ -539,17 +459,7 @@ ComputeFast_L2_SQ_WASS_DMAT=function(MM,prot,DETA=FALSE){
 ########################
 # compute fast DIST
 ComputeFast_L2_SQ_WASS_D=function(subMM){
-  ind=ncol(subMM)-1
-  rr=nrow(subMM)
-  p1=subMM[2:rr,ind+1]-subMM[1:(rr-1),ind+1]
-  
-  c1=(subMM[2:rr,1]+subMM[1:(rr-1),1])/2
-  r1=(subMM[2:rr,1]-subMM[1:(rr-1),1])/2
-  c2=(subMM[2:rr,2]+subMM[1:(rr-1),2])/2
-  r2=(subMM[2:rr,2]-subMM[1:(rr-1),2])/2
-  
-  Dist=sum(p1*((c1-c2)^2)+ p1/3*((r1-r2)^2))
-  
+  Dist=c_MM_L2_SQ_WASS_D(subMM)
   return(Dist)
 }
 
@@ -757,12 +667,21 @@ compQ_vect=function(object,vp){
 }
 
 
-REGISTER3=function(a,b){
-res=REGISTER2(a,b)
-return(res)}
-
 MEAN_VA=function(MAT,wei){
   
 res=MEDIA_V(MAT, wei)
 return(res)
+}
+
+# an alternative to table
+Table2=function(x,N, full=TRUE){
+  howm=rep(0,N)
+  names(howm)=paste0(c(1:N))
+  for (i in 1:N){
+    howm[i]=length(which(x==i))
   }
+  if (full){
+    return(howm)}else{
+      return(howm[which(howm>0)])
+    }
+}

@@ -20,8 +20,6 @@ rQQ(e1, e2)
 Pearson correlation index between quantiles
 }
 \description{
-Method \code{rQQ}
-
 Quantile-Quantile correlation between two distributions
 }
 \examples{

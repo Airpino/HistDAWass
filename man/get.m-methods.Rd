@@ -17,8 +17,6 @@ get.m(object)
 A numeric value
 }
 \description{
-Method \code{get.m}: the mean of a distribution
-
 This functon return the mean of a \code{distributionH} object.
 }
 \examples{

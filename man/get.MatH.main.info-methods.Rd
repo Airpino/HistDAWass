@@ -17,8 +17,6 @@ get.MatH.main.info(object)
 A list of char, the labels of the columns, or the names of the variables.
 }
 \description{
-Method get.MatH.main.info
-
 It returns the number of rows, of columns the labels of rows and columns of a \code{MatH} object.
 }
 \section{Slots}{

@@ -6,7 +6,7 @@
 \usage{
 WH_adaptive.kmeans(x, k, schema = 1, init, rep, simplify = FALSE,
   qua = 10, standardize = FALSE, weight.sys = "PROD", theta = 2,
-  init.weights = "EQUAL")
+  init.weights = "EQUAL", verbose = FALSE)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}
@@ -36,6 +36,8 @@ using the Wassertein based standard deviation. Use if one wants to have variable
 
 \item{init.weights}{a string how to initialize weights: 'EQUAL' (default), all weights are the same, 
 'RANDOM', weights are initalised at random.}
+
+\item{verbose}{A logic value (default is FALSE). If TRUE, details on computations are shown.}
 }
 \value{
 a list with the results of the k-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.

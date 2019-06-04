@@ -17,8 +17,6 @@ stdH(object)
 A value for the standard deviation
 }
 \description{
-Method \code{stdH}: computes the standard deviation of a distribution
-
 Standard deviation of a histogram (i.e., the square root of the centered
 second moment)
 }

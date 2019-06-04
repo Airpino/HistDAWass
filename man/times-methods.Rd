@@ -4,9 +4,7 @@
 \name{*-methods}
 \alias{*-methods}
 \alias{*,distributionH,distributionH-method}
-\alias{*-methods}
 \alias{*,numeric,distributionH-method}
-\alias{*-methods}
 \alias{*,distributionH,numeric-method}
 \title{Method *}
 \usage{

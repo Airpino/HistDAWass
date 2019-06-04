@@ -6,7 +6,7 @@
 \usage{
 WH_adaptive_fcmeans(x, k = 5, schema, m = 1.6, rep, simplify = FALSE,
   qua = 10, standardize = FALSE, init.weights = "EQUAL",
-  weight.sys = "PROD", theta = 2)
+  weight.sys = "PROD", theta = 2, verbose = FALSE)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}
@@ -31,6 +31,8 @@ WH_adaptive_fcmeans(x, k = 5, schema, m = 1.6, rep, simplify = FALSE,
 \item{weight.sys}{A string. (default='PROD') PROD, Weights product is equal to one. SUM, the weights sum up to one.}
 
 \item{theta}{A number. (default=2) A parameter for the system of weights summing up to one.}
+
+\item{verbose}{A logic value (default is FALSE). If TRUE  some details are provided.}
 }
 \value{
 The results of the fuzzy c-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.

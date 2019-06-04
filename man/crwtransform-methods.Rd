@@ -20,8 +20,6 @@ histogram} \item{$Radii }{The half-lenghts of the bins of the histogram}
 each bin (the sum is equal to 1)}
 }
 \description{
-Method \code{crwtransform}: returns the centers and the radii of bins of a distribution
-
 Centers and ranges calculation for bins of a histogram. It is useful for a
 very fast computation of statistics and methods based on the L2 Wassertein
 distance between histograms.

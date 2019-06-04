@@ -6,9 +6,7 @@
 \alias{dotpW,distributionH,distributionH-method}
 \alias{dotpW,distributionH-method}
 \alias{dotpW,numeric,distributionH-method}
-\alias{dotpW,distributionH-method}
 \alias{dotpW,distributionH,numeric-method}
-\alias{dotpW,distributionH-method}
 \title{Method \code{dotpW}}
 \usage{
 dotpW(e1, e2)
@@ -28,8 +26,6 @@ dotpW(e1, e2)
 A numeric value
 }
 \description{
-Method \code{dotpW}
-
 The dot product of two distributions inducing the L2 Wasserstein metric
 
 The dot product of a number (considered as an impulse distribution function) and a distribution

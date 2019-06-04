@@ -17,8 +17,6 @@ skewH(object)
 A value for the skewness index
 }
 \description{
-Method \code{skewH}: computes the skewness of a distribution
-
 Skewness of a histogram (using the third standardized moment)
 }
 \examples{

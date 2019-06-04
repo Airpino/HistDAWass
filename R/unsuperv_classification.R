@@ -8,6 +8,7 @@
 #' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
 #' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, 
 #' using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.   
+#' @param verbose A logic value (default is FALSE). If TRUE, details on computations are shown.   
 #' @return a list with the results of the k-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
 #' @slot solution A list.Returns the best solution among the \code{rep}etitions, i.e. 
 #' the one having the minimum sum of squares criterion.
@@ -22,12 +23,13 @@
 #' metric. In: Rizzi A., Vichi M.. COMPSTAT 2006 - Advances in computational statistics. p. 869-876, 
 #' Heidelberg:Physica-Verlag
 #' @examples
-#' results=WH_kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
+#' results=WH_kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,
+#' qua = 10,standardize = TRUE,verbose=TRUE)
 #' @export
 WH_kmeans =function (x,k, rep=5, 
                      simplify=FALSE,
                      qua=10,
-                     standardize=FALSE){
+                     standardize=FALSE,verbose=FALSE){
   if ((k<2) || (k>=nrow(x@M))){
     str=paste("The number of clusters is not appropriate:\n 2<= k<",
               nrow(x@M), "(no. of individuals in x)\n")
@@ -46,15 +48,19 @@ WH_kmeans =function (x,k, rep=5,
   
   ## compute total sum of 
   TOTSSQ=0
+  
+  tmpd=distributionH()
   for (v in 1:vars){
-    tmp=ComputeFastSSQ(MM[[v]])
+#    tmp=ComputeFastSSQ(MM[[v]])
+    tmp=c_ComputeFASTSSQ(MM[[v]])
     TOTSSQ=TOTSSQ+tmp$SSQ
     
   }
   solutions=list()
   criteria=numeric(0)
   for (repet in 1:rep){
-    cat(paste("---------> rep  ",repet,"\n"))
+    if(verbose){
+    cat(paste("---------> rep  ",repet,"\n"))}
     ## initialize clusters and prototypes
     proto=new("MatH",nrows=k,ncols=vars)
     cards=rep(0,k)
@@ -69,9 +75,16 @@ WH_kmeans =function (x,k, rep=5,
         sel=(1:ind)[IDX==clu]
         cards=length(sel)
         for (j in 1:vars){
-          tmp=ComputeFastSSQ(MM[[j]][,c(sel,(ind+1))])
-          tmpH=new('distributionH',x=tmp$mx, p=tmp$mp)
-          proto@M[clu,j][[1]]=tmpH
+          #tmp=ComputeFastSSQ(MM[[j]][,c(sel,(ind+1))])
+          tmp=c_ComputeFASTSSQ(MM[[j]][,c(sel,(ind+1))])
+          proto@M[clu,j][[1]]@x=tmp$mx
+          proto@M[clu,j][[1]]@p=tmp$mp
+          tt=M_STD_H(proto@M[clu,j][[1]])
+          proto@M[clu,j][[1]]@m=tt[1]
+          proto@M[clu,j][[1]]@s=tt[2]
+          # 
+          # tmpH=new('distributionH',x=tmp$mx, p=tmp$mp)
+          # proto@M[clu,j][[1]]=tmpH
           SSQ[clu,j]=tmp$SSQ
         }
       }
@@ -85,20 +98,16 @@ WH_kmeans =function (x,k, rep=5,
     while (OK==1){
       itcount=itcount+1
       #assign
-      Dmat=array(0,c(ind,vars,k))
-      MD=matrix(0,ind,k)
-      for (i in 1:ind){
-        for (cl in 1:k){
-          for (j in 1:vars){
-            tmp=ComputeFast_L2_SQ_WASS_D(cbind(MM[[j]][,i],proto@M[cl,j][[1]]@x,MM[[j]][,(ind+1)]))
-            Dmat[i,j,cl]=tmp#WassSqDistH(x@M[i,j][[1]],proto@M[cl,j][[1]])
-            MD[i,cl]=MD[i,cl]+Dmat[i,j,cl]
-          }
-        }
-        IDX[i]=which.min(MD[i,])
-        
-      }
-     
+      tmp=c_DISTA_M(MM,proto)
+      
+      MD=tmp$dist
+      IDX=tmp$wm
+      ##########################
+      # for (i in 1:ind){
+      #     IDX[i]=which.min(MD[i,])
+      # }
+      # browser()
+      ################################
       #recompute
       OldCrit=GenCrit
       
@@ -117,21 +126,30 @@ WH_kmeans =function (x,k, rep=5,
           #show(MD)
         }
       }
-      for (i in 1:k){
-        sel=(1:ind)[IDX==i]
+      for (clu in 1:k){
+        sel=(1:ind)[IDX==clu]
         
         cards=length(sel)
         for (j in 1:vars){
-          tmp=ComputeFastSSQ(MM[[j]][,c(sel,(ind+1))])
-          tmpH=new('distributionH',x=tmp$mx, p=tmp$mp)
-          proto@M[i,j][[1]]=tmpH
-          SSQ[i,j]=tmp$SSQ
+          #tmp=ComputeFastSSQ(MM[[j]][,c(sel,(ind+1))])
+          tmp=c_ComputeFASTSSQ(MM[[j]][,c(sel,(ind+1))])
+          proto@M[clu,j][[1]]@x=tmp$mx
+          proto@M[clu,j][[1]]@p=tmp$mp
+          tt=M_STD_H(proto@M[clu,j][[1]])
+          proto@M[clu,j][[1]]@m=tt[1]
+          proto@M[clu,j][[1]]@s=tt[2]
+          # tmpH=new('distributionH',x=tmp$mx, p=tmp$mp)
+          # proto@M[i,j][[1]]=tmpH
+          SSQ[clu,j]=tmp$SSQ
         }
       }
       GenCrit=sum(SSQ)
-      cat(paste(itcount,GenCrit, "\n", sep="---->"))
+      if (verbose){
+      cat(paste(itcount,GenCrit, "\n", sep="---->"))}
       #check criterion
-      if (abs(GenCrit-OldCrit)<treshold){OK=0}
+      if (abs(GenCrit-OldCrit)<treshold){
+        OK=0
+      }
     }
     cardinality=table(IDX)
     names(IDX)=NAMER
@@ -142,7 +160,7 @@ WH_kmeans =function (x,k, rep=5,
                                              centers=proto,Crit=GenCrit)))
     criteria=c(criteria,GenCrit)
   }
-  plot(solutions[[which.min(criteria)]]$centers,type="DENS")
+  #plot(solutions[[which.min(criteria)]]$centers,type="DENS")
   return(best.solution=list(solution=solutions[[which.min(criteria)]],
                             quality=1-min(criteria)/TOTSSQ))
 }
@@ -190,17 +208,10 @@ WH_hclust =function (x,
   x=tmp$x
   
   ##compute distance matrix
-  d=matrix(0,ind,ind)
-  for (i in 1:(ind-1)){
-    for (j in (i+1):ind){
-      for (v in 1:vars){
-        tmp=ComputeFast_L2_SQ_WASS_D(cbind(MM[[v]][,i],MM[[v]][,j],MM[[v]][,(ind+1)]))
-        d[i,j]= d[i,j]+tmp#WassSqDistH(x@M[i,v][[1]],x@M[j,v][[1]])
-      }
-      if (distance=="WDIST"){d[i,j]=sqrt(d[i,j])}
-      d[j,i]=d[i,j]
+  if (distance=="WDIST"){
+    d=sqrt(c_Fast_D_Mat(MM))
     }
-  }
+  
   rownames(d)=rownames(x@M)
   colnames(d)=rownames(x@M)
   hc=hclust(as.dist(d),method=method)
@@ -228,6 +239,7 @@ WH_hclust =function (x,
 #' @param theta a number. A parameter if \code{weight.sys='SUM'}, default is 2.  
 #' @param init.weights a string how to initialize weights: 'EQUAL' (default), all weights are the same, 
 #' 'RANDOM', weights are initalised at random.
+#' @param verbose A logic value (default is FALSE). If TRUE, details on computations are shown.   
 #' 
 #' @return a list with the results of the k-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
 #' @slot solution A list.Returns the best solution among the \code{rep}etitions, i.e. 
@@ -246,7 +258,8 @@ WH_hclust =function (x,
 #' results=WH_adaptive.kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
 #' @importFrom stats runif
 #' @export
-WH_adaptive.kmeans =function (x,k,
+
+WH_adaptive.kmeans=function (x,k,
                               schema=1, #1=VariableGLOBAL 2=componentGLOBAL 3=Variable x Cluster 4=Components x cluster 
                               init, rep,  
                               simplify=FALSE,
@@ -255,7 +268,8 @@ WH_adaptive.kmeans =function (x,k,
                               standardize=FALSE,
                               weight.sys='PROD',
                               theta=2,
-                              init.weights='EQUAL'){
+                              init.weights='EQUAL',
+                              verbose=FALSE){
   if ((k<2) || (k>=nrow(x@M))){
     str=paste("The number of clusters is not appropriate:\n 2<= k<",
               nrow(x@M), "(no. of individuals in x)\n")
@@ -278,25 +292,26 @@ WH_adaptive.kmeans =function (x,k,
   ## compute total sum of 
   TOTSSQ=0
   for (v in 1:vars){
-    tmp=ComputeFastSSQ(MM[[v]])
+    #tmp=ComputeFastSSQ(MM[[v]])
+    tmp=c_ComputeFASTSSQ(MM[[v]])
     TOTSSQ=TOTSSQ+tmp$SSQ
-    }
+  }
   
   solutions=list()
   criteria=numeric(0)
   repet=0
   while(repet<rep){
     repet=repet+1
-    cat(paste("---------> rep  ",repet,"\n"))
+    if(verbose) cat(paste("---------> rep  ",repet,"\n"))
     #initialize matrix of variables' weights
     if (init.weights=='EQUAL'){
-      cat("Weights initialization === EQUAL  \n")
+      if (verbose) cat("Weights initialization === EQUAL  \n")
       if (weight.sys=='PROD'){
         lambdas=matrix(1,2*vars,k)}
       else{lambdas=matrix(1/vars,2*vars,k)}
     }
     else{#Random initialization
-      cat("Weights initialization === RANDOM  \n")
+      if(verbose) cat("Weights initialization === RANDOM  \n")
       m1=matrix(runif((vars*k),0.01,0.99),vars,k)
       m2=matrix(runif((vars*k),0.01,0.99),vars,k)
       m1=m1/matrix(rep(apply(m1,2,sum)),vars,k,byrow = TRUE)
@@ -356,176 +371,56 @@ WH_adaptive.kmeans =function (x,k,
       #STEP 1 ##  compute prototypes
       for (cluster in 1:k){
         sel=(1:ind)[IDX==cluster]
-        #show(sel)
+        
         cards=length(sel)
         for (variables in 1:vars){
-          tmp=ComputeFastSSQ(MM[[variables]][,c(sel,(ind+1))])
-          tmpH=new('distributionH',x=tmp$mx, p=tmp$mp)
-          proto@M[cluster,variables][[1]]=tmpH
+          tmp=c_ComputeFASTSSQ(MM[[variables]][,c(sel,(ind+1))])
+          proto@M[cluster,variables][[1]]@x=tmp$mx
+          proto@M[cluster,variables][[1]]@p=tmp$mp
+          tt=M_STD_H(proto@M[cluster,variables][[1]])
+          proto@M[cluster,variables][[1]]@m=tt[1]
+          proto@M[cluster,variables][[1]]@s=tt[2]
           SSQ[cluster,variables]=tmp$SSQ
-         
         }
       }
       #       TMP_SSQ=WH.ADPT.FCMEANS.SSQ(x,memb,1,lambdas,proto)
       #       cat('\n after prototypes SSQ:', TMP_SSQ,'\n')
       #STEP 2 ##  compute weights (Lambda) Fixed Prototypes and partition
       #######################################################################################
+      
+      TMPRESU=c_STEP_2_ADA_KMEANS(MM,proto, schema,memb)
       distances=array(0,dim=c(vars,k,2))
+      distances[,,1]=TMPRESU$distances1
+      distances[,,2]=TMPRESU$distances2
       diINDtoPROT=array(0,dim=c(ind,vars,k,2))
       for (cluster in 1:k){
-        for (variables in (1:vars)){
-          for (indiv in 1:ind){
-            tmpD=ComputeFast_L2_SQ_WASS_D(cbind(MM[[variables]][,indiv],proto@M[cluster,variables][[1]]@x,
-                                                MM[[variables]][,(ind+1)]))
-            #tmpD1=WassSqDistH(x@M[indiv,variables][[1]],proto@M[cluster,variables][[1]])
-            
-            #if (memb[indiv,cluster]>0){
-            if (schema==1){#one weigth for one variable
-              #tmpD=WassSqDistH(x@M[indiv,variables][[1]],proto@M[cluster,variables][[1]])
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD*memb[indiv,cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD
-            }
-            if (schema==2){#two weigths for the two components for each variable
-              #tmpD=WassSqDistH(x@M[indiv,variables][[1]],proto@M[cluster,variables][[1]],details=T)
-              tmpD_mean=(x@M[indiv,variables][[1]]@m-proto@M[cluster,variables][[1]]@m)^2
-              tmpD_centered=tmpD-tmpD_mean
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD_mean*memb[indiv,cluster]
-              distances[variables,cluster,2]=distances[variables,cluster,2]+tmpD_centered*memb[indiv,cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD_mean
-              diINDtoPROT[indiv,variables,cluster,2]=tmpD_centered
-            }
-            if (schema==3){#a weigth for one variable and for each cluster
-              #tmpD=WassSqDistH(x@M[indiv,variables][[1]],proto@M[cluster,variables][[1]])
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD*memb[indiv,cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD
-            }
-            if (schema==4){#two weigths for the two components for each variable and each cluster
-              #tmpD=WassSqDistH(x@M[indiv,variables][[1]],proto@M[cluster,variables][[1]],details=T)
-              tmpD_mean=(x@M[indiv,variables][[1]]@m-proto@M[cluster,variables][[1]]@m)^2
-              tmpD_centered=tmpD-tmpD_mean
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD_mean*memb[indiv,cluster]
-              distances[variables,cluster,2]=distances[variables,cluster,2]+tmpD_centered*memb[indiv,cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD_mean
-              diINDtoPROT[indiv,variables,cluster,2]=tmpD_centered
-            }
-          }
-          #}
-        }
+        diINDtoPROT[,,cluster,1]=TMPRESU$dIpro_m[[cluster]]
+        diINDtoPROT[,,cluster,2]=TMPRESU$dIpro_v[[cluster]]
       }
+      
+      
+      
       ##  compute weights
       # S2.2) Weights computation
+      if (weight.sys=='PROD'){PROSUM=1}else{PROSUM=2}
+      lambdas=c_STEP_2_2_WEIGHTS_ADA_KMEANS(TMPRESU$distances1,
+                                            TMPRESU$distances2,
+                                            PROSUM, schema, theta)
       
-      for (variables in (1:vars)){
-        for (cluster in 1:k){
-          #product
-          if (weight.sys=='PROD'){
-            if (schema==1){#one weigth for one variable
-              if (cluster<=1){
-                num=(prod(apply(distances[,,1],MARGIN=c(1),sum)))^(1/vars)
-                denom=max(sum(distances[variables,,1]),1e-10)
-                lambdas[(variables*2-1),cluster]=num/denom
-                lambdas[(variables*2),cluster]=num/denom
-              }else{lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
-                    lambdas[(variables*2),cluster]=lambdas[(variables*2),1]}
-            }
-            if (schema==2){#two weigths for the two components for each variable
-              if (cluster<=1){
-                num=(prod(apply(distances[,,1],MARGIN=c(1),sum)))^(1/vars)
-                denom=max(sum(distances[variables,,1]),1e-10)
-                lambdas[(variables*2-1),cluster]=num/denom
-                num=(prod(apply(distances[,,2],MARGIN=c(1),sum)))^(1/vars)
-                denom=max(sum(distances[variables,,2]),1e-10)
-                lambdas[(variables*2),cluster]=num/denom}
-              else{
-                lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
-                lambdas[(variables*2),cluster]=lambdas[(variables*2),1]
-              }
-            }
-            if (schema==3){#a weigth for one variable and for each cluster
-              num=(prod(distances[,cluster,1]))^(1/vars)
-              denom=max(distances[variables,cluster,1],1e-10)
-              lambdas[(variables*2-1),cluster]=num/denom
-              lambdas[(variables*2),cluster]=num/denom
-            }
-            if (schema==4){#two weigths for the two components for each variable and each cluster
-              num=max((prod(distances[,cluster,1]))^(1/vars),1e-10)
-              denom=max(distances[variables,cluster,1],1e-10)
-              
-              lambdas[(variables*2-1),cluster]=num/denom
-              num=max((prod(distances[,cluster,2]))^(1/vars),1e-10)
-              denom=max(distances[variables,cluster,2],1e-10)
-              lambdas[(variables*2),cluster]=num/denom
-            }
-          }else{
-            #sum ugual to 1
-            if (schema==1){#one weigth for one variable 1W GS Global-sum
-              if (cluster<=1){
-                num=rep(sum(distances[variables,,1]),vars)
-                den=apply(distances[,,1],1,sum)
-                lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
-                lambdas[(variables*2),cluster]=lambdas[(variables*2-1),cluster]
-              }else{lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
-                    lambdas[(variables*2),cluster]=lambdas[(variables*2),1]}
-            }
-            if (schema==2){#two weigths for the two components for each variable 2W GS Global-sum
-              if (cluster<=1){
-                num=rep(sum(distances[variables,,1]),vars)
-                den=apply(distances[,,1],1,sum)
-                lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
-                num=rep(sum(distances[variables,,2]),vars)
-                den=apply(distances[,,2],1,sum)
-                lambdas[(variables*2),cluster]=1/sum((num/den)^(1/(theta-1)))
-              }
-              else{
-                lambdas[(variables*2-1),cluster]=lambdas[(variables*2-1),1]
-                lambdas[(variables*2),cluster]=lambdas[(variables*2),1]
-              }
-            }
-            if (schema==3){#a weigth for one variable and for each cluster 1W LS Local-sum
-              num=rep(distances[variables,cluster,1],vars)
-              den=distances[,cluster,1]
-              
-              lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
-              lambdas[(variables*2),cluster]=lambdas[(variables*2-1),cluster]
-            }
-            if (schema==4){#two weigths for the two components for each variable and each cluster 2W LS Local-sum
-              num=rep(distances[variables,cluster,1],vars)
-              den=distances[,cluster,1]
-              
-              lambdas[(variables*2-1),cluster]=1/sum((num/den)^(1/(theta-1)))
-              
-              num=rep(distances[variables,cluster,2],vars)
-              den=distances[,cluster,2]
-              lambdas[(variables*2),cluster]=1/sum((num/den)^(1/(theta-1)))
-              
-            }
-          }
-        }
-      }
       ############################################################################
       #       TMP_SSQ=WH.ADPT.FCMEANS.SSQ(x,memb,1,lambdas,proto)
       #       cat('\n after weights SSQ:', TMP_SSQ,'\n')      
       #recompute
       OldCrit=GenCrit
       # S3) affectation (prototype, weights are fixed)
-      DiToClu=matrix(0,ind,k)
-      for (indiv in 1:ind){
-        for (cluster in 1:k){
-          for (variables in 1:vars){
-            DiToClu[indiv,cluster]=DiToClu[indiv,cluster]+
-              lambdas[(variables*2-1),cluster]*diINDtoPROT[indiv,variables,cluster,1]+
-              lambdas[(variables*2),cluster]*diINDtoPROT[indiv,variables,cluster,2]
-          }
-        }
-        IDX[indiv]=which.min(DiToClu[indiv,])
-      }
+      resu= c_STEP_3_AFFECT_ADA_KMEANS(lambdas, 
+                                       TMPRESU$dIpro_m,TMPRESU$dIpro_v, ind, k,  vars)
+      IDX=resu$IDX;
       
       #check for empty clusters and restart
       empty=FALSE;
       for (i in 1:k){
-        sel=(1:ind)[IDX==i]
-        #show(sel)
-        if (length(sel)==0){
+        if (sum(IDX==i)==0){
           
           cat("empty cluster\n")
           empty=TRUE
@@ -536,15 +431,16 @@ WH_adaptive.kmeans =function (x,k,
       memb=matrix(0,ind,k)
       for(indiv in 1:ind){memb[indiv,IDX[indiv]]=1}
       #browser()
-      
-      TMP_SSQ=WH.ADPT.FCMEANS.SSQ_FAST(MM,x,memb,1,lambdas,proto,theta=theta)
+      TMP_SSQ=resu$SSQ
+      #TMP_SSQ=WH.ADPT.FCMEANS.SSQ_FAST(MM,x,memb,1,lambdas,proto,theta=theta)
+      #browser()
       #TMP_SSQ=WH.ADPT.FCMEANS.SSQ(x,memb,1,lambdas,proto,theta)
       GenCrit=TMP_SSQ
       if(is.na(GenCrit)){
         cat('isNAN')
       }
       
-      cat(paste(itcount,GenCrit, "\n", sep="---->"))
+      if(verbose)   cat(paste(itcount,GenCrit, "\n", sep="---->"))
       #check criterion
       if (abs(GenCrit-OldCrit)<treshold){OK=0}
     }
@@ -556,24 +452,27 @@ WH_adaptive.kmeans =function (x,k,
     }
   }
   best.solution=c(solutions[[which.min(criteria)]])
-  plot(best.solution$proto,type="DENS")
-   memb=matrix(0,ind,k)
-   for (i in 1:ind){
-     memb[i,best.solution$IDX[i]]=1;
-   }
-   resTOTSQ=WH.ADPT.KMEANS.TOTALSSQ(x,memb,m=1,
+  #plot(best.solution$proto,type="DENS")
+  memb=matrix(0,ind,k)
+  for (i in 1:ind){
+    memb[i,best.solution$IDX[i]]=1;
+  }
+  
+  resTOTSQ=c_WH_ADPT_KMEANS_TOTALSSQ(x,memb,m=1,
                                      lambdas=best.solution$weights,proto=best.solution$proto)
-   GEN_proto=resTOTSQ$protogen
-   DET_TSQ=resTOTSQ$TSQ
-   TOTFSSQ=sum(resTOTSQ$TSQ)
-  DET_TSQ2=resTOTSQ$TSQ2
-  TOTFSSQ2=sum(resTOTSQ$TSQ2)
-  BSQ=resTOTSQ$BSQ
-   quality1=1-min(criteria)/TOTFSSQ
+  # resTOTSQ=c_WH_ADPT_KMEANS_TOTALSSQ(x,memb,m=1,
+  #                                    lambdas=best.solution$weights^theta,proto=best.solution$proto)
+  GEN_proto=resTOTSQ$gen
+  DET_TSQ=list(TSQ_M=resTOTSQ$TSQ_m,TSQ_V=resTOTSQ$TSQ_v)
+  TOTFSSQ=sum(resTOTSQ$TSQ_m+resTOTSQ$TSQ_v)
+  DET_TSQ2=list(TSQ2_M=resTOTSQ$TSQ2_m,TSQ2_V=resTOTSQ$TSQ2_v)
+  TOTFSSQ2=sum(resTOTSQ$TSQ2_m+resTOTSQ$TSQ2_v)
+  BSQ=sum(resTOTSQ$BSQ_m+resTOTSQ$BSQ_v)
+  
+  quality1=1-min(criteria)/TOTFSSQ
   quality2=1-min(criteria)/TOTFSSQ2
   best.solution=c(best.solution,TOTSSQ=TOTFSSQ2,BSQ=BSQ,WSQ=best.solution$Crit,quality=BSQ/TOTFSSQ2)
   return(best.solution)
-#  return(0)
+  #  return(0)
 }
-
 

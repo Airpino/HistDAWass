@@ -17,8 +17,6 @@ meanH(object)
 the mean of the distribution
 }
 \description{
-Method \code{meanH}: computes the mean of a distribution
-
 Mean of a histogram (First moment of the distribution)
 }
 \examples{

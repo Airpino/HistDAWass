@@ -23,8 +23,6 @@ default = equal weight for each row}
 a squared \code{matrix} with the weighted sum of squares
 }
 \description{
-Method WH.SSQ
-
 Compute the sum-of-squares-deviations (from the mean) matrix of a \code{MatH} object, i.e. 
 a matrix of numbers, consistent with 
 a set of distributions equipped with a L2 wasserstein metric.

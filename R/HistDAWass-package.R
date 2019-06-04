@@ -18,13 +18,13 @@
 #' @name HistDAWass-package
 #' @aliases HistDAWass-package HistDAWass
 #' @docType package
-#' @author Antonio Irpino <antonio.irpino@@unina2.it>
+#' @author Antonio Irpino <antonio.irpino@@unicampania.it>
 #' @references
 #' Irpino, A., Verde, R. (2015) \emph{Basic
 #' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4\cr
-#' #' Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets: 
-#' Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.
+#' approach}, Advances in Data Analysis and Classification, Volume 9, Issue 2, pp 143--175.
+#' DOI \url{https://doi.org/10.1007/s11634-014-0176-4}\cr
+#' 
 #' @import ggplot2 grid
 #' @keywords package
 #' @examples
@@ -124,7 +124,7 @@ NULL
 #' @docType data
 #' @format a \code{MatH} object, a matrix of distributions.
 #' @author Antonio Irpino, 2014-10-05
-#' @source United States Census Bureau \url{http://www.census.gov/data.html}
+#' @source United States Census Bureau \url{https://www.census.gov/data.html}
 NULL
 
 #' Agronomique data
@@ -158,7 +158,7 @@ NULL
 #' @docType data
 #' @format a \code{MatH} object, a matrix of distributions.
 #' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ndps/tr055.html}
+#' @source raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}
 NULL
 
 #' A seasonal climatic dataset of China
@@ -176,7 +176,7 @@ NULL
 #' @docType data
 #' @format a \code{MatH} object, a matrix of distributions.
 #' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ndps/tr055.html}. 
+#' @source raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}. 
 #' Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 #' DOI: 10.3334/CDIAC/cli.tr055
 NULL
@@ -190,7 +190,7 @@ NULL
 #' @docType data
 #' @format a data.frame
 #' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ndps/tr055.html}. 
+#' @source raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}. 
 #' Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 #' DOI: 10.3334/CDIAC/cli.tr055
 NULL

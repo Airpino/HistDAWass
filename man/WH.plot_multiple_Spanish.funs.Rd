@@ -4,8 +4,8 @@
 \alias{WH.plot_multiple_Spanish.funs}
 \title{Plotting Spanish fun plots for Multiple factor analysis of Histogram Variables}
 \usage{
-WH.plot_multiple_Spanish.funs(res, axes = c(1, 2), var = 1, LABS = TRUE,
-  multi = TRUE, corplot = TRUE)
+WH.plot_multiple_Spanish.funs(res, axes = c(1, 2), var = 1,
+  LABS = TRUE, multi = TRUE, corplot = TRUE)
 }
 \arguments{
 \item{res}{Results from WH.MultiplePCA, or WH.1D.PCA.}
@@ -31,7 +31,11 @@ of the histogrma variables after a Multiple factor analysis.
 }
 \examples{
 #Do a MultiplePCA on the BLOOD dataset
+\dontrun{
 res=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3)) 
+}
 #Plot results
+\dontrun{
 WH.plot_multiple_Spanish.funs(res,axes=c(1,2),var=c(1:3))
+}
 }

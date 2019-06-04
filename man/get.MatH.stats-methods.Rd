@@ -31,8 +31,6 @@ get.MatH.stats(object, ...)
 A list
 }
 \description{
-Method get.MatH.stats
-
 It returns statistics for each distribution contained in a \code{MatH} object.
 }
 \section{Slots}{

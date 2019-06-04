@@ -17,8 +17,6 @@ get.histo(object)
 A matrix: the two columns contains the bounds of the histogram the third contains the probablity (or the relative frequency) of the bin.
 }
 \description{
-Method \code{get.histo}: show the distribution with bins
-
 This functon return a data.frame describing the histogram of a \code{distributionH} object.
 }
 \examples{

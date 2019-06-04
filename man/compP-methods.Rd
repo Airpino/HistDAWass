@@ -20,8 +20,6 @@ compP(object, q)
 Returns a value between 0 and 1.
 }
 \description{
-Method \code{compP}
-
 Compute the cdf probability at a given value for a histogram
 }
 \examples{

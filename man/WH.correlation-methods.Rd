@@ -23,8 +23,6 @@ default = equal weight for each row}
 a squared \code{matrix} with the (weighted) correlations indices
 }
 \description{
-Method WH.correlation
-
 Compute the correlation matrix of a \code{MatH} object, i.e. 
 a matrix of values consistent with 
 a set of distributions equipped with a L2 wasserstein metric.

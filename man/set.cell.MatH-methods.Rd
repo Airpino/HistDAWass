@@ -9,7 +9,8 @@
 \usage{
 set.cell.MatH(object, mat, r, c)
 
-\S4method{set.cell.MatH}{distributionH,MatH,numeric,numeric}(object, mat, r, c)
+\S4method{set.cell.MatH}{distributionH,MatH,numeric,numeric}(object, mat,
+  r, c)
 }
 \arguments{
 \item{object}{a distributionH object, a matrix of distributions.}
@@ -24,8 +25,6 @@ set.cell.MatH(object, mat, r, c)
 A \code{MatH} object.
 }
 \description{
-Method set.cell.MatH assign a histogram to a cell of a matrix of histograms
-
 Assign a histogram data to the r-th row and the c-th column of a matrix of histograms.
 }
 \examples{

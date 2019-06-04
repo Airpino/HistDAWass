@@ -22,8 +22,6 @@ the \code{MatH object}, default = equal weights for all}
 a \code{distributionH} object, i.e. a histogram
 }
 \description{
-Method WH.vec.mean
-
 Compute a histogram that is the weighted mean of the set of histograms contained
 in a \code{MatH} object, i.e. a matrix of histograms, consistent with 
 a set of distributions equipped with a L2 wasserstein metric.
