@@ -7,12 +7,24 @@
 \alias{initialize,MatH-method}
 \title{Class MatH.}
 \usage{
-\S4method{initialize}{MatH}(.Object, nrows = 1, ncols = 1,
-  ListOfDist = NULL, names.rows = NULL, names.cols = NULL,
-  by.row = FALSE)
+\S4method{initialize}{MatH}(
+  .Object,
+  nrows = 1,
+  ncols = 1,
+  ListOfDist = NULL,
+  names.rows = NULL,
+  names.cols = NULL,
+  by.row = FALSE
+)
 
-MatH(x = NULL, nrows = 1, ncols = 1, rownames = NULL,
-  varnames = NULL, by.row = FALSE)
+MatH(
+  x = NULL,
+  nrows = 1,
+  ncols = 1,
+  rownames = NULL,
+  varnames = NULL,
+  by.row = FALSE
+)
 }
 \arguments{
 \item{.Object}{the object type "MatH"}

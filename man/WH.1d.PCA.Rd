@@ -4,8 +4,16 @@
 \alias{WH.1d.PCA}
 \title{Principal components analysis  of histogram variable based on Wasserstein distance}
 \usage{
-WH.1d.PCA(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4),
-  axisequal = FALSE, qcut = 1, outl = 0)
+WH.1d.PCA(
+  data,
+  var,
+  quantiles = 10,
+  plots = TRUE,
+  listaxes = c(1:4),
+  axisequal = FALSE,
+  qcut = 1,
+  outl = 0
+)
 }
 \arguments{
 \item{data}{A MatH object (a matrix of distributionH).}

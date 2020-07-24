@@ -7,8 +7,12 @@
 \alias{initialize,TMatH-method}
 \title{Class TMatH}
 \usage{
-\S4method{initialize}{TMatH}(.Object, tstamp = numeric(0),
-  period = list(start = -Inf, end = -Inf), mat = new("MatH"))
+\S4method{initialize}{TMatH}(
+  .Object,
+  tstamp = numeric(0),
+  period = list(start = -Inf, end = -Inf),
+  mat = new("MatH")
+)
 }
 \arguments{
 \item{.Object}{the type of object ("TMatH")}
