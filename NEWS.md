@@ -1,15 +1,17 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-HistDAWass 1.0.4 What’s new
-===========================
+# HistDAWass 1.0.5 What’s new
+
+Fixed some minor bugs. Added the names of columns and the rows in
+weights matrices of adaptive distances based methods.
+
+# HistDAWass 1.0.4 What’s new
 
 Fixed some minor bugs.
 
-HistDAWass 1.0.3 What’s new
-===========================
+# HistDAWass 1.0.3 What’s new
 
-Histogram-valued Data analysis using Wasserstein metric
--------------------------------------------------------
+## Histogram-valued Data analysis using Wasserstein metric
 
 Fixed some visualizations accordingly to the new ggplot2 release.
 
@@ -38,7 +40,7 @@ times.
 
 > unsupervised learning
 
-WH\_kmeans now returns more informative outputs
+WH_kmeans now returns more informative outputs
 
 > principal components analysis
 

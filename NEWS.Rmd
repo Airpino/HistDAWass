@@ -16,6 +16,11 @@ knitr::opts_chunk$set(
 )
 
 ```
+# HistDAWass 1.0.5 What's new
+
+Fixed some minor bugs. Added the names of columns and the rows in weights matrices of adaptive distances based methods. 
+
+
 # HistDAWass 1.0.4 What's new
 
 Fixed some minor bugs.
