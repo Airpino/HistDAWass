@@ -922,7 +922,6 @@ setMethod("show",
 #' @description A plot function for a \code{distributionH} object. The function returns a representation 
 #' of the histogram.
 #' @param x  a \code{distributionH} object
-#' @param ... other optional parameters
 #' @param type (optional) a string describing the type of plot, default="HISTO".\cr Other allowed types are 
 #' \cr"CDF"=Cumulative distribution function, \cr"QF"= quantile function, \cr"DENS"=a density approximation, 
 #' \cr"HBOXPLOT"=horizontal boxplot, \cr"VBOXPLOT"= vertical boxplot,

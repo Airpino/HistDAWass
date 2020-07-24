@@ -7,8 +7,7 @@
 \alias{initialize,HTS-method}
 \title{Class HTS}
 \usage{
-\S4method{initialize}{HTS}(.Object, epocs = 1,
-  ListOfTimedElements = c(new("TdistributionH")))
+\S4method{initialize}{HTS}(.Object, epocs = 1, ListOfTimedElements = c(new("TdistributionH")))
 }
 \arguments{
 \item{.Object}{the object type ("HTS") a histogram time series}

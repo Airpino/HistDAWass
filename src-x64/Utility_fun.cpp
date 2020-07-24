@@ -89,7 +89,7 @@ List REGISTER2(S4 a, S4 b) {
   
   NumericVector tmp, tmp_p;
   int doit=0;
-  if ((abs(p1.size()-p2.size())>0)){
+  if (p1.size()!=p2.size()){
     doit=1;
   }else{
     if (sum(abs(p1-p2))>1e-20) {doit=1;}

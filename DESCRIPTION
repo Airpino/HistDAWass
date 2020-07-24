@@ -1,11 +1,13 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 1.0.3
-Date: 2019-06-04
-Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
-  	     email = "antonio.irpino@unicampania.it"))
-Author: Antonio Irpino [aut, cre]
+Version: 1.0.4
+Date: 2020-02-14
+Authors@R: c(person(given="Antonio",
+                family= "Irpino", 
+                role = c("aut", "cre"),
+  	            email = "antonio.irpino@unicampania.it", 
+  	            comment = c(ORCID = "0000-0001-9293-7180")))
 Maintainer: Antonio Irpino <antonio.irpino@unicampania.it>
 Description: In the framework of Symbolic Data Analysis, a relatively new
     approach to the statistical analysis of multi-valued data, we consider
@@ -49,6 +51,6 @@ Collate:
     'unsuperv_classification.R'
     'Plotting_with_ggplot.R'
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 NeedsCompilation: yes
 LinkingTo: Rcpp,RcppArmadillo
