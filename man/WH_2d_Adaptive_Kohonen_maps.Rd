@@ -4,12 +4,25 @@
 \alias{WH_2d_Adaptive_Kohonen_maps}
 \title{Batch Kohonen self-organizing 2d maps using adaptive distances for  histogram-valued data}
 \usage{
-WH_2d_Adaptive_Kohonen_maps(x, net = list(xdim = 4, ydim = 3, topo =
-  c("rectangular")), kern.param = 2, TMAX = -9999, Tmin = -9999,
-  niter = 30, repetitions, simplify = FALSE, qua = 10,
-  standardize = FALSE, schema = 6, init.weights = "EQUAL",
-  weight.sys = "PROD", theta = 2, Wfix = FALSE, verbose = FALSE,
-  atleast = 2)
+WH_2d_Adaptive_Kohonen_maps(
+  x,
+  net = list(xdim = 4, ydim = 3, topo = c("rectangular")),
+  kern.param = 2,
+  TMAX = -9999,
+  Tmin = -9999,
+  niter = 30,
+  repetitions,
+  simplify = FALSE,
+  qua = 10,
+  standardize = FALSE,
+  schema = 6,
+  init.weights = "EQUAL",
+  weight.sys = "PROD",
+  theta = 2,
+  Wfix = FALSE,
+  verbose = FALSE,
+  atleast = 2
+)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}

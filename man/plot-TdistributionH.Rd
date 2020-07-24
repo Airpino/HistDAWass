@@ -6,8 +6,7 @@
 \alias{plot,TdistributionH-method}
 \title{plot for a TdistributionH object}
 \usage{
-\S4method{plot}{TdistributionH}(x, type = "HISTO", col = "green",
-  border = "black")
+\S4method{plot}{TdistributionH}(x, type = "HISTO", col = "green", border = "black")
 }
 \arguments{
 \item{x}{a \code{TdistributionH} object}

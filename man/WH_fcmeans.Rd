@@ -4,8 +4,7 @@
 \alias{WH_fcmeans}
 \title{Fuzzy c-means of a dataset of histogram-valued data}
 \usage{
-WH_fcmeans(x, k, m = 1.6, rep, simplify = FALSE, qua = 10,
-  standardize = FALSE)
+WH_fcmeans(x, k, m = 1.6, rep, simplify = FALSE, qua = 10, standardize = FALSE)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}

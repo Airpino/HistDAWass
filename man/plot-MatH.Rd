@@ -6,8 +6,7 @@
 \alias{plot,MatH-method}
 \title{Method plot for a matrix  of histograms}
 \usage{
-\S4method{plot}{MatH}(x, y = "missing", type = "HISTO",
-  border = "black", angL = 330)
+\S4method{plot}{MatH}(x, y = "missing", type = "HISTO", border = "black", angL = 330)
 }
 \arguments{
 \item{x}{a \code{distributionH} object}

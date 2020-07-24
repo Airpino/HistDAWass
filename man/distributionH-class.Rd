@@ -7,8 +7,13 @@
 \alias{initialize,distributionH-method}
 \title{Class distributionH.}
 \usage{
-\S4method{initialize}{distributionH}(.Object, x = numeric(0),
-  p = numeric(0), m = numeric(0), s = numeric(0))
+\S4method{initialize}{distributionH}(
+  .Object,
+  x = numeric(0),
+  p = numeric(0),
+  m = numeric(0),
+  s = numeric(0)
+)
 
 distributionH(x = numeric(0), p = numeric(0))
 }

@@ -4,8 +4,15 @@
 \alias{WH_kmeans}
 \title{K-means of a dataset of histogram-valued data}
 \usage{
-WH_kmeans(x, k, rep = 5, simplify = FALSE, qua = 10,
-  standardize = FALSE, verbose = FALSE)
+WH_kmeans(
+  x,
+  k,
+  rep = 5,
+  simplify = FALSE,
+  qua = 10,
+  standardize = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}

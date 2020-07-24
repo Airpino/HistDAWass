@@ -4,9 +4,20 @@
 \alias{WH_adaptive.kmeans}
 \title{K-means of a dataset of histogram-valued data using adaptive  Wasserstein distances}
 \usage{
-WH_adaptive.kmeans(x, k, schema = 1, init, rep, simplify = FALSE,
-  qua = 10, standardize = FALSE, weight.sys = "PROD", theta = 2,
-  init.weights = "EQUAL", verbose = FALSE)
+WH_adaptive.kmeans(
+  x,
+  k,
+  schema = 1,
+  init,
+  rep,
+  simplify = FALSE,
+  qua = 10,
+  standardize = FALSE,
+  weight.sys = "PROD",
+  theta = 2,
+  init.weights = "EQUAL",
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}

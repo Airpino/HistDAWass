@@ -4,8 +4,14 @@
 \alias{data2hist}
 \title{From real data to distributionH.}
 \usage{
-data2hist(data, algo = "histogram", type = "combined", qua = 10,
-  breaks = numeric(0), epsilon = 0.01)
+data2hist(
+  data,
+  algo = "histogram",
+  type = "combined",
+  qua = 10,
+  breaks = numeric(0),
+  epsilon = 0.01
+)
 }
 \arguments{
 \item{data}{a set of numeric values.}

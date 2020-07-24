@@ -6,8 +6,7 @@
 \alias{plot,HTS-method}
 \title{Method plot for a histogram time series}
 \usage{
-\S4method{plot}{HTS}(x, y = "missing", type = "VIOLIN",
-  border = "black", maxno.perplot = 30)
+\S4method{plot}{HTS}(x, y = "missing", type = "VIOLIN", border = "black", maxno.perplot = 30)
 }
 \arguments{
 \item{x}{a \code{distributionH} object}

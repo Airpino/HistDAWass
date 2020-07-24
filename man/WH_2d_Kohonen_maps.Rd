@@ -4,10 +4,19 @@
 \alias{WH_2d_Kohonen_maps}
 \title{Batch Kohonen self-organizing 2d maps for  histogram-valued data}
 \usage{
-WH_2d_Kohonen_maps(x, net = list(xdim = 4, ydim = 3, topo =
-  c("rectangular")), kern.param = 2, TMAX = 2, Tmin = 0.2,
-  niter = 30, repetitions = 5, simplify = FALSE, qua = 10,
-  standardize = FALSE, verbose = FALSE)
+WH_2d_Kohonen_maps(
+  x,
+  net = list(xdim = 4, ydim = 3, topo = c("rectangular")),
+  kern.param = 2,
+  TMAX = 2,
+  Tmin = 0.2,
+  niter = 30,
+  repetitions = 5,
+  simplify = FALSE,
+  qua = 10,
+  standardize = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}

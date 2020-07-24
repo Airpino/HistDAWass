@@ -6,8 +6,7 @@
 \alias{plot,distributionH-method}
 \title{plot for a distributionH object}
 \usage{
-\S4method{plot}{distributionH}(x, type = "HISTO", col = "green",
-  border = "black")
+\S4method{plot}{distributionH}(x, type = "HISTO", col = "green", border = "black")
 }
 \arguments{
 \item{x}{a \code{distributionH} object}
@@ -19,8 +18,6 @@
 \item{col}{(optional) a string the color of the plot, default="green".}
 
 \item{border}{(optional) a string the color of the border of the plot, default="black".}
-
-\item{...}{other optional parameters}
 }
 \description{
 A plot function for a \code{distributionH} object. The function returns a representation 

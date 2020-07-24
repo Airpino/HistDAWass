@@ -4,8 +4,14 @@
 \alias{WH_hclust}
 \title{Hierarchical clustering of histogram data}
 \usage{
-WH_hclust(x, simplify = FALSE, qua = 10, standardize = FALSE,
-  distance = "WDIST", method = "complete")
+WH_hclust(
+  x,
+  simplify = FALSE,
+  qua = 10,
+  standardize = FALSE,
+  distance = "WDIST",
+  method = "complete"
+)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}

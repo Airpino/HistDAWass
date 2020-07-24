@@ -1090,7 +1090,7 @@ List c_STEP_3_AFFECT_ADA_KMEANS(NumericMatrix lambdas,
   NumericMatrix DiToClu(ind,k);
   int indiv,cluster,variable;
   NumericVector IDX(ind);
-  double SSQ;
+  double SSQ=0;
   
   for (indiv=0;indiv<ind;indiv++){
     for (cluster=0;cluster<k;cluster++){
@@ -1103,8 +1103,8 @@ List c_STEP_3_AFFECT_ADA_KMEANS(NumericMatrix lambdas,
     IDX[indiv]=which_min(DiToClu(indiv,_))+1;
     SSQ=SSQ+(min(DiToClu(indiv,_)));    
   }
-  List resu = List::create(Named("DiToClu") = DiToClu , _["IDX"] = IDX,_["SSQ"]=SSQ);
-  return resu;
+   List resu = List::create(Named("DiToClu") = DiToClu , _["IDX"] = IDX,_["SSQ"]=SSQ);
+   return resu;
 }
 /////////////////
 // [[Rcpp::export]]

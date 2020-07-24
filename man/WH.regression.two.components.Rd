@@ -4,8 +4,7 @@
 \alias{WH.regression.two.components}
 \title{Multiple regression analysis for  histogram variables based on a two component model and L2 Wasserstein distance}
 \usage{
-WH.regression.two.components(data, Yvar, Xvars, simplify = FALSE,
-  qua = 20)
+WH.regression.two.components(data, Yvar, Xvars, simplify = FALSE, qua = 20)
 }
 \arguments{
 \item{data}{A MatH object (a matrix of distributionH).}

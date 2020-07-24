@@ -4,9 +4,18 @@
 \alias{WH.plot_multiple_indivs}
 \title{Plot histograms of individuals after a  Multiple factor analysis of Histogram Variables}
 \usage{
-WH.plot_multiple_indivs(data, res, axes = c(1, 2), indiv = 0,
-  var = 1, strx = 0.1, stry = 0.1, HISTO = TRUE, coor = 0,
-  stat = "mean")
+WH.plot_multiple_indivs(
+  data,
+  res,
+  axes = c(1, 2),
+  indiv = 0,
+  var = 1,
+  strx = 0.1,
+  stry = 0.1,
+  HISTO = TRUE,
+  coor = 0,
+  stat = "mean"
+)
 }
 \arguments{
 \item{data}{a MatH object}
