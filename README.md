@@ -134,7 +134,7 @@ Methods for Histogram time series
 
 -   Exponential smoothing
 
-> Predicting
+> Forecasting
 
 -   KNN prediction of histogram time series
 
