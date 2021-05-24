@@ -1,4 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<img src="HistDAWass_LOGO.png" alt="HistDAWass" width="250">
+
 HistDAWass
 ==========
 
