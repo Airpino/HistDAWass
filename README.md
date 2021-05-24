@@ -15,7 +15,8 @@ What is the L2 Wasserstein metric?
 
 given two probability density functions *f* and *g*, each one has a cumulative distribution function *F* and *G* and thei respectively quantile functions (the inverse of a cumulative distribution function) *Q*<sub>*f*</sub> and *Q*<sub>*g*</sub>. The L2 Wasserstein distance is
 
-$$d\_W(f,g)=\\sqrt{\\int\\limits\_0^1{(Q\_f(p) - Q\_g(p))^2 dp}}$$
+<img src="https://render.githubusercontent.com/render/math?math={d_W(f,g)=\sqrt{\int_0^1{(Q_f(p) - Q_g(p))^2 dp}}}">
+
 
 The implemented classes are those described in the following table
 
