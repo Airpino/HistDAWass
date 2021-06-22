@@ -24,14 +24,14 @@ a \code{MatH} object,
 It attaches two \code{MatH} objects with the same columns by row, or the same rows by colum.
 }
 \examples{
-# binding by row 
-M1<-BLOOD[1:10,1]
-M2<-BLOOD[1:10,3]
-MAT<-WH.bind(M1,M2, byrow=TRUE)
+# binding by row
+M1 <- BLOOD[1:10, 1]
+M2 <- BLOOD[1:10, 3]
+MAT <- WH.bind(M1, M2, byrow = TRUE)
 # binding by col
-M1<-BLOOD[1:10,1]
-M2<-BLOOD[1:10,3]
-MAT<-WH.bind(M1,M2, byrow=FALSE)
+M1 <- BLOOD[1:10, 1]
+M2 <- BLOOD[1:10, 3]
+MAT <- WH.bind(M1, M2, byrow = FALSE)
 }
 \seealso{
 \code{\link{WH.bind.row}} for binding by row, \code{\link{WH.bind.col}} for binding by column

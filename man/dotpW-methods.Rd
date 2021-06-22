@@ -34,17 +34,18 @@ The dot product of a distribution and a number (considered as an impulse distrib
 \examples{
 
 ## let's define two distributionH objects
-mydist1<-distributionH(x=c(1,2,3,10), p=c(0,0.1,0.5,1))
-mydist2<-distributionH(x=c(5,7,15), p=c(0,0.7,1))
+mydist1 <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+mydist2 <- distributionH(x = c(5, 7, 15), p = c(0, 0.7, 1))
 
 ## the dot product between the distributions
-dotpW(mydist1,mydist2) #---> 39.51429
+dotpW(mydist1, mydist2) #---> 39.51429
 
 ## the dot product between a distribution and a numeric
-dotpW(mydist1,3)  #---> 13.2
-dotpW(3,mydist1)  #---> 13.2
+dotpW(mydist1, 3) #---> 13.2
+dotpW(3, mydist1) #---> 13.2
 
 
+# DOTPW method -----
 }
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic

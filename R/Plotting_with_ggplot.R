@@ -114,7 +114,7 @@ plot.gg <- function(x, type = "HISTO", col = "green", border = "black") {
 WH.joy <- function(DATA, var) {
   n <- get.MatH.nrows(DATA)
   n_names <- get.MatH.rownames(DATA)
-  vp <- c(0:200) / 200
+  vp <- c(0:1000) / 1000
   vec1 <- numeric()
   labs <- character()
 

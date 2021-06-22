@@ -14,21 +14,21 @@ WH.SSQ(object, ...)
 
 \item{...}{some optional parameters}
 
-\item{w}{it is possible to add a vector of weights (positive numbers) 
-having the same size of the rows of the \code{MatH object}, 
+\item{w}{it is possible to add a vector of weights (positive numbers)
+having the same size of the rows of the \code{MatH object},
 default = equal weight for each row}
 }
 \value{
 a squared \code{matrix} with the weighted sum of squares
 }
 \description{
-Compute the sum-of-squares-deviations (from the mean) matrix of a \code{MatH} object, i.e. 
-a matrix of numbers, consistent with 
+Compute the sum-of-squares-deviations (from the mean) matrix of a \code{MatH} object, i.e.
+a matrix of numbers, consistent with
 a set of distributions equipped with a L2 wasserstein metric.
 }
 \examples{
 WH.SSQ(BLOOD)
 # generate a set of random weights
-RN<-runif(get.MatH.nrows(BLOOD))
-WH.SSQ(BLOOD,w=RN)
+RN <- runif(get.MatH.nrows(BLOOD))
+WH.SSQ(BLOOD, w = RN)
 }

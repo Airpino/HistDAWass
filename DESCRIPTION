@@ -1,8 +1,8 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 1.0.5
-Date: 2021-05-24
+Version: 1.0.6
+Date: 2021-06-22
 Authors@R: c(person(given="Antonio",
                 family= "Irpino", 
                 role = c("aut", "cre"),
@@ -16,7 +16,7 @@ Description: In the framework of Symbolic Data Analysis, a relatively new
     on the L2 Wasserstein metric between distributions, i.e., the Euclidean metric
     between quantile functions. The package contains unsupervised classification
     techniques, least square regression and tools for histogram-valued data and for
-    histogram time series. An introducing paper is Irpino A. Verde R. (2015) \doi{10.1007/s11634-014-0176-4}.
+    histogram time series. An introducing paper is Irpino A. Verde R. (2015) <doi: 10.1007/s11634-014-0176-4>.
 License: GPL (>=2)
 Imports:
     graphics,

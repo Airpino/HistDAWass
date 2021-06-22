@@ -36,12 +36,12 @@ The function plots the circle of correlation of the quantiles
 of the histogrma variables after a Multiple factor analysis.
 }
 \examples{
-#Do a MultiplePCA on the BLOOD dataset
+# Do a MultiplePCA on the BLOOD dataset
 \dontrun{
-res=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3)) 
+res <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3))
 }
-#Plot results
+# Plot results
 \dontrun{
-WH.plot_multiple_Spanish.funs(res,axes=c(1,2),var=c(1:3))
+WH.plot_multiple_Spanish.funs(res, axes = c(1, 2), var = c(1:3))
 }
 }

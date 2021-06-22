@@ -22,7 +22,7 @@ a \code{MatH} object,
 It attaches two \code{MatH} objects with the same columns by row.
 }
 \examples{
-M1<-BLOOD[1:3,]
-M2<-BLOOD[5:8,]
-MAT<-WH.bind.row(M1,M2)
+M1 <- BLOOD[1:3, ]
+M2 <- BLOOD[5:8, ]
+MAT <- WH.bind.row(M1, M2)
 }

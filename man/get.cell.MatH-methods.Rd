@@ -24,5 +24,5 @@ A \code{distributionH} object.
 Returns the histogram data in the r-th row and the c-th column.
 }
 \examples{
-get.cell.MatH(BLOOD, r=1,c=1)
+get.cell.MatH(BLOOD, r = 1, c = 1)
 }

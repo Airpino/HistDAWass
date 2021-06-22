@@ -21,11 +21,10 @@ Kurtosis of a histogram (using the fourth standardized moment)
 }
 \examples{
 
-##---- A mydist distribution ----
-mydist<-distributionH(x=c(1,2,3,10), p=c(0,0.1,0.5,1))
-##---- Compute the kurtosis of mydist ----
+## ---- A mydist distribution ----
+mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+## ---- Compute the kurtosis of mydist ----
 kurtH(mydist) #---> 1.473242
-
 }
 \author{
 Antonio Irpino

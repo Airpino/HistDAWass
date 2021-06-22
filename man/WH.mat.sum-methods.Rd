@@ -19,13 +19,13 @@ WH.mat.sum(object1, object2)
 a \code{MatH} object,
 }
 \description{
-It sums two \code{MatH} objects, i.e. two matrices of distributions, 
-by summing the quantile functions of histograms. This sum is consistent with 
+It sums two \code{MatH} objects, i.e. two matrices of distributions,
+by summing the quantile functions of histograms. This sum is consistent with
 a set of distributions equipped with a L2 wasserstein metric.
 }
 \examples{
-# binding by row 
-M1<-BLOOD[1:5,]
-M2<-BLOOD[6:10,]
-MAT<-WH.mat.sum(M1,M2)
+# binding by row
+M1 <- BLOOD[1:5, ]
+M2 <- BLOOD[6:10, ]
+MAT <- WH.mat.sum(M1, M2)
 }

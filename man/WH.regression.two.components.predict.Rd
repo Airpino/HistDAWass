@@ -19,12 +19,13 @@ Predict distributions using the results of a regression done with \code{WH.regre
 }
 \examples{
 # do regression
- model.parameters=WH.regression.two.components(data = BLOOD,Yvar = 1, Xvars= c(2:3))
+model.parameters <- WH.regression.two.components(data = BLOOD, Yvar = 1, Xvars = c(2:3))
 # do prediction
-Predicted.BLOOD=WH.regression.two.components.predict(data = BLOOD[,2:3],parameters=model.parameters)
+Predicted.BLOOD <- WH.regression.two.components.predict(data = BLOOD[, 2:3], 
+                                                        parameters = model.parameters)
 }
 \references{
-Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach 
+Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach
 based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
-An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{http://arxiv.org/abs/1202.1436v2}
+An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{https://arxiv.org/abs/1202.1436v2}
 }

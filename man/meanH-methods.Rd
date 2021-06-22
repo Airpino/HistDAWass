@@ -20,11 +20,10 @@ Mean of a histogram (First moment of the distribution)
 }
 \examples{
 
-##---- A mydist distribution ----
-mydist<-distributionH(x=c(1,2,3,10), p=c(0,0.1,0.5,1))
-##---- Compute the mean of mydist ----
+## ---- A mydist distribution ----
+mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+## ---- Compute the mean of mydist ----
 meanH(mydist) #---> 4.4
-
 }
 \author{
 Antonio Irpino

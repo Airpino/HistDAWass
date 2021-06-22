@@ -1,5 +1,9 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# HistDAWass 1.0.6 What’s new
+
+Added the WH_WASS_MAT_DIST for computing a distance matrix
+
 # HistDAWass 1.0.5 What’s new
 
 Fixed some minor bugs. Added the names of columns and the rows in

@@ -28,39 +28,39 @@ WH.1d.PCA(
 
 \item{axisequal}{A logical value. Default TRUE, the plot have the same scale for the x and the y axes.}
 
-\item{qcut}{a number between 0.5 and 1, it is used for the plot of densities, and avoids very peaked densities. 
+\item{qcut}{a number between 0.5 and 1, it is used for the plot of densities, and avoids very peaked densities.
 Default=1, all the densities are considered.}
 
-\item{outl}{a number between 0 (default)  and 0.5. For each distribution, is the amount of mass removed from the tails 
-of the distribution. For example, if 0.1, from each distribution is cut away a left tail and a right one each containing 
+\item{outl}{a number between 0 (default)  and 0.5. For each distribution, is the amount of mass removed from the tails
+of the distribution. For example, if 0.1, from each distribution is cut away a left tail and a right one each containing
 the 0.1 of mass.}
 }
 \value{
 a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA
 }
 \description{
-The function implements a Principal components analysis of histogram variable 
+The function implements a Principal components analysis of histogram variable
 based on Wasserstein distance. It performs a centered (not standardized) PCA on a set of quantiles of a variable.
-Being a distribution a multivalued description, the analysis performs a dimensional reduction and a visualization of distributions. 
+Being a distribution a multivalued description, the analysis performs a dimensional reduction and a visualization of distributions.
 It is a 1d (one dimension) becuse it is considered just one histogram variable.
 }
 \details{
-In the framework of symbolic data analysis (SDA), distribution-valued data 
-are defined as multivalued data, where each unit is described by a distribution 
+In the framework of symbolic data analysis (SDA), distribution-valued data
+are defined as multivalued data, where each unit is described by a distribution
 (e.g., a histogram, a density, or a quantile function) of a quantitative variable.
- SDA provides different methods for analyzing multivalued data. Among them, the most relevant 
- techniques proposed for a dimensional reduction of multivalued quantitative variables is principal 
- component analysis (PCA). This paper gives a contribution in this context of analysis. 
- Starting from new association measures for distributional variables based on a peculiar metric 
+ SDA provides different methods for analyzing multivalued data. Among them, the most relevant
+ techniques proposed for a dimensional reduction of multivalued quantitative variables is principal
+ component analysis (PCA). This paper gives a contribution in this context of analysis.
+ Starting from new association measures for distributional variables based on a peculiar metric
  for distributions, the squared Wasserstein distance, a PCA approach is proposed for distribution-valued data,
   represented by quantile-variables.
 }
 \examples{
-results=WH.1d.PCA(data = BLOOD,var = 1, listaxes=c(1:2))
+results <- WH.1d.PCA(data = BLOOD, var = 1, listaxes = c(1:2))
 }
 \references{
 Verde, R.; Irpino, A.; Balzanella, A., "Dimension Reduction Techniques for Distributional Symbolic Data," Cybernetics, IEEE Transactions on , vol.PP, no.99, pp.1,1
 doi: 10.1109/TCYB.2015.2389653
 keywords: {Correlation;Covariance matrices;Distribution functions;Histograms;Measurement;Principal component analysis;Shape;Distributional data;Wasserstein distance;principal components analysis;quantiles},
-\url{http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7024099&isnumber=6352949}
+\url{https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7024099&isnumber=6352949}
 }

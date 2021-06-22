@@ -58,6 +58,8 @@ The results of the fuzzy c-means of the set of Histogram-valued data \code{x} in
 Fuzzy c-means of a dataset of histogram-valued data using different adaptive distances based on the L2 Wasserstein metric.
 }
 \examples{
-results=WH_adaptive_fcmeans(x = BLOOD,k = 2,schema=4,m = 1.5,rep = 3,simplify = TRUE,
-                           qua = 10,standardize = TRUE,init.weights='EQUAL', weight.sys='PROD')
+results <- WH_adaptive_fcmeans(
+  x = BLOOD, k = 2, schema = 4, m = 1.5, rep = 3, simplify = TRUE,
+  qua = 10, standardize = TRUE, init.weights = "EQUAL", weight.sys = "PROD"
+)
 }

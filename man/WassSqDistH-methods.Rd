@@ -21,23 +21,23 @@ WassSqDistH(object1, object2, ...)
 }
 \value{
 If \code{details=FALSE}, the function returns the squared L2 Wasserstein distance.\cr
-If \code{details=TRUE}, the function returns list containing the squared distance, its 
+If \code{details=TRUE}, the function returns list containing the squared distance, its
 decomposition in three parts (position, size and shape) and the correlation coefficient between the quantile functions.
 }
 \description{
 Computes the squared L2 Wasserstein distance between two \code{distributionH} objects.
 }
 \examples{
-##---- create two distributionH objects ----
- mydist1=distributionH(x=c(1,2,3),p=c(0, 0.4, 1))
- mydist2=distributionH(x=c(7,8,10,15),p=c(0, 0.2, 0.7, 1))
+## ---- create two distributionH objects ----
+mydist1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
+mydist2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
 # -- compute the squared L2 Waaserstein distance
-WassSqDistH(mydist1,mydist2)
+WassSqDistH(mydist1, mydist2)
 # -- compute the squared L2 Waaserstein distance with details
-WassSqDistH(mydist1,mydist2,details=TRUE)
+WassSqDistH(mydist1, mydist2, details = TRUE)
 }
 \references{
-Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets: 
+Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets:
 Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.\cr
 Irpino, A., Verde, R. (2015) \emph{Basic
 statistics for distributional symbolic variables: a new metric-based

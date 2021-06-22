@@ -27,14 +27,14 @@ be used as a tool for interpreting preditive methods (for exampe, the regression
 }
 \examples{
 ## do a regression
-pars=WH.regression.two.components(BLOOD,Yvar = 1,Xvars = c(2:3))
+pars <- WH.regression.two.components(BLOOD, Yvar = 1, Xvars = c(2:3))
 ## predict data
-PRED=WH.regression.two.components.predict(data = BLOOD[,2:3],parameters = pars)
+PRED <- WH.regression.two.components.predict(data = BLOOD[, 2:3], parameters = pars)
 ## define observed data
 \dontrun{
-OBS=BLOOD[,1]
-plotPredVsObs(PRED,OBS,"HISTO")
-plotPredVsObs(PRED,OBS,"CDF")
-plotPredVsObs(PRED,OBS,"DENS")
+OBS <- BLOOD[, 1]
+plotPredVsObs(PRED, OBS, "HISTO")
+plotPredVsObs(PRED, OBS, "CDF")
+plotPredVsObs(PRED, OBS, "DENS")
 }
 }

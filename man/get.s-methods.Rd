@@ -19,6 +19,6 @@ A numeric positive value, the standard deviation.
 This functon return the standard deviation of a \code{distributionH} object.
 }
 \examples{
-D=distributionH(x=c(1,2,3,4),p=c(0,0.2,0.6, 1))
+D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
 get.s(D) # returns the standard deviation of D
 }

@@ -28,10 +28,10 @@ WH.plot_multiple_indivs(
 
 \item{var}{An integer indicating an original histogrma variable to plot.}
 
-\item{strx}{a resizing factor for the domain of histograms (default=0.1 means 
+\item{strx}{a resizing factor for the domain of histograms (default=0.1 means
 that each distribution has a support that is one tenth of the spread of the x axis)}
 
-\item{stry}{a resizing factor for the density of histograms (default=0.1 means 
+\item{stry}{a resizing factor for the density of histograms (default=0.1 means
 that each distribution has a density that is one tenth of the spread of the y axis)}
 
 \item{HISTO}{a logical value. Default=TRUE plots histograms, FALSE plot smooth densities.}
@@ -49,16 +49,22 @@ a plot of class ggplot
 variable on a factorial palne after a Multiple factor analysis.
 }
 \examples{
-#Do a MultiplePCA on the BLOOD dataset
+# Do a MultiplePCA on the BLOOD dataset
 \dontrun{
-#' results=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3)) 
-#Plot histograms of variable 1 of BLOOD dataset on the first 
-#factorial plane showing histograms
-WH.plot_multiple_indivs(BLOOD,results,axes=c(1,2),var=1,strx=0.1,
- stry=0.1, HISTO=TRUE)
-#Plot histograms of variable 1 of BLOOD dataset on the first 
-#factorial plane showing densities
-WH.plot_multiple_indivs(BLOOD,results,axes=c(1,2),var=1,strx=0.1,
- stry=0.1, HISTO=FALSE)
- }
+#' results=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3))
+# Plot histograms of variable 1 of BLOOD dataset on the first
+# factorial plane showing histograms
+WH.plot_multiple_indivs(BLOOD, results,
+  axes = c(1, 2), var = 1, strx = 0.1,
+  stry = 0.1, HISTO = TRUE
+)
+# Plot histograms of variable 1 of BLOOD dataset on the first
+# factorial plane showing densities
+
+WH.plot_multiple_indivs(BLOOD, results,
+  axes = c(1, 2), var = 1, strx = 0.1,
+  stry = 0.1, HISTO = FALSE
+)
+}
+
 }

@@ -19,6 +19,6 @@ A numeric value
 This functon return the mean of a \code{distributionH} object.
 }
 \examples{
-D=distributionH(x=c(1,2,3,4),p=c(0,0.2,0.6, 1))
-get.m(D) #returns the mean of D
+D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
+get.m(D) # returns the mean of D
 }

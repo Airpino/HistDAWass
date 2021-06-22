@@ -15,7 +15,7 @@ HTS.exponential.smoothing(HTS, alpha = 0.9)
 a list with the results of the smoothing procedure.
 }
 \description{
-(Beta verson of) Extends theexponential smoothing of a time 
+(Beta verson of) Extends theexponential smoothing of a time
 series to a histogram time series,using L2 Wasserstein distance.
 }
 \section{Slots}{
@@ -27,7 +27,7 @@ series to a histogram time series,using L2 Wasserstein distance.
 }}
 
 \examples{
-mov.expo.smooth=HTS.exponential.smoothing(HTS=RetHTS, alpha=0.8)
+mov.expo.smooth <- HTS.exponential.smoothing(HTS = RetHTS, alpha = 0.8)
 # a show method for HTS must be implemented you can see it using
 # str(mov.expo.smooth$AveragedHTS)
 }

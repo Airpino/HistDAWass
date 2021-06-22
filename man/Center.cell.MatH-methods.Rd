@@ -16,10 +16,10 @@ Center.cell.MatH(object)
 A \code{MatH} object, having each distribution with a zero mean.
 }
 \description{
-The function transform a MatH object (i.e. a matrix of distributions), 
+The function transform a MatH object (i.e. a matrix of distributions),
 such that each distribution is shifted and has a mean equal to zero
 }
 \examples{
-CEN_BLOOD=Center.cell.MatH(BLOOD)
-get.MatH.stats(BLOOD, stat="mean")
+CEN_BLOOD <- Center.cell.MatH(BLOOD)
+get.MatH.stats(BLOOD, stat = "mean")
 }

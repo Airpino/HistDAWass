@@ -26,15 +26,16 @@ number of element in the \code{x} slot without modifing their density
 function.
 }
 \examples{
-#initialize three distributionH objects mydist1 and mydist2 
- mydist1=new("distributionH",c(1,2,3),c(0, 0.4, 1))
- mydist2=new("distributionH",c(7,8,10,15),c(0, 0.2, 0.7, 1))
- mydist3=new("distributionH",c(9,11,20),c(0, 0.8, 1))
+# initialize three distributionH objects mydist1 and mydist2
+mydist1 <- new("distributionH", c(1, 2, 3), c(0, 0.4, 1))
+mydist2 <- new("distributionH", c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
+mydist3 <- new("distributionH", c(9, 11, 20), c(0, 0.8, 1))
 # create a MatH object
 
- MyMAT=new("MatH",nrows=1,ncols=3,ListOfDist=c(mydist1,mydist2,mydist3), 1,3)
+MyMAT <- new("MatH", nrows = 1, ncols = 3, ListOfDist = c(mydist1, mydist2, mydist3), 1, 3)
 # register the two distributions
-  MATregistered=registerMH(MyMAT)
+MATregistered <- registerMH(MyMAT)
+#
 # OUTPUT the structure of MATregstered
 str(MATregistered)
 #   Formal class 'MatH' [package "HistDAWass"] with 1 slots
@@ -55,6 +56,7 @@ str(MATregistered)
 #   .. ..- attr(*, "dimnames")=List of 2
 #   .. .. ..$ : chr "I1"
 #   .. .. ..$ : chr [1:3] "X1" "X2" "X3"
+#
 }
 \references{
 Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic

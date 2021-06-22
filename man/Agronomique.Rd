@@ -4,7 +4,9 @@
 \name{Agronomique}
 \alias{Agronomique}
 \title{Agronomique data}
-\format{a \code{MatH} object, a matrix of distributions.}
+\format{
+a \code{MatH} object, a matrix of distributions.
+}
 \source{
 Rosanna Verde, Antonio Irpino, Second University of Naples; Dominique Desbois, UMR Economie
 publique, INRA-AgroParisTech, How to cope with modelling and privacy concerns? A regression model and a visualization tool for
@@ -12,7 +14,7 @@ aggregated data,  Conference of European Statistics Stakeholders,
 Rome, November, 24-25,2014
 }
 \description{
-A dataset with the distributions of marginal costs of farms in 22 France regions. It contains four 
+A dataset with the distributions of marginal costs of farms in 22 France regions. It contains four
 histogram variables: "Y_TSC" (Total costs of a farm),  "X_Wheat" (Costs for Wheat), "X_Pig" (Costs for Pigs)
 "X_Cmilk" (Costs for Cow Milk)
 }

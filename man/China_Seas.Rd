@@ -4,9 +4,11 @@
 \name{China_Seas}
 \alias{China_Seas}
 \title{A seasonal climatic dataset of China}
-\format{a \code{MatH} object, a matrix of distributions.}
+\format{
+a \code{MatH} object, a matrix of distributions.
+}
 \source{
-raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}. 
+raw data are available here: \url{https://cdiac.ess-dive.lbl.gov/ftp/tr055/}.
 Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 DOI: 10.3334/CDIAC/cli.tr055
 }
@@ -17,7 +19,7 @@ The collected variables are 56 i.e. 14 climatic variables observed for 4 seasons
   total precipitation (mm), sunshine duration (h), mean cloud amount (percentage of sky cover),
   mean relative humidity (%), snow days (days with snow cover), dominant wind direction (degrees),
    mean wind speed (m/s), dominant wind frequency (%), extreme maximum temperature (C),
-   extreme minimum temperature. 
+   extreme minimum temperature.
 Use the command \code{ get.MatH.main.info(China_Seas)} for rapid info.
 }
 \author{

@@ -4,7 +4,9 @@
 \name{RetHTS}
 \alias{RetHTS}
 \title{A histogram-valued dataset of returns}
-\format{a \code{MatH} object, a matrix of distributions.}
+\format{
+a \code{MatH} object, a matrix of distributions.
+}
 \description{
 A histogram-valued dataset of returns of dollar vs yen change rates
 }

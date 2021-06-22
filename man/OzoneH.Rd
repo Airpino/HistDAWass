@@ -4,7 +4,9 @@
 \name{OzoneH}
 \alias{OzoneH}
 \title{Complete Ozone dataset for Histogram data analysis}
-\format{a \code{MatH} istance, 1 row per station.}
+\format{
+a \code{MatH} istance, 1 row per station.
+}
 \source{
 http://java.epa.gov/castnet/epa_jsp/prepackageddata.jsp
 ftp://ftp.epa.gov/castnet/data/metdata.zip

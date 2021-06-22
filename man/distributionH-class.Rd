@@ -50,8 +50,8 @@ Class \code{distributionH} defines a histogram object
 }
 
 \examples{
- #---- initialize a distributionH object mydist
-# from a simple histogram 
+#---- initialize a distributionH object mydist
+# from a simple histogram
 # ----------------------------
 # | Bins    |  Prob  | cdf   |
 # ----------------------------
@@ -60,7 +60,7 @@ Class \code{distributionH} defines a histogram object
 # ----------------------------
 # | Tot.    |  1.0   | -     |
 # ----------------------------
-mydist=new("distributionH",c(1,2,3),c(0, 0.4, 1))
+mydist <- new("distributionH", c(1, 2, 3), c(0, 0.4, 1))
 str(mydist)
 # OUTPUT
 # Formal class 'distributionH' [package "HistDAWass"] with 4 slots
@@ -69,7 +69,7 @@ str(mydist)
 #   ..@ m: num 2.1 the mean
 #   ..@ s: num 0.569 the standard deviation
 # or using
-mydist=distributionH(x=c(1,2,3),p=c(0,0.4, 1))
+mydist <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
 }
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic

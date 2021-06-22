@@ -22,12 +22,12 @@ a \code{distributionH} object, i.e. a histogram
 }
 \description{
 Compute a histogram that is the weighted mean of the set of histograms contained
-in a \code{MatH} object, i.e. a matrix of histograms, consistent with 
+in a \code{MatH} object, i.e. a matrix of histograms, consistent with
 a set of distributions equipped with a L2 wasserstein metric.
 }
 \examples{
-hmean<-WH.vec.mean(BLOOD)
+hmean <- WH.vec.mean(BLOOD)
 # generate a set of random weights
-RN<-runif(get.MatH.nrows(BLOOD)*get.MatH.ncols(BLOOD))
-hmean<-WH.vec.mean(BLOOD,w=RN)
+RN <- runif(get.MatH.nrows(BLOOD) * get.MatH.ncols(BLOOD))
+hmean <- WH.vec.mean(BLOOD, w = RN)
 }

@@ -11,8 +11,8 @@
 \arguments{
 \item{x}{a \code{distributionH} object}
 
-\item{type}{(optional) a string describing the type of plot, default="HISTO".\cr Other allowed types are 
-\cr"CDF"=Cumulative distribution function, \cr"QF"= quantile function, \cr"DENS"=a density approximation, 
+\item{type}{(optional) a string describing the type of plot, default="HISTO".\cr Other allowed types are
+\cr"CDF"=Cumulative distribution function, \cr"QF"= quantile function, \cr"DENS"=a density approximation,
 \cr"HBOXPLOT"=horizontal boxplot, \cr"VBOXPLOT"= vertical boxplot,}
 
 \item{col}{(optional) a string the color of the plot, default="green".}
@@ -20,18 +20,18 @@
 \item{border}{(optional) a string the color of the border of the plot, default="black".}
 }
 \description{
-A plot function for a \code{distributionH} object. The function returns a representation 
+A plot function for a \code{distributionH} object. The function returns a representation
 of the histogram.
 }
 \examples{
-##---- initialize a distributionH
- mydist<-distributionH(x=c(7,8,10,15),p=c(0, 0.2, 0.7, 1))
- # show the histogram
- plot(mydist) #plots mydist
- plot(mydist, type="HISTO", col="red", border="blue") #plots mydist
- plot(mydist, type="DENS", col="red", border="blue") #plots a density approximation for mydist
- plot(mydist, type="HBOXPLOT") #plots a horizontal boxplot for mydist
- plot(mydist, type="VBOXPLOT") #plots a vertical boxplot for mydist
- plot(mydist, type="CDF") #plots the cumulative distribution function of mydist
- plot(mydist, type="QF") #plots the quantile function of mydist
+## ---- initialize a distributionH
+mydist <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
+# show the histogram
+plot(mydist) # plots mydist
+plot(mydist, type = "HISTO", col = "red", border = "blue") # plots mydist
+plot(mydist, type = "DENS", col = "red", border = "blue") # plots a density approximation for mydist
+plot(mydist, type = "HBOXPLOT") # plots a horizontal boxplot for mydist
+plot(mydist, type = "VBOXPLOT") # plots a vertical boxplot for mydist
+plot(mydist, type = "CDF") # plots the cumulative distribution function of mydist
+plot(mydist, type = "QF") # plots the quantile function of mydist
 }

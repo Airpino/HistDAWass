@@ -4,9 +4,11 @@
 \name{stations_coordinates}
 \alias{stations_coordinates}
 \title{Stations coordinates of China_Month and China_Seas datasets}
-\format{a data.frame}
+\format{
+a data.frame
+}
 \source{
-raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}. 
+raw data are available here: \url{https://cdiac.ess-dive.lbl.gov/ftp/tr055/}.
 Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 DOI: 10.3334/CDIAC/cli.tr055
 }

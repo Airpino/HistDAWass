@@ -19,6 +19,6 @@ A matrix: the two columns contains the bounds of the histogram the third contain
 This functon return a data.frame describing the histogram of a \code{distributionH} object.
 }
 \examples{
-D=distributionH(x=c(1,2,3,4),p=c(0,0.2,0.6, 1))
-get.histo(D) #returns the histogram representation of D by a data.frame
+D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
+get.histo(D) # returns the histogram representation of D by a data.frame
 }

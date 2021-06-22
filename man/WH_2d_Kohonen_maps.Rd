@@ -22,7 +22,7 @@ WH_2d_Kohonen_maps(
 \item{x}{A MatH object (a matrix of distributionH).}
 
 \item{net}{a list describing the topology of the net \code{list(xdim=number of rows,
-ydim=numbers of columns,topo=c('rectangular' or 'hexagonal'))}, see \code{somgrid} sintax in package\pkg{class} 
+ydim=numbers of columns,topo=c('rectangular' or 'hexagonal'))}, see \code{somgrid} sintax in package\pkg{class}
 default \code{net=list(xdim=4,ydim=3,topo=c('rectangular'))}}
 
 \item{kern.param}{(default =2) the kernel parameter for the RBF kernel used in the algorithm}
@@ -39,10 +39,10 @@ default \code{net=list(xdim=4,ydim=3,topo=c('rectangular'))}}
 
 \item{qua}{if \code{simplify=TRUE} number of equally spaced quantiles for recodify the histograms (default=10)}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, 
+\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
 using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
 
-\item{verbose}{a logical parameter (default=FALSE). If TRUE details of 
+\item{verbose}{a logical parameter (default=FALSE). If TRUE details of
 computation are shown during the execution.}
 }
 \value{
@@ -54,20 +54,20 @@ The function implements a Batch Kohonen self-organizing 2d maps algorithm for  h
 \details{
 An extension of Batch Self Organised Map (BSOM) is here proposed for  histogram data.
  These kind of data have been defined in the context of symbolic data analysis.
-  The BSOM cost function is then based on a distance 
+  The BSOM cost function is then based on a distance
   function: the L2 Wasserstein distance. This distance has been widely proposed in several
-   techniques of analysis (clustering, regression) when input data are expressed by distributions 
+   techniques of analysis (clustering, regression) when input data are expressed by distributions
    (empirical by histograms or theoretical by probability distributions).
-   The peculiarity of such distance is to be an Euclidean distance between quantile functions so 
-   that all the properties proved for L2 distances are verified again. An adaptative versions of 
-   BSOM is also introduced considering an automatic system of weights in the cost function in 
-   order to take into account the different effect of the several variables in the Self-Organised Map 
+   The peculiarity of such distance is to be an Euclidean distance between quantile functions so
+   that all the properties proved for L2 distances are verified again. An adaptative versions of
+   BSOM is also introduced considering an automatic system of weights in the cost function in
+   order to take into account the different effect of the several variables in the Self-Organised Map
    grid.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{repetitions}etitions, i.e. 
+\item{\code{solution}}{A list.Returns the best solution among the \code{repetitions}etitions, i.e.
 the one having the minimum sum of squares criterion.}
 
 \item{\code{solution$MAP}}{The map topology.}
@@ -78,20 +78,22 @@ the one having the minimum sum of squares criterion.}
 
 \item{\code{solution$proto}}{A \code{MatH} object with the description of centers.}
 
-\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation 
+\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation
 from the centers) value at the end of the run.}
 
-\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
+\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model.
 (The higher the better)}
 }}
 
 \examples{
 \dontrun{
-results=WH_2d_Kohonen_maps(x = BLOOD,
-                           net=list(xdim=2,ydim=3,topo=c('rectangular')), 
-                           repetitions = 2,simplify = TRUE,
-                           qua = 10,standardize = TRUE)
-                                   }
+results <- WH_2d_Kohonen_maps(
+  x = BLOOD,
+  net = list(xdim = 2, ydim = 3, topo = c("rectangular")),
+  repetitions = 2, simplify = TRUE,
+  qua = 10, standardize = TRUE
+)
+}
 }
 \references{
 Irpino A, Verde R, De Carvalho FAT (2012). Batch self organizing maps for interval and histogram data.

@@ -20,11 +20,10 @@ Skewness of a histogram (using the third standardized moment)
 }
 \examples{
 
-##---- A mydist distribution ----
-mydist<-distributionH(x=c(1,2,3,10), p=c(0,0.1,0.5,1))
-##---- Compute the skewness of mydist ----
+## ---- A mydist distribution ----
+mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+## ---- Compute the skewness of mydist ----
 skewH(mydist) #---> -1.186017
-
 }
 \author{
 Antonio Irpino

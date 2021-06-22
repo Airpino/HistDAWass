@@ -4,9 +4,11 @@
 \name{China_Month}
 \alias{China_Month}
 \title{A monthly climatic dataset of China}
-\format{a \code{MatH} object, a matrix of distributions.}
+\format{
+a \code{MatH} object, a matrix of distributions.
+}
 \source{
-raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}
+raw data are available here: \url{https://cdiac.ess-dive.lbl.gov/ftp/tr055/}
 }
 \description{
 A dataset with the distributions of some climatic variables collected for each month in 60 stations of China.
@@ -15,7 +17,7 @@ The collected variables are 168 i.e. 14 climatic variables observed for 12 month
   total precipitation (mm), sunshine duration (h), mean cloud amount (percentage of sky cover),
   mean relative humidity (%), snow days (days with snow cover), dominant wind direction (degrees),
    mean wind speed (m/s), dominant wind frequency (%), extreme maximum temperature (C),
-   extreme minimum temperature. 
+   extreme minimum temperature.
 Use the command \code{ get.MatH.main.info(China_Month)} for rapid info.
 }
 \author{

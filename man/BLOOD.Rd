@@ -4,7 +4,9 @@
 \name{BLOOD}
 \alias{BLOOD}
 \title{Blood dataset for Histogram data analysis}
-\format{a \code{MatH} istance, 1 row per group.}
+\format{
+a \code{MatH} istance, 1 row per group.
+}
 \source{
 Billard L. and Diday E. (2006). Symbolic Data Analysis: Conceptual
 Statistics and Data Mining, Wiley.

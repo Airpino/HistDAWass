@@ -38,14 +38,14 @@ WH_adaptive.kmeans(
 
 \item{qua}{An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, 
+\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
 using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
 
 \item{weight.sys}{a string. Weights may add to one ('SUM') or their product is equal to 1 ('PROD', default).}
 
 \item{theta}{a number. A parameter if \code{weight.sys='SUM'}, default is 2.}
 
-\item{init.weights}{a string how to initialize weights: 'EQUAL' (default), all weights are the same, 
+\item{init.weights}{a string how to initialize weights: 'EQUAL' (default), all weights are the same,
 'RANDOM', weights are initalised at random.}
 
 \item{verbose}{A logic value (default is FALSE). If TRUE, details on computations are shown.}
@@ -59,7 +59,7 @@ The function implements the k-means using adaptive distance for a set of histogr
 \section{Slots}{
 
 \describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e. 
+\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e.
 the one having the minimum sum of squares criterion.}
 
 \item{\code{solution$IDX}}{A vector. The clusters at which the objects are assigned.}
@@ -68,18 +68,19 @@ the one having the minimum sum of squares criterion.}
 
 \item{\code{solution$centers}}{A \code{MatH} object with the description of centers.}
 
-\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation 
+\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation
 from the centers) value at the end of the run.}
 
-\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
+\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model.
 (The higher the better)}
 }}
 
 \examples{
-results=WH_adaptive.kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
+results <- WH_adaptive.kmeans(x = BLOOD, k = 2, rep = 10, 
+            simplify = TRUE, qua = 10, standardize = TRUE)
 }
 \references{
-Irpino A., Rosanna V., De Carvalho F.A.T. (2014). Dynamic clustering of histogram data 
-based on adaptive squared Wasserstein distances. EXPERT SYSTEMS WITH APPLICATIONS, vol. 41, p. 3351-3366, 
+Irpino A., Rosanna V., De Carvalho F.A.T. (2014). Dynamic clustering of histogram data
+based on adaptive squared Wasserstein distances. EXPERT SYSTEMS WITH APPLICATIONS, vol. 41, p. 3351-3366,
 ISSN: 0957-4174, doi: http://dx.doi.org/10.1016/j.eswa.2013.12.001
 }

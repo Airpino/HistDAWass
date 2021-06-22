@@ -17,8 +17,8 @@ WH.var.covar2(object1, object2, ...)
 
 \item{...}{some optional parameters}
 
-\item{w}{it is possible to add a vector of weights (positive numbers) 
-having the same size of the rows of the \code{MatH object}, 
+\item{w}{it is possible to add a vector of weights (positive numbers)
+having the same size of the rows of the \code{MatH object},
 default = equal weight for each row}
 }
 \value{
@@ -26,14 +26,14 @@ a rectangular \code{matrix} with the weighted sum of squares
 }
 \description{
 Compute the covariance matrix using two  \code{MatH} objects having the same number of rows,
- It returns a rectangular a matrix of numbers, consistent with 
+ It returns a rectangular a matrix of numbers, consistent with
 a set of distributions equipped with a L2 wasserstein metric.
 }
 \examples{
-M1<-BLOOD[,1]
-M2<-BLOOD[,2:3]
-WH.var.covar2(M1,M2)
+M1 <- BLOOD[, 1]
+M2 <- BLOOD[, 2:3]
+WH.var.covar2(M1, M2)
 # generate a set of random weights
-RN<-runif(get.MatH.nrows(BLOOD))
-WH.var.covar2(M1,M2,w=RN)
+RN <- runif(get.MatH.nrows(BLOOD))
+WH.var.covar2(M1, M2, w = RN)
 }

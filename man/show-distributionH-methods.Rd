@@ -12,12 +12,12 @@
 \item{object}{a \code{distributionH} object}
 }
 \description{
-An overriding show function for a \code{distributionH} object. The function returns a representation 
+An overriding show function for a \code{distributionH} object. The function returns a representation
 of the histogram, if the number of bins is high the central part of the histogram is truncated.
 }
 \examples{
-##---- initialize a distributionH
- mydist<-distributionH(x=c(7,8,10,15),p=c(0, 0.2, 0.7, 1))
- # show the histogram
- mydist
+## ---- initialize a distributionH
+mydist <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
+# show the histogram
+mydist
 }

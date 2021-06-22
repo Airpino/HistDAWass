@@ -19,14 +19,15 @@ It computes three goodness of fit indices using the results and the predictions 
 }
 \examples{
 # do regression
- model.parameters=WH.regression.two.components(data = BLOOD,Yvar = 1, Xvars= c(2:3))
- #' # do prediction
-Predicted.BLOOD=WH.regression.two.components.predict(data = BLOOD[,2:3],parameters=model.parameters)
+model.parameters <- WH.regression.two.components(data = BLOOD, Yvar = 1, Xvars = c(2:3))
+#' # do prediction
+Predicted.BLOOD <- WH.regression.two.components.predict(data = BLOOD[, 2:3], 
+                                              parameters = model.parameters)
 # compute GOF indices
-GOF.indices=WH.regression.GOF(observed=BLOOD[,1], predicted=Predicted.BLOOD)
+GOF.indices <- WH.regression.GOF(observed = BLOOD[, 1], predicted = Predicted.BLOOD)
 }
 \references{
-Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach 
+Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach
 based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
-An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{http://arxiv.org/abs/1202.1436v2}
+An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{https://arxiv.org/abs/1202.1436v2}
 }

@@ -12,7 +12,7 @@
 \item{object}{a \code{MatH} object}
 }
 \description{
-An overriding show method for a \code{MatH} object. The method returns a representation 
+An overriding show method for a \code{MatH} object. The method returns a representation
 of the matrix using the mean and the standard deviation for each histogram.
 }
 \examples{

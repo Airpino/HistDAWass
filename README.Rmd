@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ##(Histogram-valued Data analysis using Wasserstein metric)
 
 In this document we describe the main features of the HistDAWass package.
-The name is the acronym for Histogram-valued Data analysis using Wasserstein metric. The implemented classes and functions are related to the anlysis of data tables containing histograms in each cell instead of the classical numeric values.
+The name is the acronym for Histogram-valued Data analysis using Wasserstein metric. The implemented classes and functions are related to the analysis of data tables containing histograms in each cell instead of the classical numeric values.
 
 
 In this document we describe the main features of the HistDAWass package. The name is the acronym for Histogram-valued Data analysis using Wasserstein metric. The implemented classes and functions are related to the anlysis of data tables containing histograms in each cell instead of the classical numeric values.

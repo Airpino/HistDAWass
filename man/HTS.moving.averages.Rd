@@ -17,7 +17,7 @@ HTS.moving.averages(HTS, k = 3, weights = rep(1, k))
 a list with the results of the smoothing procedure.
 }
 \description{
-(Beta verson of) Extends the moving average smoothing of a time 
+(Beta verson of) Extends the moving average smoothing of a time
 series to a histogram time series, using L2 Wasserstein distance.
 }
 \section{Slots}{
@@ -31,7 +31,7 @@ series to a histogram time series, using L2 Wasserstein distance.
 }}
 
 \examples{
-mov.av.smoothed=HTS.moving.averages(HTS=RetHTS, k=5)
+mov.av.smoothed <- HTS.moving.averages(HTS = RetHTS, k = 5)
 # a show method for HTS must be implemented you can see it using
 # str(mov.av.smoothed$AveragedHTS)
 }

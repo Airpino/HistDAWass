@@ -26,6 +26,6 @@ A \code{MatH} object.
 Assign a histogram data to the r-th row and the c-th column of a matrix of histograms.
 }
 \examples{
-mydist=distributionH(x=c(0,1,2,3,4), p=c(0,0.1,0.6,0.9,1))
-MAT=set.cell.MatH(mydist,BLOOD, r=1,c=1)
+mydist <- distributionH(x = c(0, 1, 2, 3, 4), p = c(0, 0.1, 0.6, 0.9, 1))
+MAT <- set.cell.MatH(mydist, BLOOD, r = 1, c = 1)
 }

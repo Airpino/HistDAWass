@@ -27,7 +27,7 @@ distribution is observed along a period and not on a timestamp)}
 
 \item{x}{a vector of increasing values, the domain of the distribution (the same of \code{distributionH} object)}
 
-\item{p}{a vector of increasing values from 0 to 1, 
+\item{p}{a vector of increasing values from 0 to 1,
 the CDF of the distribution (the same of \code{distributionH} object)}
 
 \item{m}{a number, the mean of the distribution (the same of \code{distributionH} object)}

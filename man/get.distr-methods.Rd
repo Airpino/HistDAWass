@@ -19,6 +19,6 @@ A data frame: the first column contains the domain the second the CDF values.
 This functon return the cumulative distribution function of a \code{distributionH} object.
 }
 \examples{
-D=distributionH(x=c(1,2,3,4),p=c(0,0.2,0.6, 1))
-get.distr(D) #a data.frame describing the CDF of D
+D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
+get.distr(D) # a data.frame describing the CDF of D
 }

@@ -17,19 +17,19 @@ data2hist(
 \item{data}{a set of numeric values.}
 
 \item{algo}{(optional) a string. Default is "histogram", i.e. the function "histogram"
-defined in the \code{\link[histogram]{histogram}}  package. \cr If "base" 
+defined in the \code{\link[histogram]{histogram}}  package. \cr If "base"
 the \code{\link[graphics]{hist}} function is used. \cr
 "FixedQuantiles" computes the histogram using as breaks a fixed number of quantiles.\cr
 "ManualBreaks" computes a histogram where braks are provided as a vector of values.\cr
 "PolyLine" computes a histogram using a piecewise linear approximation of the empirical
-cumulative distribution function using the "Ramer-Douglas-Peucker algorithm", 
- \url{http://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm}. 
+cumulative distribution function using the "Ramer-Douglas-Peucker algorithm",
+ \url{https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm}.
  An \code{epsilon} parameter is required.
  The data are scaled in order to have a standard deviation equal to one.}
 
-\item{type}{(optional) a string. Default is "combined" and generates 
-a histogram having regularly spaced breaks (i.e., equi-width bins) and 
-irregularly spaced ones. The choice is done accordingly with the penalization method described in 
+\item{type}{(optional) a string. Default is "combined" and generates
+a histogram having regularly spaced breaks (i.e., equi-width bins) and
+irregularly spaced ones. The choice is done accordingly with the penalization method described in
 \code{\link[histogram]{histogram}}. "regular" returns equi-width binned histograms, "irregular" returns
 a histogram without equi-width histograms.}
 
@@ -46,8 +46,8 @@ A \code{distributionH} object, i.e. a distribution.
 From real data to distributionH.
 }
 \examples{
-data=rnorm(n = 1000,mean = 2,sd = 3)
-mydist=data2hist(data)
+data <- rnorm(n = 1000, mean = 2, sd = 3)
+mydist <- data2hist(data)
 plot(mydist)
 }
 \seealso{

@@ -23,11 +23,10 @@ for numerical reasons.
 }
 \examples{
 
-##---- A mydist distribution with an empty bin i.e. two consecutive values of p are equal----
-mydist<-distributionH(x=c(1,2,3,10), p=c(0,0.5,0.5,1))
-##---- Checks for empty byns and returns the newdist object without empty bins ----
-newdist<-checkEmptyBins(mydist)
-
+## ---- A mydist distribution with an empty bin i.e. two consecutive values of p are equal----
+mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.5, 0.5, 1))
+## ---- Checks for empty byns and returns the newdist object without empty bins ----
+newdist <- checkEmptyBins(mydist)
 }
 \author{
 Antonio Irpino

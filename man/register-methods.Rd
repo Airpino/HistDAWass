@@ -20,28 +20,29 @@ The two \code{distributionH} objects in input sharing the same cdf (the \code{p}
 slot)
 }
 \description{
-Given two \code{distributionH} objects, it returns two equivalent distributions such that 
+Given two \code{distributionH} objects, it returns two equivalent distributions such that
 they share the same cdf values. This function is useful for computing basic statistics.
 }
 \examples{
 
-##---- initialize two distributionH objects mydist1 and mydist2
- mydist1=distributionH(c(1,2,3),c(0, 0.4, 1))
- mydist2=distributionH(c(7,8,10,15),c(0, 0.2, 0.7, 1))
- ## register the two distributions
- regDist=register(mydist1,mydist2)
- 
+## ---- initialize two distributionH objects mydist1 and mydist2
+mydist1 <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
+mydist2 <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
+## register the two distributions
+regDist <- register(mydist1, mydist2)
+
 ## OUTPUT:
 ## regDist$[[1]]
 ## An object of class "distributionH"
 ## Slot "x": [1] 1.0 1.5 2.0 2.5 3.0
 ## Slot "p": [1] 0.0 0.2 0.4 0.7 1.0
 ## ...
-## regDist$[[2]] 
+## regDist$[[2]]
 ## An object of class "distributionH"
 ## Slot "x": [1] 7.0 8.0 8.8 10.0 15.0
 ## Slot "p": [1] 0.0 0.2 0.4  0.7  1.0
 ## ...
+# The REGISTER function ----
 }
 \references{
 Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic

@@ -504,3 +504,38 @@ WH_adaptive.kmeans <- function(x, k,
   return(best.solution)
 }
 
+# L2  Wasserstein distance matrix----
+#' L2  Wasserstein distance matrix
+#' @description The function extracts the L2 Wasserstein distance matrix from a MatH object.
+#' @param x A MatH object (a matrix of distributionH).
+#' @param simplify A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.
+#' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
+#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
+#' using the Wasserstein based standard deviation. Use if one wants to have variables with std equal to one.
+#' @return A matrix of squared L2 distances.
+#' @references Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering
+#' of histogram symbolic data. In: Batanjeli et al. Data Science and Classification, IFCS 2006. p. 185-192,
+#'  BERLIN:Springer, ISBN: 3-540-34415-2
+#' @examples
+#' DMAT <- WH_MAT_DIST(x = BLOOD, simplify = TRUE)
+#' @importFrom stats quantile
+#' @export
+WH_MAT_DIST<- function(x,
+                      simplify = FALSE,
+                      qua = 10,
+                      standardize = FALSE) {
+  ind <- nrow(x@M)
+  vars <- ncol(x@M)
+  
+  ## we homogeneize data for speeding up the code if required
+  tmp <- Prepare(x, simplify, qua, standardize)
+  MM <- tmp$MM
+  x <- tmp$x
+  
+  ## compute distance matrix
+  d <- sqrt(c_Fast_D_Mat(MM))
+  
+  rownames(d) <- rownames(x@M)
+  colnames(d) <- rownames(x@M)
+  return(d)
+}

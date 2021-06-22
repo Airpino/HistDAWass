@@ -26,6 +26,6 @@ A \code{matH} object
 This method overrides the "[" operator for a  \code{matH} object.
 }
 \examples{
-D=BLOOD #the BLOOD dataset
-SUB_D=BLOOD[c(1,2,5),c(1,2)]
+D <- BLOOD # the BLOOD dataset
+SUB_D <- BLOOD[c(1, 2, 5), c(1, 2)]
 }

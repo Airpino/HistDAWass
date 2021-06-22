@@ -20,14 +20,14 @@ WH_hclust(
 
 \item{qua}{An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, 
+\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
 using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
 
 \item{distance}{A string default "WDIST" the L2 Wasserstein distance (other distances will be implemented)}
 
 \item{method}{A string, default="complete", is the the agglomeration method to be used.
 This should be (an unambiguous abbreviation of) one of "\code{ward.D}", "\code{ward.D2}",
- "\code{single}", "\code{complete}", "\code{average}" (= UPGMA), "\code{mcquitty}" 
+ "\code{single}", "\code{complete}", "\code{average}" (= UPGMA), "\code{mcquitty}"
  (= WPGMA), "\code{median}" (= WPGMC) or "\code{centroid}" (= UPGMC).}
 }
 \value{
@@ -35,17 +35,17 @@ An object of class hclust which describes the tree produced by
  the clustering process.
 }
 \description{
-The function implements a Hierarchical clustering 
+The function implements a Hierarchical clustering
  for a set of histogram-valued data, based on the L2 Wassertein distance.
  Extends the \code{hclust} function of the \pkg{stat} package.
 }
 \examples{
-results=WH_hclust(x = BLOOD,simplify = TRUE, method="complete")
+results <- WH_hclust(x = BLOOD, simplify = TRUE, method = "complete")
 plot(results) # it plots the dendrogram
-cutree(results,k = 5) # it returns the labels for 5 clusters
+cutree(results, k = 5) # it returns the labels for 5 clusters
 }
 \references{
-Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering 
+Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering
 of histogram symbolic data. In: Batanjeli et al. Data Science and Classification, IFCS 2006. p. 185-192,
  BERLIN:Springer, ISBN: 3-540-34415-2
 }

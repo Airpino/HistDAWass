@@ -14,23 +14,23 @@ WH.var.covar(object, ...)
 
 \item{...}{some optional parameters}
 
-\item{w}{it is possible to add a vector of weights (positive numbers) 
-having the same size of the rows of the \code{MatH object}, 
+\item{w}{it is possible to add a vector of weights (positive numbers)
+having the same size of the rows of the \code{MatH object},
 default = equal weight for each row}
 }
 \value{
 a squared \code{matrix} with the (weighted) variance-covariance values
 }
 \description{
-Compute the variance-covariance matrix of a \code{MatH} object, i.e. 
-a matrix of values consistent with 
+Compute the variance-covariance matrix of a \code{MatH} object, i.e.
+a matrix of values consistent with
 a set of distributions equipped with a L2 wasserstein metric.
 }
 \examples{
 WH.var.covar(BLOOD)
 # generate a set of random weights
-RN<-runif(get.MatH.nrows(BLOOD))
-WH.var.covar(BLOOD,w=RN)
+RN <- runif(get.MatH.nrows(BLOOD))
+WH.var.covar(BLOOD, w = RN)
 }
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic

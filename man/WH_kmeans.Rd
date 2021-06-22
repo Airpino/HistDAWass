@@ -25,7 +25,7 @@ WH_kmeans(
 
 \item{qua}{An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, 
+\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
 using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
 
 \item{verbose}{A logic value (default is FALSE). If TRUE, details on computations are shown.}
@@ -39,7 +39,7 @@ The function implements the k-means for a set of histogram-valued data.
 \section{Slots}{
 
 \describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e. 
+\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e.
 the one having the minimum sum of squares criterion.}
 
 \item{\code{solution$IDX}}{A vector. The clusters at which the objects are assigned.}
@@ -48,19 +48,21 @@ the one having the minimum sum of squares criterion.}
 
 \item{\code{solution$centers}}{A \code{MatH} object with the description of centers.}
 
-\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation 
+\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation
 from the centers) value at the end of the run.}
 
-\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
+\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model.
 (The higher the better)}
 }}
 
 \examples{
-results=WH_kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,
-qua = 10,standardize = TRUE,verbose=TRUE)
+results <- WH_kmeans(
+  x = BLOOD, k = 2, rep = 10, simplify = TRUE,
+  qua = 10, standardize = TRUE, verbose = TRUE
+)
 }
 \references{
-Irpino A., Verde R., Lechevallier Y. (2006). Dynamic clustering of histograms using Wasserstein 
-metric. In: Rizzi A., Vichi M.. COMPSTAT 2006 - Advances in computational statistics. p. 869-876, 
+Irpino A., Verde R., Lechevallier Y. (2006). Dynamic clustering of histograms using Wasserstein
+metric. In: Rizzi A., Vichi M.. COMPSTAT 2006 - Advances in computational statistics. p. 869-876,
 Heidelberg:Physica-Verlag
 }

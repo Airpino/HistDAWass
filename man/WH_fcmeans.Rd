@@ -30,7 +30,7 @@ The function implements the fuzzy c-means for a set of histogram-valued data.
 \section{Slots}{
 
 \describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e. 
+\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e.
 the one having the minimum sum of squares deviation.}
 
 \item{\code{solution$membership}}{A matrix. The membership degree of each unit to each cluster.}
@@ -39,13 +39,14 @@ the one having the minimum sum of squares deviation.}
 
 \item{\code{solution$cardinality}}{A vector. The cardinality of each final cluster (after the crisp assignement).}
 
-\item{\code{solution$Crit}}{A number. The criterion (Sum of square deviation 
+\item{\code{solution$Crit}}{A number. The criterion (Sum of square deviation
 from the prototypes) value at the end of the run.}
 
-\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
+\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model.
 (The higher the better)}
 }}
 
 \examples{
-results=WH_fcmeans(x = BLOOD,k = 2,m = 1.5,rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
+results <- WH_fcmeans(x = BLOOD, k = 2, m = 1.5, rep = 10, 
+                      simplify = TRUE, qua = 10, standardize = TRUE)
 }

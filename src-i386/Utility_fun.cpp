@@ -2214,7 +2214,7 @@ List c_Wass_Q_dist_2P(S4 o1, S4 o2){
   
   
   double dm2,ditot,cp;
-  
+   
   dm2=(m1-m2)*(m1-m2);
   cp=c_dotpW(o1,o2);
   
@@ -2225,3 +2225,4 @@ List c_Wass_Q_dist_2P(S4 o1, S4 o2){
 
   return resu;
 }
+

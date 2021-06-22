@@ -18,7 +18,7 @@ plot_errors(PRED, OBS, type = "HISTO_QUA", np = 200)
 \item{np}{number of points considered for density  or quantile computation (default=200).}
 }
 \value{
-A plot with functions of differences between observed and predicted histograms, and a 
+A plot with functions of differences between observed and predicted histograms, and a
 Root Mean Squared value computing by using the L2 Wasserstein distance.
 }
 \description{
@@ -28,12 +28,12 @@ be used as a tool for interpreting preditive methods (for exampe, the regression
 }
 \examples{
 ## do a regression
-pars=WH.regression.two.components(BLOOD,Yvar = 1,Xvars = c(2:3))
+pars <- WH.regression.two.components(BLOOD, Yvar = 1, Xvars = c(2:3))
 ## predict data
-PRED=WH.regression.two.components.predict(data = BLOOD[,2:3],parameters = pars)
+PRED <- WH.regression.two.components.predict(data = BLOOD[, 2:3], parameters = pars)
 ## define observed data
-OBS=BLOOD[,1]
-plot_errors(PRED,OBS,"HISTO_QUA")
-plot_errors(PRED,OBS,"HISTO_DEN")
-plot_errors(PRED,OBS,"DENS_KDE")
+OBS <- BLOOD[, 1]
+plot_errors(PRED, OBS, "HISTO_QUA")
+plot_errors(PRED, OBS, "HISTO_DEN")
+plot_errors(PRED, OBS, "DENS_KDE")
 }

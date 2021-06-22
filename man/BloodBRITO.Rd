@@ -4,7 +4,9 @@
 \name{BloodBRITO}
 \alias{BloodBRITO}
 \title{Blood dataset from Brito P. for Histogram data analysis}
-\format{a \code{MatH} istance, 1 row per patient.}
+\format{
+a \code{MatH} istance, 1 row per patient.
+}
 \source{
 Dias, S. and Brito P. Distribution and Symmetric Distribution
 Regression Model for Histogram-Valued Variables, ArXiv, arXiv:1303.6199

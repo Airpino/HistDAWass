@@ -14,7 +14,7 @@ WH.vec.sum(object, ...)
 
 \item{...}{optional arguments}
 
-\item{w}{it is possible to add a vector of weights (positive numbers) having the same size of the \code{MatH object}, 
+\item{w}{it is possible to add a vector of weights (positive numbers) having the same size of the \code{MatH object},
 default = equal weights for all cells}
 }
 \value{
@@ -22,12 +22,13 @@ a \code{distributionH} object, i.e. a histogram
 }
 \description{
 Compute a histogram that is the weighted sum of the set of histograms contained
-in a \code{MatH} object, i.e. a matrix of histograms, consistent with 
+in a \code{MatH} object, i.e. a matrix of histograms, consistent with
 a set of distributions equipped with a L2 wasserstein metric.
 }
 \examples{
-hsum<-WH.vec.sum(BLOOD)
+hsum <- WH.vec.sum(BLOOD)
 # generate a set of random weights
-RN<-runif(get.MatH.nrows(BLOOD)*get.MatH.ncols(BLOOD))
-hsum<-WH.vec.sum(BLOOD,w=RN)
+RN <- runif(get.MatH.nrows(BLOOD) * get.MatH.ncols(BLOOD))
+hsum <- WH.vec.sum(BLOOD, w = RN)
+### SUM of distributions ----
 }

@@ -23,14 +23,14 @@ Other allowed types are \cr
 \item{angL}{(optional) angle of labels of rows (DEFAULT=330).}
 }
 \description{
-An overloading plot function for a \code{MatH} object. The method returns a graphical representation 
+An overloading plot function for a \code{MatH} object. The method returns a graphical representation
 of the matrix of histograms.
 }
 \examples{
-plot(BLOOD) #plots BLOOD dataset
+plot(BLOOD) # plots BLOOD dataset
 \dontrun{
-plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
-plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
-plot(BLOOD, type="BOXPLOT") #plots a  boxplots
+plot(BLOOD, type = "HISTO", border = "blue") # plots a matrix of histograms
+plot(BLOOD, type = "DENS", border = "blue") # plots a matrix of densities
+plot(BLOOD, type = "BOXPLOT") # plots a  boxplots
 }
 }

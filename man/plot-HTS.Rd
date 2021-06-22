@@ -19,19 +19,19 @@ Other allowed types are \cr
 
 \item{border}{(optional) a string the color of the border of the plot, default="black".}
 
-\item{maxno.perplot}{An integer (DEFAULT=30). Maximum number of timestamps per row. 
+\item{maxno.perplot}{An integer (DEFAULT=30). Maximum number of timestamps per row.
 It allows a plot organized by rows, each row of the plot contains a max number of time stamps
  indicated by maxno.perplot.}
 }
 \description{
-An overloading plot function for a \code{HTS} object. The method returns a graphical representation 
+An overloading plot function for a \code{HTS} object. The method returns a graphical representation
 of a histogram time series.
 }
 \examples{
- plot(subsetHTS(RetHTS,from=1,to=10)) #plots RetHTS dataset
+plot(subsetHTS(RetHTS, from = 1, to = 10)) # plots RetHTS dataset
 \dontrun{
- plot(RetHTS, type="BOXPLOT",  border="blue", maxno.perplot=20) 
- plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=20)
- plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=10)
- }
+plot(RetHTS, type = "BOXPLOT", border = "blue", maxno.perplot = 20)
+plot(RetHTS, type = "VIOLIN", border = "blue", maxno.perplot = 20)
+plot(RetHTS, type = "VIOLIN", border = "blue", maxno.perplot = 10)
+}
 }
