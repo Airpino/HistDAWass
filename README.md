@@ -5,8 +5,6 @@
 HistDAWass
 ==========
 
-
-# HistDAWass 
 ## (Histogram-valued Data analysis using Wasserstein
 metric)
 
