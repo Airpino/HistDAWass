@@ -30,8 +30,6 @@ quantile functions (the inverse of a cumulative distribution function)
 *Q*<sub>*f*</sub> and *Q*<sub>*g*</sub>. The L2 Wasserstein distance is
 
 
-$$d_W(f,g)=\\sqrt{\\int\\limits_0^1{(Q_f(p) - Q_g(p))^2 dp}}$$
-=======
 <img src="https://render.githubusercontent.com/render/math?math={d_W(f,g)=\sqrt{\int_0^1{(Q_f(p) - Q_g(p))^2 dp}}}">
 
 
