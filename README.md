@@ -1,13 +1,14 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<<<<<<< HEAD
+HEAD
 =======
 <img src="HistDAWass_LOGO.png" alt="HistDAWass" width="250">
 
 HistDAWass
 ==========
->>>>>>> cc4841cbad42739350a2f09c9b78d620fe2d9c1e
 
-\#HistDAWass \#\#(Histogram-valued Data analysis using Wasserstein
+
+# HistDAWass 
+## (Histogram-valued Data analysis using Wasserstein
 metric)
 
 In this document we describe the main features of the HistDAWass
@@ -29,12 +30,11 @@ cumulative distribution function *F* and *G* and thei respectively
 quantile functions (the inverse of a cumulative distribution function)
 *Q*<sub>*f*</sub> and *Q*<sub>*g*</sub>. The L2 Wasserstein distance is
 
-<<<<<<< HEAD
+
 $$d_W(f,g)=\\sqrt{\\int\\limits_0^1{(Q_f(p) - Q_g(p))^2 dp}}$$
 =======
 <img src="https://render.githubusercontent.com/render/math?math={d_W(f,g)=\sqrt{\int_0^1{(Q_f(p) - Q_g(p))^2 dp}}}">
 
->>>>>>> cc4841cbad42739350a2f09c9b78d620fe2d9c1e
 
 The implemented classes are those described in the following table
 
@@ -50,11 +50,11 @@ library(HistDAWass)
 mydist=distributionH(x=c(0,1,2),p=c(0,0.3,1))
 ```
 
-\#From raw data to histograms
+# From raw data to histograms
 
 > data2hist functions
 
-\#Basic statistics for a distributionH (A histogram)
+# Basic statistics for a distributionH (A histogram)
 
 -   mean  
     + the mean of a histogram
@@ -70,7 +70,7 @@ mydist=distributionH(x=c(0,1,2),p=c(0,0.3,1))
 
     -   the fourth standardized momemt of a histogram
 
-\#Basic statistics for a MatH (A matrix of histogrm-valued data)
+# Basic statistics for a MatH (A matrix of histogrm-valued data)
 
 -   The average hisogram of a column  
     + It is an average **histogram** that minimizes the sum of squared
@@ -88,13 +88,13 @@ mydist=distributionH(x=c(0,1,2),p=c(0,0.3,1))
     + It is a matrix that measures the correlation into a set of
     hitogram variables.
 
-\#Visualization \> plot of a distributionH
+# Visualization \> plot of a distributionH
 
 > plot of a MatH
 
 > plot of a HTS
 
-\#Data Analysis methods
+# Data Analysis methods
 
 > Clustering
 
@@ -120,7 +120,7 @@ mydist=distributionH(x=c(0,1,2),p=c(0,0.3,1))
 -   Principal components analysis of a set of histogram variables (using
     Multiple Factor Analysis)
 
-\#Methods for Histogram time series
+# Methods for Histogram time series
 
 > Smoothing
 
@@ -132,7 +132,7 @@ mydist=distributionH(x=c(0,1,2),p=c(0,0.3,1))
 
 -   KNN prediction of histogram time series
 
-\#Linear regression
+# Linear regression
 
 > A two component model for a linear regression using Least Square
 > method
