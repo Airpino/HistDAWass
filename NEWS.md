@@ -1,5 +1,9 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# HistDAWass 1.0.7 What’s new
+
+Minor bug fixes fo compatibility isseues with ggridges.
+
 # HistDAWass 1.0.6 What’s new
 
 Added the WH_WASS_MAT_DIST for computing a distance matrix
@@ -19,24 +23,24 @@ Fixed some minor bugs.
 
 Fixed some visualizations accordingly to the new ggplot2 release.
 
-\#HistDAWass 1.0.2 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 1.0.2 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric)
 
 Soelf Organizing maps have been improved for speed and aptions.
 
-\#HistDAWass 1.0.1 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 1.0.1 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric)
 
 Some bugs have been resolved when processing data with a single
 variable.
 
-\#HistDAWass 1.0.0 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 1.0.0 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric)
 
 Now, a set of methods for MatH (WH.SSQ, WH.vec.mean, and all the methods
 using them) are much faster due to RCPP implementation.
 
-\#HistDAWass 0.1.7 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 0.1.7 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric)
 
 Some general improvements have been added for reducing elaboration
@@ -50,26 +54,26 @@ WH_kmeans now returns more informative outputs
 
 Multiple factor analysis has new functions for plotting results
 
-\#HistDAWass 0.1.6 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 0.1.6 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric)
 
 > unsupervised learning
 
 fuzzy c-means and kohonen maps are 10 times faster
 
-\#HistDAWass 0.1.5 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 0.1.5 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric)
 
 > some minor bug fixed
 
-\#HistDAWass 0.1.4 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 0.1.4 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric)
 
 > some minor bug fixed
 
-\#HistDAWass 0.1.3 What’s new Some fixes to the worksapce
+#HistDAWass 0.1.3 What’s new Some fixes to the worksapce
 
-\#HistDAWass 0.1.2 What’s new \#\#(Histogram-valued Data analysis using
+#HistDAWass 0.1.2 What’s new ##(Histogram-valued Data analysis using
 Wasserstein metric) \> From raw data to histograms
 
 A new function was added for generating a histogram from a set of raw

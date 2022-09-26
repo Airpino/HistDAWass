@@ -16,6 +16,11 @@ knitr::opts_chunk$set(
 )
 
 ```
+
+# HistDAWass 1.0.7 What’s new
+
+Minor bug fixes fo compatibility isseues with ggridges.
+
 # HistDAWass 1.0.6 What's new
 
 Added the WH_WASS_MAT_DIST for computing a distance matrix
