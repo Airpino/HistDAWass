@@ -317,7 +317,7 @@ plot.HTS.1v <- function(x, type = "BOXPLOT", border = "black", maxno.perplot = 1
     if (type == "VIOLIN") {
       nr <- length(y@data)
       df <- data.frame(x = numeric(), t = numeric(), grad = numeric())
-      df2 <- data.frame(x = numeric(), t = numeric(), xe = numeric, te = numeric(), grad = numeric())
+      df2 <- data.frame(x = numeric(), t = numeric(), xe = numeric(), te = numeric(), grad = numeric())
       for (i in 1:nr) {
         points <- 100
         xn <- c(rep(0, points))
