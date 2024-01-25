@@ -8,7 +8,7 @@
 a \code{MatH} object, a matrix of distributions.
 }
 \source{
-raw data are available here: \url{https://cdiac.ess-dive.lbl.gov/ftp/tr055/}
+raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}
 }
 \description{
 A dataset with the distributions of some climatic variables collected for each month in 60 stations of China.

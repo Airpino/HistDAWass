@@ -12,12 +12,12 @@
 #'
 #' \tabular{ll}{ Package: \tab HistDAWass\cr Type: \tab Package\cr Version:
 #' \tab 0.1.1\cr Date: \tab 2014-09-17\cr License: \tab GPL (>=2)\cr Depends:
-#' \tab methods\cr } ~~ An overview of how to use the package, including the
-#' most important functions ~~
+#' \tab methods\cr }  An overview of how to use the package, including the
+#' most important functions 
 #'
 #' @name HistDAWass-package
 #' @aliases HistDAWass-package HistDAWass
-#' @docType package
+#' _PACKAGE
 #' @author Antonio Irpino <antonio.irpino@@unicampania.it>
 #' @references
 #' Irpino, A., Verde, R. (2015) \emph{Basic
@@ -167,7 +167,7 @@ NULL
 #' @docType data
 #' @format a \code{MatH} object, a matrix of distributions.
 #' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{https://cdiac.ess-dive.lbl.gov/ftp/tr055/}
+#' @source raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}
 NULL
 
 #' A seasonal climatic dataset of China
@@ -185,7 +185,7 @@ NULL
 #' @docType data
 #' @format a \code{MatH} object, a matrix of distributions.
 #' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{https://cdiac.ess-dive.lbl.gov/ftp/tr055/}.
+#' @source raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}.
 #' Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 #' DOI: 10.3334/CDIAC/cli.tr055
 NULL
@@ -199,7 +199,7 @@ NULL
 #' @docType data
 #' @format a data.frame
 #' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{https://cdiac.ess-dive.lbl.gov/ftp/tr055/}.
+#' @source raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}.
 #' Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 #' DOI: 10.3334/CDIAC/cli.tr055
 NULL

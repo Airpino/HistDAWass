@@ -15,7 +15,7 @@ setMethod("show",
 setMethod("show",
   signature(object = "HTS"),
   definition = function(object) {
-    x <- summary.HTS(object)
+    x <- summaryHTS(object)
     show(x[, 1:7])
   }
 )
@@ -82,42 +82,6 @@ setMethod(
   }
 )
 
-summary.HTS <- function(x) {
-  df <- data.frame(
-    Tstamp = numeric(),
-    T_period_start = numeric(),
-    T_period_end = numeric(),
-    mean = numeric(),
-    std = numeric(),
-    skew = numeric(),
-    kurt = numeric(),
-    min = numeric(),
-    Q1 = numeric(),
-    MED = numeric(),
-    Q3 = numeric(),
-    Max = numeric()
-  )
-  nr <- length(x@data)
-  for (i in 1:nr) {
-    tmpo <- x@data[[i]]
-    newrow <- data.frame(
-      Tstamp = tmpo@tstamp,
-      T_period_start = tmpo@period$start,
-      T_period_end = tmpo@period$end,
-      mean = tmpo@m,
-      std = tmpo@s,
-      skew = skewH(tmpo),
-      kurt = kurtH(tmpo),
-      min = tmpo@x[1],
-      Q1 = compQ(tmpo, 0.25),
-      MED = compQ(tmpo, 0.5),
-      Q3 = compQ(tmpo, 0.75),
-      Max = tmpo@x[length(tmpo@x)]
-    )
-    df <- rbind(df, newrow)
-  }
-  return(df)
-}
 
 #' Method \code{subsetHTS}: extract a subset of a histogram time series
 #' @name subsetHTS

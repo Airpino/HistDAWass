@@ -1,5 +1,53 @@
 #' @importFrom ggridges geom_density_ridges
 NULL
+
+#' A function for summarize HTS
+#' @description A summarizer for HTS
+#' @param x a HTS
+#' @return A matrix with basic statistics.
+#' @examples
+#' summaryHTS(subsetHTS(RetHTS, from = 1, to = 10))
+#' @export
+summaryHTS <- function(x) {
+  df <- data.frame(
+    Tstamp = numeric(),
+    T_period_start = numeric(),
+    T_period_end = numeric(),
+    mean = numeric(),
+    std = numeric(),
+    skew = numeric(),
+    kurt = numeric(),
+    min = numeric(),
+    Q1 = numeric(),
+    MED = numeric(),
+    Q3 = numeric(),
+    Max = numeric()
+  )
+  nr <- length(x@data)
+  for (i in 1:nr) {
+    tmpo <- x@data[[i]]
+    newrow <- data.frame(
+      Tstamp = tmpo@tstamp,
+      T_period_start = tmpo@period$start,
+      T_period_end = tmpo@period$end,
+      mean = tmpo@m,
+      std = tmpo@s,
+      skew = skewH(tmpo),
+      kurt = kurtH(tmpo),
+      min = tmpo@x[1],
+      Q1 = compQ(tmpo, 0.25),
+      MED = compQ(tmpo, 0.5),
+      Q3 = compQ(tmpo, 0.75),
+      Max = tmpo@x[length(tmpo@x)]
+    )
+    df <- rbind(df, newrow)
+  }
+  return(df)
+}
+
+
+
+
 # OK assigned
 
 plot.gg <- function(x, type = "HISTO", col = "green", border = "black") {
@@ -290,7 +338,7 @@ plot.HTS.1v <- function(x, type = "BOXPLOT", border = "black", maxno.perplot = 1
   numofp <- length(x@data)
   numoflines <- ceiling(numofp / maxno.perplot)
   listofP <- list()
-  df1 <- summary.HTS(x)
+  df1 <- summaryHTS(x)
   clint <- c(1:numofp) / numofp
   TT <- max(df1$Tstamp) - min(df1$Tstamp)
   Tini <- min(df1$Tstamp)
@@ -662,3 +710,5 @@ plot_errors <- function(PRED, OBS, type = "HISTO_QUA", np = 200) {
   # print(sqrt(dists))
   # summary(sqrt(dists))
 }
+
+
