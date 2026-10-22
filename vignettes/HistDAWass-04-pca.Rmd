@@ -1,0 +1,104 @@
+---
+title: "4. Principal component analysis of histogram data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{4. Principal component analysis of histogram data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
+                      fig.width = 7, fig.height = 5, dpi = 72, out.width = "100%")
+```
+
+```{r setup}
+library(HistDAWass)
+```
+
+The principal component analysis (PCA) of histogram data is based on the
+quantile functions: each histogram is represented by a set of its quantiles,
+and a PCA of the quantiles is consistent with the L2 Wasserstein distance
+(Verde, Irpino and Balzanella, 2016). The results are shown by
+"Spanish-fan" plots of the quantiles and by plotting the histograms on the
+factorial planes.
+
+We use the `BLOOD` data (14 groups of patients, three histogram variables).
+
+## PCA of one histogram variable
+
+`WH.1d.PCA()` analyses a single variable. By default it draws, for each
+factorial plane, four plots: the quantiles (Spanish-fan plot), the
+individuals, and the individuals coloured by their mean and by their standard
+deviation.
+
+```{r, results = "hide", fig.height = 7}
+pca1 <- WH.1d.PCA(BLOOD, var = 1, quantiles = 10, listaxes = c(1, 2))
+```
+
+The results of `FactoMineR::PCA()` are in `PCAout`:
+
+```{r}
+round(pca1$PCAout$eig[1:4, ], 2)
+round(head(pca1$PCAout$ind$coord[, 1:2]), 3)
+```
+
+The first axis is mainly related to the position (the mean) of the histograms,
+the second one to their variability: the supplementary variables `vmeans` and
+`vstds` (means and standard deviations of the histograms) show it.
+
+```{r}
+round(pca1$PCAout$quanti.sup$cor[, 1:2], 3)
+```
+
+`outl` removes a share of the probability from the tails of each histogram
+(e.g. `outl = 0.05` removes 5% from each tail), to reduce the effect of
+outlying values.
+
+## PCA of several histogram variables
+
+`WH.MultiplePCA()` analyses several variables together: it is a multiple
+factor analysis (`FactoMineR::MFA()`) where each variable is a group of
+quantiles.
+
+```{r}
+mpca <- WH.MultiplePCA(BLOOD, list.of.vars = 1:3, quantiles = 10, graph = FALSE)
+round(mpca$eig[1:4, ], 2)
+```
+
+The Spanish-fan plot of the quantiles of all the variables on the first
+plane (correlations with the axes):
+
+```{r}
+WH.plot_multiple_Spanish.funs(mpca, axes = c(1, 2), var = 1:3)
+```
+
+The histograms of a variable, for each individual, plotted at the coordinates
+of the individuals on the first factorial plane (each histogram is centred on
+its mean). A second plot colours the histograms by a statistic (here the mean):
+
+```{r, fig.height = 5}
+WH.plot_multiple_indivs(BLOOD, mpca, axes = c(1, 2), var = 1,
+                        HISTO = TRUE, stat = "mean")
+```
+
+The histograms are measured on the scale of the variable, while the plane has
+the scale of the principal components, so their size is set automatically: by
+default the average width of the histograms is one tenth of the range of the
+coordinates on the x axis (`strx = 0.1`) and the highest density is one eighth
+of the range on the y axis (`stry = 1/8`). All the histograms share the same
+scales, so their spreads and their densities remain comparable. Larger or
+smaller values zoom the histograms:
+
+```{r, fig.height = 5}
+WH.plot_multiple_indivs(BLOOD, mpca, axes = c(1, 2), var = 2,
+                        strx = 0.15, stry = 0.2, HISTO = FALSE)
+```
+
+With `HISTO = FALSE` smoothed densities are drawn instead of histograms.
+
+## Reference
+
+Verde, R., Irpino, A., Balzanella, A. (2016) Dimension reduction techniques
+for distributional symbolic data. *IEEE Transactions on Cybernetics*, 46(2),
+344-355. <https://doi.org/10.1109/TCYB.2015.2389653>

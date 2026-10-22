@@ -77,6 +77,39 @@ sums). Times on a matrix of 300 histograms x 3 variables with different bins:
   create) objects with a decreasing `x`; they now return the distribution of
   `a * X` and `a - X`.
 
+* `plot()` of a `MatH` (type `"HISTO"`) cut the densities at the fixed value
+  2: variables with a narrow range were drawn as flat, truncated histograms.
+  The heights are now normalised within each variable.
+* `WH.plot_multiple_indivs()` drew the histograms of the individuals as flat
+  lines (the normalised domain and densities were computed but not used). The
+  size of the histograms is now set automatically: `strx` (default 0.1) is
+  the average width of the histograms and `stry` (default 1/8) the height of
+  the highest density, as fractions of the ranges of the coordinates of the
+  individuals on the two axes. Each histogram is centred on its mean, and
+  histograms with very narrow bins (e.g. quantiles with ties) are drawn on 30
+  equal-width bins to avoid spikes.
+* The printout of a histogram with many bins used two different formats for
+  the bins.
+* `[` on a `MatH` object: columns or rows selected by name got `NA` names;
+  negative and logical indices are now allowed (e.g. `BLOOD[-1, ]`,
+  `BLOOD[, "Cholesterol"]`).
+
+## Vignettes
+
+Five vignettes have been added:
+
+* `vignette("HistDAWass-01-data")`: creating histograms (`distributionH`,
+  `data2hist()`) and matrices of histograms (`MatH`), also from a data frame
+  of raw data;
+* `vignette("HistDAWass-02-basic-statistics")`: statistics of histograms and of
+  histogram variables (means, quantiles, distances, covariances, correlations);
+* `vignette("HistDAWass-03-clustering")`: k-means and fuzzy c-means, also with
+  adaptive distances, and hierarchical clustering;
+* `vignette("HistDAWass-04-pca")`: principal component analysis of one or more
+  histogram variables;
+* `vignette("HistDAWass-05-regression")`: the two-component linear regression
+  of histogram variables.
+
 ## Tests
 
 * New tests for the fixes above and for the fast computations.

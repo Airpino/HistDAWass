@@ -889,7 +889,7 @@ setMethod("show",
         count <- 0
         for (i in 2:6) {
           count <- count + 1
-          mymat[count + 1, 1] <- paste("[", format(object@x[(i - 1)], digits = 5), "-", format(object@x[i], digits = 5), ")", sep = "")
+          mymat[count + 1, 1] <- paste("[", format(object@x[(i - 1)], digits = 5), " ; ", format(object@x[i], digits = 5), ")", sep = "")
           mymat[count + 1, 2] <- paste(format(object@p[i] - object@p[i - 1], digits = 4))
         }
         count <- count + 1

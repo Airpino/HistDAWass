@@ -12,3 +12,5 @@
 ^HistDAWass_LOGO\.png$
 ^cran-comments\.md$
 ^.*Rplots\.pdf$
+^doc$
+^Meta$

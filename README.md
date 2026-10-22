@@ -10,6 +10,7 @@ metric)
 
 ## What's new in version 1.0.10
 
+* **Vignettes** for the main features (see below).
 * **Much faster with histograms having different bins** (the default
   `simplify = FALSE`), with the same results: on 300 histograms x 3 variables
   the Kohonen maps and the adaptive fuzzy c-means go from more than 100 s to
@@ -18,9 +19,17 @@ metric)
 * **Bug fixes**: timestamps of `HTS.moving.averages()`, ties in
   `HTS.predict.knn()`, proportional initial weights of the adaptive Kohonen
   maps, `d1 - d2` for distributions sharing the same cdf, products by negative
-  numbers and `a - d`.
+  numbers and `a - d`, selection of columns by name with `[`, the histograms
+  of `plot()` for a `MatH` and of `WH.plot_multiple_indivs()`.
 
 See `NEWS.md` for the details.
+
+**Vignettes**: five tutorials on creating histogram data, basic statistics,
+clustering, principal component analysis and regression:
+
+```r
+browseVignettes("HistDAWass")
+```
 
 ## What's new in version 1.0.9
 

@@ -1,0 +1,191 @@
+---
+title: "1. Creating histogram-valued data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{1. Creating histogram-valued data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
+                      fig.width = 7, fig.height = 4.5, dpi = 72, out.width = "100%")
+```
+
+```{r setup}
+library(HistDAWass)
+```
+
+In HistDAWass a histogram is a `distributionH` object and a data table whose
+cells are histograms is a `MatH` object: rows are individuals (or groups) and
+columns are histogram-valued variables. This vignette shows how to build them.
+
+## A single histogram
+
+A histogram is described by its **cumulative distribution function** (cdf):
+the bounds of the bins `x` and the values `p` of the cdf at the bounds. For
+example, the histogram
+
+| Bin    | Probability | cdf |
+|--------|------------:|----:|
+| [1, 2) | 0.4         | 0.4 |
+| [2, 3] | 0.6         | 1.0 |
+
+is created as
+
+```{r}
+d1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
+d1
+```
+
+`x` must be non-decreasing and `p` must be non-decreasing from 0 to 1. The mean
+and the standard deviation are computed when the object is created and are
+stored in the slots `m` and `s`:
+
+```{r}
+d1@m
+d1@s
+```
+
+A single value defines an impulse (a degenerate distribution), and a bin with
+zero probability (an *empty bin*) gets a tiny weight of `1e-8`, to avoid
+numerical problems:
+
+```{r}
+distributionH(5)@x
+d2 <- distributionH(x = c(0, 1, 2, 4), p = c(0, 0.5, 0.5, 1))
+diff(d2@p) # the probabilities of the bins
+```
+
+```{r, fig.height = 3.5}
+plot(d1)
+```
+
+## From raw data to a histogram
+
+`data2hist()` builds a histogram from a sample of values. Several algorithms are
+available for choosing the bins:
+
+```{r}
+set.seed(1)
+x <- c(rnorm(300, mean = 10, sd = 2), rnorm(200, mean = 18, sd = 1))
+
+h_base <- data2hist(x, algo = "base")                     # the bins of hist()
+h_quan <- data2hist(x, algo = "FixedQuantiles", qua = 10) # 10 equal-probability bins
+h_man  <- data2hist(x, algo = "ManualBreaks", breaks = seq(0, 25, by = 2.5))
+h_pl   <- data2hist(x, algo = "PolyLine", epsilon = 0.01) # piecewise linear cdf
+sapply(list(base = h_base, quantiles = h_quan, manual = h_man, polyline = h_pl),
+       function(h) length(h@x) - 1) # number of bins
+```
+
+The default, `algo = "histogram"`, chooses the bins with the penalised
+likelihood method of the **histogram** package: it is accurate but slower for
+large samples.
+
+```{r, fig.height = 3.5}
+plot(h_quan)
+plot(h_quan, type = "CDF")
+```
+
+## A matrix of histograms
+
+A `MatH` object is created from a list of `distributionH` objects, filled by
+columns (default) or by rows:
+
+```{r}
+ListOfDist <- list(
+  distributionH(c(1, 2, 3), c(0, 0.4, 1)),
+  distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1)),
+  distributionH(c(9, 11, 20), c(0, 0.5, 1)),
+  distributionH(c(2, 5, 8), c(0, 0.3, 1)),
+  distributionH(c(8, 10, 15), c(0, 0.75, 1)),
+  distributionH(c(20, 22, 24), c(0, 0.12, 1))
+)
+MyMAT <- MatH(x = ListOfDist, nrows = 3, ncols = 2,
+              rownames = c("I1", "I2", "I3"), varnames = c("Var1", "Var2"))
+MyMAT
+```
+
+### From a data frame of raw data
+
+The most common case: a data frame of raw observations and a grouping variable.
+Each group becomes a row of the `MatH`, each numeric variable a column. With
+the `iris` data, the three species are the individuals:
+
+```{r}
+groups <- levels(iris$Species)
+vars <- names(iris)[1:4]
+cells <- list()
+for (v in vars) {           # the matrix is filled by columns
+  for (g in groups) {
+    cells <- c(cells, data2hist(iris[iris$Species == g, v],
+                                algo = "FixedQuantiles", qua = 5))
+  }
+}
+IRIS <- MatH(x = cells, nrows = length(groups), ncols = length(vars),
+             rownames = groups, varnames = vars)
+IRIS
+```
+
+```{r, fig.height = 4}
+plot(IRIS)                  # histograms
+plot(IRIS, type = "DENS")   # smoothed densities
+```
+
+All the plot methods return a `ggplot` object (invisibly), that can be
+modified with the functions of **ggplot2**:
+
+```{r, fig.height = 4}
+p <- plot(IRIS, type = "BOXPLOT")
+p + ggplot2::ggtitle("Iris data: boxplots of the histograms")
+```
+
+## Working with a MatH
+
+Rows and columns are extracted as for an ordinary matrix, and matrices with the
+same columns (rows) can be bound by rows (columns):
+
+```{r}
+dim(BLOOD@M)
+B <- BLOOD[1:4, c("Cholesterol", "Hemoglobin")]
+B
+get.MatH.main.info(B)
+
+WH.bind.row(BLOOD[1:2, ], BLOOD[13:14, ])
+```
+
+Single cells are read and written with `get.cell.MatH()` and `set.cell.MatH()`
+(or directly through the slot `M`):
+
+```{r}
+get.cell.MatH(BLOOD, r = 1, c = 1)
+B2 <- set.cell.MatH(distributionH(c(100, 150, 200), c(0, 0.5, 1)), B, r = 1, c = 1)
+B2@M[[1, 1]]
+```
+
+## Registration
+
+Two histograms with different bins can be expressed on the same cdf values
+without changing them (*registration*). This is the basis of all the fast
+computations of the package and is done automatically by the methods; it can
+also be done explicitly:
+
+```{r}
+R <- registerMH(MyMAT)
+is.registeredMH(MyMAT)
+is.registeredMH(R)
+R@M[[1, 1]]@p
+```
+
+## Histogram time series
+
+A histogram time series (`HTS`) is a sequence of histograms with a time
+reference; `RetHTS` is an example:
+
+```{r, fig.height = 3.5}
+RetHTS
+plot(subsetHTS(RetHTS, from = 1, to = 15), type = "BOXPLOT")
+```
+
+See the other vignettes for the statistics (`vignette("HistDAWass-02-basic-statistics")`),
+clustering, principal component analysis and regression of histogram data.

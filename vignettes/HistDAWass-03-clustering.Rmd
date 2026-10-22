@@ -1,0 +1,160 @@
+---
+title: "3. Clustering histogram data: k-means and fuzzy c-means"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{3. Clustering histogram data: k-means and fuzzy c-means}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
+                      fig.width = 7, fig.height = 4.5, dpi = 72, out.width = "100%")
+```
+
+```{r setup}
+library(HistDAWass)
+```
+
+The clustering methods of HistDAWass group the individuals (rows) of a `MatH`
+object using the L2 Wasserstein distance between histograms. The prototype of
+each cluster is itself a histogram for each variable (the Wasserstein mean of
+the histograms of the cluster).
+
+We use the `OzoneFull` data: 78 stations in the USA described by the
+histograms of four variables.
+
+```{r}
+get.MatH.main.info(OzoneFull)$varnames
+```
+
+Two options are common to all the methods:
+
+* `standardize = TRUE` standardises each variable by its Wasserstein standard
+  deviation: useful when the variables have different units, as here;
+* `simplify = TRUE` approximates each histogram with `qua` equally spaced
+  quantiles: much faster for large datasets, with an approximation error that
+  decreases with `qua` (see the vignette on basic statistics).
+
+The algorithms start from random partitions, so we fix the seed and repeat
+each algorithm `rep` times, keeping the best solution.
+
+## K-means
+
+```{r}
+set.seed(1)
+km <- WH_kmeans(OzoneFull, k = 3, rep = 5,
+                simplify = TRUE, qua = 20, standardize = TRUE)
+names(km$solution)
+km$solution$cardinality
+km$quality   # proportion of the total sum of squares explained by the partition
+head(km$solution$IDX)
+```
+
+The prototypes are a `MatH` object, so they can be plotted:
+
+```{r, fig.height = 3.5}
+plot(km$solution$centers)
+```
+
+### Choosing the number of clusters
+
+The quality (between / total sum of squares) increases with `k`; a common
+choice is where the gain begins to flatten (elbow):
+
+```{r, results = "hide"}
+set.seed(1)
+qual <- sapply(2:7, function(k)
+  WH_kmeans(OzoneFull, k = k, rep = 5, simplify = TRUE, qua = 20,
+            standardize = TRUE)$quality)
+```
+
+```{r, fig.height = 3.5}
+round(qual, 3)
+plot(2:7, qual, type = "b", xlab = "k", ylab = "quality")
+```
+
+## K-means with adaptive distances
+
+`WH_adaptive.kmeans()` also estimates a weight for each variable, so that the
+variables that better separate the clusters weigh more. With `schema = 2`
+there is a weight for the position (mean) and one for the variability
+(centred distribution) of each variable; with `schema = 3` or `4` the weights
+also change with the cluster.
+
+```{r, results = "hide"}
+set.seed(1)
+akm <- WH_adaptive.kmeans(OzoneFull, k = 3, schema = 2, rep = 5,
+                          simplify = TRUE, qua = 20, standardize = TRUE)
+```
+
+```{r}
+round(akm$weights[, 1], 3)   # the same for all the clusters with schema = 2
+akm$cardinality
+akm$quality
+```
+
+By default the product of the weights is one (`weight.sys = "PROD"`); with
+`weight.sys = "SUM"` they sum to one.
+
+## Fuzzy c-means
+
+`WH_fcmeans()` assigns to each individual a degree of membership to each
+cluster; `m` (greater than 1) controls the fuzziness.
+
+```{r, results = "hide"}
+set.seed(1)
+fcm <- WH_fcmeans(OzoneFull, k = 3, m = 1.6, rep = 5,
+                  simplify = TRUE, qua = 20, standardize = TRUE)
+```
+
+```{r}
+round(head(fcm$solution$membership), 3)
+fcm$solution$cardinality   # crisp assignment to the cluster of maximum membership
+fcm$quality
+```
+
+Individuals with no clearly dominant membership lie between clusters:
+
+```{r}
+maxmemb <- apply(fcm$solution$membership, 1, max)
+sum(maxmemb < 0.6)
+```
+
+## Fuzzy c-means with adaptive distances
+
+```{r, results = "hide"}
+set.seed(1)
+afcm <- WH_adaptive_fcmeans(OzoneFull, k = 3, schema = 2, m = 1.6, rep = 3,
+                            simplify = TRUE, qua = 20, standardize = TRUE)
+```
+
+```{r}
+round(afcm$solution$var.weights[, 1], 3)
+afcm$quality
+```
+
+## Comparing partitions
+
+Hierarchical clustering (`WH_hclust()`, a wrapper of `stats::hclust()`) gives
+a dendrogram that can be cut at any number of clusters:
+
+```{r, fig.height = 4}
+hc <- WH_hclust(OzoneFull, simplify = TRUE, qua = 20, standardize = TRUE,
+                method = "ward.D2")
+plot(hc, labels = FALSE, main = "OzoneFull, Ward method")
+table(hclust = cutree(hc, k = 3), kmeans = km$solution$IDX)
+```
+
+Self-organising maps (`WH_2d_Kohonen_maps()` and
+`WH_2d_Adaptive_Kohonen_maps()`) are also available.
+
+## References
+
+Irpino, A., Verde, R., Lechevallier, Y. (2006) Dynamic clustering of histograms
+using Wasserstein metric. In: *COMPSTAT 2006*, Physica-Verlag, 869-876.
+
+Irpino, A., Verde, R., De Carvalho, F.A.T. (2014) Dynamic clustering of
+histogram data based on adaptive squared Wasserstein distances. *Expert
+Systems with Applications*, 41, 3351-3366.
+<https://doi.org/10.1016/j.eswa.2013.12.001>

@@ -69,3 +69,13 @@ test_that("Kohonen maps run with proportional initial weights", {
     )))
   }
 })
+
+test_that("subsetting a MatH keeps the names and accepts all index types", {
+  B <- BLOOD[1:4, c("Cholesterol", "Hemoglobin")]
+  expect_equal(get.MatH.varnames(B), c("Cholesterol", "Hemoglobin"))
+  expect_equal(get.MatH.rownames(B), get.MatH.rownames(BLOOD)[1:4])
+  expect_equal(get.MatH.nrows(BLOOD[-1, ]), 13)
+  expect_equal(get.MatH.ncols(BLOOD[, c(TRUE, FALSE, TRUE)]), 2)
+  expect_identical(BLOOD[2, 3]@M[[1, 1]], BLOOD@M[[2, 3]])
+  expect_identical(BLOOD[, ], BLOOD)
+})

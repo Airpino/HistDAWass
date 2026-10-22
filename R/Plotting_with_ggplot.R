@@ -175,13 +175,22 @@ summaryHTS <- function(x) {
       )
     })
     DF <- do.call(rbind, one)
-    if (tr == 1) {
-      treshold <- 2
-    } else {
-      treshold <- 1.5 * diff(stats::quantile(DF$H, probs = c(0.25, 0.75))) +
-        stats::quantile(DF$H, probs = 0.75)
+    # the heights are normalised within each variable (the tallest bin is 1),
+    # after limiting the spikes due to very narrow bins. Up to 1.0.9 the
+    # densities were cut at the fixed value 2, so variables with a narrow
+    # range were drawn as flat, truncated histograms.
+    pos <- DF$H[DF$H > 0]
+    if (length(pos) > 0) {
+      if (tr == 1) {
+        # robust: spikes (bins of almost zero width) can be many
+        cap <- 4 * stats::median(pos)
+      } else {
+        cap <- 1.5 * diff(stats::quantile(pos, probs = c(0.25, 0.75), names = FALSE)) +
+          stats::quantile(pos, probs = 0.75, names = FALSE)
+      }
+      DF$H <- pmin(DF$H, cap)
+      DF$H <- DF$H / max(DF$H)
     }
-    DF$H[DF$H > treshold] <- treshold
     DF$z <- vn[v]
     DF
   })

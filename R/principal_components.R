@@ -679,8 +679,16 @@ WH.plot_multiple_Spanish.funs <- function(res,
 #' @param indiv A vector of integers, the individuals (rows) to plot. Default 0:
 #' all the individuals.
 #' @param var An integer, the variable to plot.
-#' @param strx,stry Resizing factors for the domain and for the density of the
-#' histograms (default 0.1: one tenth of the range of the axes).
+#' @param strx A number, the average width of the drawn distributions as a
+#' fraction of the range of the coordinates of the individuals on the x axis
+#' (default 0.1: on average, the domain of a distribution takes one tenth of
+#' the x axis). All the distributions share the same scale, so their spreads
+#' remain comparable.
+#' @param stry A number, the height of the highest density as a fraction of the
+#' range of the coordinates of the individuals on the y axis (default 1/8).
+#' All the densities share the same scale; spikes (bins of almost zero
+#' width) are avoided by drawing histograms with very narrow bins on 30
+#' equal-width bins.
 #' @param HISTO A logical value: if \code{TRUE} (default) histograms are drawn,
 #' otherwise smoothed densities.
 #' @param coor A matrix of coordinates of the individuals. Default 0: the
@@ -688,6 +696,12 @@ WH.plot_multiple_Spanish.funs <- function(res,
 #' @param stat The statistic used to label and colour the histograms in the
 #' second plot: \code{"mean"} (default), \code{"std"}, \code{"skewness"} or
 #' \code{"kurtosis"}.
+#' @details The distributions are measured on the scale of the original
+#' variable, while the factorial plane has the scale of the principal
+#' components: \code{strx} and \code{stry} set the size of the drawn
+#' distributions automatically, as fractions of the ranges of the coordinates
+#' of the individuals. Each distribution is drawn with its mean at the
+#' coordinates of the individual.
 #' @return The two plots are drawn on the current device and a list with the two
 #' \code{ggplot} objects is returned invisibly.
 #' @examples
@@ -698,7 +712,7 @@ WH.plot_multiple_Spanish.funs <- function(res,
 #' }
 #' @export
 WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 1,
-                                    strx = 0.1, stry = 0.1, HISTO = TRUE, coor = 0,
+                                    strx = 0.1, stry = 1 / 8, HISTO = TRUE, coor = 0,
                                     stat = "mean") {
   # require(ggplot2)
 
@@ -727,7 +741,7 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
       if (tmp_r > rmax) {
         rmax <- tmp_r
       }
-      vv <- COMP_POLY_H(data@M[i, var][[1]])
+      vv <- .poly_hist(data@M[i, var][[1]])
       x <- c(x, min(vv$x), vv$x, max(vv$x))
       y <- c(y, 0, vv$y, 0)
       ID_O <- c(ID_O, rep(i, length(vv$x) + 2))
@@ -765,34 +779,36 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
   x_o <- x
   y_o <- y
   ALL_OBJ <- data.frame(x_o = x_o, y_o = y_o, ID_o = ID_o, minx = minx, mea = mea)
-  limX <- range(ALL_OBJ$x_o)
-
-  EXTRY <- quantile(ALL_OBJ$y_o, probs = 0.995)
-  # bisogna traslare ogni oggetto e scalarlo
-  # scaliamo gli oggetti tra 0 e 1
-  ALL_OBJ$x <- (ALL_OBJ$x_o - minx) / (rmax)
-  # tagliamo picchi eccessivi (up to 1.0.8 the cut was applied to a wrong column)
-  ALL_OBJ$y_o[ALL_OBJ$y_o > EXTRY] <- EXTRY
-  limY <- quantile(ALL_OBJ$y_o, probs = 0.99)
-  ALL_OBJ$y <- ALL_OBJ$y_o / limY
-  # ogni oggetto va traslato e rimpicciolito di un fattore strech x strech y
-  dim1MAX <- max(coord[, 1])
-  dim1Min <- min(coord[, 1])
-  rX <- (dim1MAX - dim1Min)
-  dim2MAX <- max(coord[, 2])
-  dim2Min <- min(coord[, 2])
-  rY <- (dim2MAX - dim2Min)
+  # Automatic scaling (since 1.0.10). The distributions are measured on the
+  # scale of the variable, the plane on the scale of the components:
+  # - x: a common factor such that the average width of the domains is
+  #   strx times the range of the coordinates on the first axis;
+  # - y: a common factor such that the highest density is stry times the
+  #   range of the coordinates on the second axis (histograms with very narrow
+  #   bins are re-binned for drawing, see .poly_hist).
+  # Each distribution is centred on its mean. (Up to 1.0.9 the original values
+  # were used, and the histograms were drawn as flat lines.)
+  coord <- as.matrix(coord)
+  rX <- diff(range(coord[, 1]))
+  rY <- diff(range(coord[, 2]))
+  if (!is.finite(rX) || rX <= 0) rX <- 1
+  if (!is.finite(rY) || rY <= 0) rY <- 1
+  widths <- tapply(ALL_OBJ$x_o, ALL_OBJ$ID_o, function(v) diff(range(v)))
+  avg_width <- mean(widths)
+  if (!is.finite(avg_width) || avg_width <= 0) avg_width <- 1
+  sx <- strx * rX / avg_width
+  limY <- max(ALL_OBJ$y_o[is.finite(ALL_OBJ$y_o)])
+  if (!is.finite(limY) || limY <= 0) limY <- 1
+  sy <- stry * rY / limY
+  ALL_OBJ$y_o <- pmin(ALL_OBJ$y_o, limY)
   cc <- 0
   for (i in el_ind) {
     cc <- cc + 1
     xc <- coord[cc, 1]
     yc <- coord[cc, 2]
-    tmp_x <- ALL_OBJ$x_o[which(ALL_OBJ$ID_o == i)]
-    tmp_y <- ALL_OBJ$y_o[which(ALL_OBJ$ID_o == i)]
-    tmp_x <- tmp_x * strx * rX
-    tmp_y <- tmp_y * stry * rY
-    tmp_x <- (tmp_x - mean(tmp_x)) + xc
-    tmp_y <- tmp_y + yc
+    sel <- which(ALL_OBJ$ID_o == i)
+    tmp_x <- (ALL_OBJ$x_o[sel] - ALL_OBJ$mea[sel]) * sx + xc
+    tmp_y <- ALL_OBJ$y_o[sel] * sy + yc
     ALL_OBJ$x_o[which(ALL_OBJ$ID_o == i)] <- tmp_x
     ALL_OBJ$y_o[which(ALL_OBJ$ID_o == i)] <- tmp_y
   }
@@ -862,6 +878,23 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
   print(p2)
 
   return(invisible(list(p, p2)))
+}
+
+# Polygon of a histogram for drawing. If some bins are narrower than 1/100 of
+# the domain (e.g. histograms of quantiles with ties, whose density is huge or
+# infinite), the histogram is re-binned on max_bins equal-width bins, keeping
+# the probabilities (the cdf at the new breaks); otherwise it is drawn as is.
+.poly_hist <- function(object, max_bins = 30) {
+  x <- object@x
+  rng <- diff(range(x))
+  if (length(x) > 2 && rng > 0 && min(diff(x)) < rng / 100) {
+    br <- seq(x[1], x[length(x)], length.out = max_bins + 1)
+    p <- .cdffun(object, br)
+    p[1] <- 0
+    p[length(p)] <- 1
+    object <- .distH(br, p)
+  }
+  COMP_POLY_H(object)
 }
 
 COMP_POLY_H <- function(object) {

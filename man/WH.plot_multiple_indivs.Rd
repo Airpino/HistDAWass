@@ -11,7 +11,7 @@ WH.plot_multiple_indivs(
   indiv = 0,
   var = 1,
   strx = 0.1,
-  stry = 0.1,
+  stry = 1/8,
   HISTO = TRUE,
   coor = 0,
   stat = "mean"
@@ -30,8 +30,17 @@ all the individuals.}
 
 \item{var}{An integer, the variable to plot.}
 
-\item{strx, stry}{Resizing factors for the domain and for the density of the
-histograms (default 0.1: one tenth of the range of the axes).}
+\item{strx}{A number, the average width of the drawn distributions as a
+fraction of the range of the coordinates of the individuals on the x axis
+(default 0.1: on average, the domain of a distribution takes one tenth of
+the x axis). All the distributions share the same scale, so their spreads
+remain comparable.}
+
+\item{stry}{A number, the height of the highest density as a fraction of the
+range of the coordinates of the individuals on the y axis (default 1/8).
+All the densities share the same scale; spikes (bins of almost zero
+width) are avoided by drawing histograms with very narrow bins on 30
+equal-width bins.}
 
 \item{HISTO}{A logical value: if \code{TRUE} (default) histograms are drawn,
 otherwise smoothed densities.}
@@ -51,6 +60,14 @@ The two plots are drawn on the current device and a list with the two
 (Beta version) Plots the histograms (or densities) of one variable for each
 individual, placed at the coordinates of the individuals on a factorial plane
 of \code{\link{WH.MultiplePCA}}.
+}
+\details{
+The distributions are measured on the scale of the original
+variable, while the factorial plane has the scale of the principal
+components: \code{strx} and \code{stry} set the size of the drawn
+distributions automatically, as fractions of the ranges of the coordinates
+of the individuals. Each distribution is drawn with its mean at the
+coordinates of the individual.
 }
 \examples{
 \donttest{

@@ -1,0 +1,154 @@
+---
+title: "2. Basic statistics for histogram data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{2. Basic statistics for histogram data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
+                      fig.width = 7, fig.height = 4.5, dpi = 72, out.width = "100%")
+```
+
+```{r setup}
+library(HistDAWass)
+```
+
+The statistics of HistDAWass are based on the **L2 Wasserstein distance**
+between two distributions $f$ and $g$, i.e. the Euclidean distance between
+their quantile functions $Q_f$ and $Q_g$:
+$$d_W^2(f, g) = \int_0^1 \left(Q_f(p) - Q_g(p)\right)^2 dp.$$
+With this distance, the mean of a set of histograms is the histogram whose
+quantile function is the mean of the quantile functions, and variances,
+covariances and correlations are defined accordingly (Irpino and Verde, 2015).
+
+We use the `BLOOD` data: 14 groups of patients described by three
+histogram-valued variables.
+
+```{r}
+BLOOD
+```
+
+## Statistics of a single histogram
+
+```{r}
+d <- BLOOD@M[[1, 1]] # cholesterol of the first group
+d
+meanH(d)    # mean
+stdH(d)     # standard deviation
+skewH(d)    # skewness
+kurtH(d)    # kurtosis (3 for a Gaussian)
+compQ(d, 0.5)   # the median
+compQ(d, 0.25); compQ(d, 0.75)  # first and third quartiles
+compP(d, 150)   # the cdf at 150
+```
+
+The centres, the half-widths and the probabilities of the bins:
+
+```{r}
+str(crwtransform(d))
+```
+
+## Arithmetic and distance between two histograms
+
+Sums and products by a number act on the quantile functions:
+
+```{r}
+d1 <- BLOOD@M[[1, 1]]
+d2 <- BLOOD@M[[2, 1]]
+d12 <- 0.5 * d1 + 0.5 * d2   # the Wasserstein mean of the two histograms
+c(meanH(d1), meanH(d2), meanH(d12))
+```
+
+The squared distance and its decomposition into a **position** (difference of
+the means), a **size** (difference of the standard deviations) and a **shape**
+component; `rQQ` is the correlation between the quantile functions:
+
+```{r}
+WassSqDistH(d1, d2)
+WassSqDistH(d1, d2, details = TRUE)
+rQQ(d1, d2)
+```
+
+## Statistics of each histogram of a matrix
+
+`get.MatH.stats()` returns a matrix with a statistic for each cell:
+
+```{r}
+get.MatH.stats(BLOOD, stat = "mean")$mat
+get.MatH.stats(BLOOD, stat = "std")$mat[1:5, ]
+get.MatH.stats(BLOOD, stat = "quantile", prob = 0.9)$mat[1:5, ]
+```
+
+Available statistics: `"mean"`, `"median"`, `"min"`, `"max"`, `"std"`,
+`"skewness"`, `"kurtosis"` and `"quantile"`.
+
+## Mean histogram, variance, covariance and correlation of the variables
+
+The mean histogram (the Wasserstein barycentre) of a variable:
+
+```{r, fig.height = 3.5}
+m_chol <- WH.vec.mean(BLOOD[, "Cholesterol"])
+m_chol
+plot(m_chol)
+```
+
+Weights can be given, e.g. proportional to the size of the groups:
+
+```{r}
+w <- c(rep(2, 7), rep(1, 7))
+meanH(WH.vec.mean(BLOOD[, 1], w = w))
+```
+
+The variance-covariance and the correlation matrices of the histogram
+variables, and the matrix of the sums of squared deviations from the mean:
+
+```{r}
+WH.var.covar(BLOOD)
+WH.correlation(BLOOD)
+WH.SSQ(BLOOD)
+```
+
+The versions with suffix 2 compute the same quantities between the variables
+of two matrices with the same rows:
+
+```{r}
+WH.correlation2(BLOOD[, 1], BLOOD[, 2:3])
+```
+
+## Distances between individuals
+
+The matrix of the L2 Wasserstein distances between the rows of a `MatH`
+(summing the squared distances over the variables), optionally after
+standardising the variables:
+
+```{r}
+D <- WH_MAT_DIST(BLOOD, standardize = TRUE)
+round(D[1:5, 1:5], 3)
+```
+
+For large matrices of histograms with different bins, `simplify = TRUE`
+approximates each histogram with `qua` equally spaced quantiles: the
+computations are much faster, at the cost of an approximation error that
+decreases with `qua`. The relative errors of the distances:
+
+```{r}
+u <- upper.tri(D)
+for (q in c(20, 100)) {
+  Dq <- WH_MAT_DIST(BLOOD, standardize = TRUE, simplify = TRUE, qua = q)
+  err <- abs(Dq[u] - D[u]) / D[u]
+  cat("qua =", q, " median:", signif(median(err), 2),
+      " maximum:", signif(max(err), 2), "\n")
+}
+```
+
+The largest relative errors concern the smallest distances; values of `qua`
+between 50 and 100 are usually a good compromise.
+
+## Reference
+
+Irpino, A., Verde, R. (2015) Basic statistics for distributional symbolic
+variables: a new metric-based approach. *Advances in Data Analysis and
+Classification*, 9(2), 143-175. <https://doi.org/10.1007/s11634-014-0176-4>

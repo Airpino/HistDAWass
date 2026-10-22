@@ -43,25 +43,14 @@ setMethod(
   "[",
   signature(x = "MatH"),
   function(x, i, j, ..., drop = TRUE) {
-    if (missing(i) && missing(j)) {
-      i <- c(1:nrow(x@M))
-      j <- c(1:ncol(x@M))
-    }
-    else {
-      if (missing(i)) i <- c(1:nrow(x@M))
-      if (missing(j)) j <- c(1:ncol(x@M))
-    }
-    # consider negative indexes!TO BE DONE!!
-    if (min(i) <= 0 | min(j) <= 0) {
-      stop("negative indexes are not allowed in subsetting [,] a MatH object")
-    }
-
-
-    x@M <- matrix(x@M[i, j],
-      nrow = length(i), ncol = length(j),
-      dimnames = list(row.names(x@M)[i], colnames(x@M)[j])
-    )
-
+    # standard matrix subsetting: positive, negative, character (names) and
+    # logical indices are allowed, the names of rows and columns are kept
+    # (up to 1.0.9 negative indices were not allowed and character indices
+    # gave NA names)
+    M <- x@M
+    if (missing(i)) i <- seq_len(nrow(M))
+    if (missing(j)) j <- seq_len(ncol(M))
+    x@M <- M[i, j, drop = FALSE]
     return(x)
   }
 )
