@@ -1,7 +1,48 @@
 # A class for histogram-valued data ---------------------------------------
-#' Class distributionH.
+#' Histogram objects: the distributionH class
+#'
+#' The \code{distributionH} class describes a histogram (a distribution) by means
+#' of its cumulative distribution function (cdf): the bounds of the bins and the
+#' values of the cdf at the bounds. All the methods of the package are based on
+#' the L2 Wasserstein distance between distributions.
+#'
+#' @slot x A non-decreasing numeric vector: the bounds of the bins (the domain of
+#' the distribution).
+#' @slot p A non-decreasing numeric vector of the same length of \code{x}, from 0
+#' to 1: the cdf at the values in \code{x}.
+#' @slot m The mean of the distribution.
+#' @slot s The standard deviation of the distribution.
+#' @param x A numeric vector, the bounds of the bins, in non-decreasing order.
+#' A single value defines an impulse distribution.
+#' @param p A numeric vector of the same length of \code{x}, the values of the
+#' cdf at \code{x}, non-decreasing from 0 to 1.
+#' @section Creating objects:
+#' Objects are created with \code{distributionH(x, p)} or, equivalently, with
+#' \code{new("distributionH", x, p, m, s)}, where the optional \code{m} and
+#' \code{s} (mean and standard deviation) are computed when not given.
+#'
+#' Empty bins, i.e. bins with zero weight (two consecutive equal values in
+#' \code{p}), may produce numerical problems. Since version 1.0.9 each empty bin
+#' gets a weight of \code{1e-8} and the cdf is renormalised when the object is
+#' created (see also \code{\link{checkEmptyBins}}).
+#' @return \code{distributionH()} returns a \code{distributionH} object.
+#' @references Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+#' distributional symbolic variables: a new metric-based approach}, Advances in
+#' Data Analysis and Classification, 9(2), 143-175.
+#' \doi{10.1007/s11634-014-0176-4}
+#' @seealso \code{\link{data2hist}} to build a histogram from raw data;
+#' \code{\link{meanH}}, \code{\link{stdH}}, \code{\link{plot,distributionH-method}}.
+#' @examples
+#' # the histogram
+#' # | Bins  | Prob | cdf |
+#' # | [1,2) | 0.4  | 0.4 |
+#' # | [2,3] | 0.6  | 1.0 |
+#' mydist <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
+#' mydist
+#' str(mydist)
 #' @name distributionH-class
 #' @rdname distributionH-class
+#' @aliases distributionH-class
 #' @exportClass distributionH
 setClass(
   Class = "distributionH",
@@ -11,94 +52,35 @@ setClass(
     m = "numeric",
     s = "numeric"
   ),
-  # distributionH=
   validity = function(object) {
-    if (length(object@x) <= 0) {
-      x <- NA
-    }
-    else {
-      if (length(object@p)) {
-        nv <- length(object@x)
-        p <- c(0, c(1:nv) / nv)
-      }
-      if (length(object@x) != length(object@p)) {
-        stop("the x and p vectors must be of the same length")
-      }
-      if (length(object@x) == 1) {
-        object@x <- c(object@x, object@x)
-        object@p <- c(0, 1)
-      }
-      nv <- length(object@x)
-      if ((length(object@x) > 1) &&
-        (min(diff(object@x)) < 0)) {
-        print(object@x)
-        print(object@p)
-        return("the x must be in not descending order")
-      }
-      if ((length(object@x) > 1) && (min(diff(object@p)) < 0) &&
-        (object@p[1] > 1e-14) && (object@p[nv] < 1 - 1e-14)) {
-        print(object@x)
-        print(object@p)
-        return("the p must be in not descending order from 0 to 1")
-      }
-
+    if (length(object@x) == 0) {
       return(TRUE)
     }
+    .check_xp(object@x, object@p)
   }
 )
-#' Constructor method of distributionH class
-#'
-#' Class \code{distributionH} defines a histogram object
-#'
-#' @name distributionH
 #' @rdname distributionH-class
 #' @aliases initialize,distributionH-method
-#' @description Class \code{"distributionH"} desfines an histogram object
-#' The class describes a histogram by means of its cumulative distribution
-#' function. The methods are develoved accordingly to the L2 Wasserstein
-#' distance between distributions.
-#'
-#' @docType class
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new("distributionH", x, p, m, s)}.
-#' @param .Object the type ("distributionH")
-#' @param x a numeric vector. it is the domain of the distribution (i.e. the
-#' extremes of bins).
-#' @param p a numeric vector (of the same lenght of x). It is the cumulative distribution function CDF.
-#' @param m (optional) a numeric value. Is the mean of the histogram.
-#' @param s (optional) a numeric positive value. It is the standard deviation of a histogram.
-#' @author Antonio Irpino
-#' @references Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI
-#' 10.1007/s11634-014-0176-4
-#' @keywords classes
-#' @examples #---- initialize a distributionH object mydist
-#' # from a simple histogram
-#' # ----------------------------
-#' # | Bins    |  Prob  | cdf   |
-#' # ----------------------------
-#' # | [1,2)   |  0.4   | 0.4   |
-#' # | [2,3]   |  0.6   | 1.0   |
-#' # ----------------------------
-#' # | Tot.    |  1.0   | -     |
-#' # ----------------------------
-#' mydist <- new("distributionH", c(1, 2, 3), c(0, 0.4, 1))
-#' str(mydist)
-#' # OUTPUT
-#' # Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#' #   ..@@ x: num [1:3] 1 2 3 the quantiles
-#' #   ..@@ p: num [1:3] 0 0.4 1 the cdf
-#' #   ..@@ m: num 2.1 the mean
-#' #   ..@@ s: num 0.569 the standard deviation
-#' @seealso \code{\link{meanH}} computes the mean. \code{\link{stdH}} computes the standard deviation.
+#' @usage NULL
 # showClass("distributionH")
 setMethod("initialize", "distributionH",
   definition = function(.Object, x = numeric(0), p = numeric(0), m = numeric(0), s = numeric(0)) {
-    .Object@x <- x
-    .Object@p <- p
+    # a single value is a degenerate distribution (an impulse)
+    if (length(x) == 1L) {
+      x <- c(x, x)
+      p <- c(0, 1)
+    }
+    .Object@x <- as.numeric(x)
+    .Object@p <- as.numeric(p)
     if (length(x) > 0) {
       validObject(.Object)
+      # zero-weight (empty) bins get a weight of 1e-8 (since v. 1.0.9)
+      fx <- .fix_empty_bins_p(.Object@p)
+      if (fx$fixed) {
+        .Object@p <- fx$p
+        m <- numeric(0) # mean and std must be recomputed
+        s <- numeric(0)
+      }
       if (length(m) == 0) .Object@m <- meanH(.Object) else .Object@m <- m
       if (length(s) == 0) .Object@s <- stdH(.Object) else .Object@s <- s
     }
@@ -108,21 +90,27 @@ setMethod("initialize", "distributionH",
 )
 
 # A class of a matrix of histogram-valued data ----------------------------
-#' Class MatH.
-#' @name MatH-class
-#' @rdname MatH-class
-#' @exportClass MatH
-#' @docType class
-#' @description   Class \code{MatH} defines a matrix of \code{distributionH} objects
-#' @author Antonio Irpino
-#' @references Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI
-#' 10.1007/s11634-014-0176-4
-#' @keywords classes
-#' @examples
+#' Matrices of histograms: the MatH class
 #'
-#' ## ---- create a list of six distributionH objects
+#' The \code{MatH} class describes a matrix of histograms: each cell contains a
+#' \code{distributionH} object, rows are the individuals and columns the
+#' (histogram-valued) variables.
+#'
+#' @slot M A matrix of mode list, each cell containing a \code{distributionH}
+#' object.
+#' @section Creating objects:
+#' Objects are created with \code{MatH()} or with
+#' \code{new("MatH", nrows, ncols, ListOfDist, names.rows, names.cols, by.row)},
+#' where \code{ListOfDist} is a list of \code{distributionH} objects and
+#' \code{names.rows}, \code{names.cols} are the names of rows and columns.
+#' @references Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+#' distributional symbolic variables: a new metric-based approach}, Advances in
+#' Data Analysis and Classification, 9(2), 143-175.
+#' \doi{10.1007/s11634-014-0176-4}
+#' @seealso \code{\link{get.MatH.main.info}}, \code{\link{plot,MatH-method}},
+#' \code{\link{WH.vec.mean}}, \code{\link{WH.var.covar}}.
+#' @examples
+#' ## a list of six distributionH objects
 #' ListOfDist <- vector("list", 6)
 #' ListOfDist[[1]] <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
 #' ListOfDist[[2]] <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
@@ -130,27 +118,26 @@ setMethod("initialize", "distributionH",
 #' ListOfDist[[4]] <- distributionH(c(2, 5, 8), c(0, 0.3, 1))
 #' ListOfDist[[5]] <- distributionH(c(8, 10, 15), c(0, 0.75, 1))
 #' ListOfDist[[6]] <- distributionH(c(20, 22, 24), c(0, 0.12, 1))
-#'
-#' ## create a MatH object filling it by columns
-#' MyMAT <- new("MatH",
-#'   nrows = 3, ncols = 2, ListOfDist = ListOfDist,
-#'   names.rows = c("I1", "I2", "I3"), names.cols = c("Var1", "Var2"), by.row = FALSE
+#' ## a 3 x 2 MatH filled by columns
+#' MyMAT <- MatH(
+#'   x = ListOfDist, nrows = 3, ncols = 2,
+#'   rownames = c("I1", "I2", "I3"), varnames = c("Var1", "Var2")
 #' )
-#'
-#' showClass("MatH")
-#' @param .Object the object type "MatH"
-#' @param ListOfDist a vector or a list of \code{distributionH} objects
-#' @param names.rows a vector or list of strings with thenames of the rows
-#' @param names.cols a vector or list of strings with thenames of the columns (variables)
+#' MyMAT
+#' ## an empty 10 x 4 matrix of histograms
+#' MAT <- MatH(nrows = 10, ncols = 4)
+#' @name MatH-class
+#' @rdname MatH-class
+#' @aliases MatH-class
+#' @exportClass MatH
 
 setClass(
   Class = "MatH",
   representation = representation(M = "matrix"),
 )
-#' Constructor method for MatH class
-#' @name MatH
 #' @rdname MatH-class
 #' @aliases initialize,MatH-method
+#' @usage NULL
 setMethod("initialize", "MatH",
   definition = function(.Object, nrows = 1, ncols = 1, ListOfDist = NULL, names.rows = NULL, names.cols = NULL, by.row = FALSE) {
     tt <- list(new("distributionH"))
@@ -222,12 +209,30 @@ setMethod("initialize", "MatH",
 )
 ## Classes for Histogram Time Series ------
 ## A single distribution with a time stamp ------
-#' Class TdistributionH
+#' Histograms with a time reference: the TdistributionH class
 #'
-#' Class \code{TdistributionH} defines a histogram with a time (point or period)
+#' The \code{TdistributionH} class extends \code{distributionH} with a time
+#' reference: a timestamp or a time period. It is the element of a histogram time
+#' series (\code{\link{HTS-class}}).
 #'
+#' @slot tstamp A number, the timestamp.
+#' @slot period A list with two elements, \code{start} and \code{end}, the bounds
+#' of the time period (alternative to \code{tstamp}).
+#' @slot x The bounds of the bins (see \code{\link{distributionH-class}}).
+#' @slot p The cdf at \code{x}.
+#' @slot m The mean.
+#' @slot s The standard deviation.
+#' @section Creating objects:
+#' Objects are created with
+#' \code{new("TdistributionH", tstamp, period, x, p, m, s)}, where \code{x},
+#' \code{p}, \code{m} and \code{s} are as in \code{\link{distributionH}}.
+#' @seealso \code{\link{HTS-class}}, \code{\link{plot,TdistributionH-method}}
+#' @examples
+#' td <- new("TdistributionH", tstamp = 1, x = c(1, 2, 3), p = c(0, 0.4, 1))
+#' td@tstamp
 #' @name TdistributionH-class
 #' @rdname TdistributionH-class
+#' @aliases TdistributionH-class
 #' @exportClass TdistributionH
 setClass(
   Class = "TdistributionH",
@@ -249,20 +254,9 @@ setClass(
   }
 )
 ## Initialize ------
-#' Constructor method of TdistributionH Class
-#'
-#' @name TdistributionH
 #' @rdname TdistributionH-class
 #' @aliases initialize,TdistributionH-method
-#' @param .Object the type of object ("TdistributionH") a \code{"distributionH"} object with a time reference
-#' @param tstamp a numeric value related to  a timestamp
-#' @param period a list of two values, the starting time and the ending time (alternative to tstamp if the
-#' distribution is observed along a period and not on a timestamp)
-#' @param x a vector of increasing values, the domain of the distribution (the same of \code{distributionH} object)
-#' @param p a vector of increasing values from 0 to 1,
-#' the CDF of the distribution (the same of \code{distributionH} object)
-#' @param m a number, the mean of the distribution (the same of \code{distributionH} object)
-#' @param s a positive number, the standard deviation of the distribution (the same of \code{distributionH} object)
+#' @usage NULL
 setMethod("initialize", "TdistributionH",
   definition = function(.Object,
                         tstamp = numeric(0),
@@ -271,14 +265,25 @@ setMethod("initialize", "TdistributionH",
                         p = numeric(0),
                         m = numeric(0),
                         s = numeric(0)) {
-    .Object@x <- x
-    .Object@p <- p
+    if (length(x) == 1L) {
+      x <- c(x, x)
+      p <- c(0, 1)
+    }
+    .Object@x <- as.numeric(x)
+    .Object@p <- as.numeric(p)
     .Object@m <- m
     .Object@s <- s
     .Object@tstamp <- tstamp
     .Object@period <- period
     if (length(x) > 0) {
       validObject(.Object)
+      # zero-weight (empty) bins get a weight of 1e-8 (since v. 1.0.9)
+      fx <- .fix_empty_bins_p(.Object@p)
+      if (fx$fixed) {
+        .Object@p <- fx$p
+        m <- numeric(0)
+        s <- numeric(0)
+      }
       if (length(m) == 0) .Object@m <- meanH(.Object) else .Object@m <- m
       if (length(s) == 0) .Object@s <- stdH(.Object) else .Object@s <- s
     }
@@ -300,12 +305,21 @@ setAs(
 )
 
 ## A mulvariate MatH with a time stamp  ----
-#' Class TMatH
+#' Matrices of histograms with a time reference: the TMatH class
 #'
-#' Class \code{TMatH} defines a matrix of histograms, a \code{TMatH} object, with a time (a timepoint or a time window).
+#' The \code{TMatH} class extends \code{MatH} with a time reference (timestamps or
+#' time periods).
 #'
+#' @slot tstamp A numeric vector of timestamps.
+#' @slot period A list of time periods (alternative to \code{tstamp}).
+#' @slot M The matrix of histograms, as in \code{\link{MatH-class}}.
+#' @section Creating objects:
+#' Objects are created with \code{new("TMatH", mat, tstamp, period)}, where
+#' \code{mat} is a \code{MatH} object.
+#' @seealso \code{\link{MatH-class}}, \code{\link{HTS-class}}
 #' @name TMatH-class
 #' @rdname TMatH-class
+#' @aliases TMatH-class
 #' @exportClass TMatH
 setClass(
   Class = "TMatH",
@@ -327,17 +341,9 @@ setClass(
   }
 )
 ## Initialize TMatH ------
-#' Constructor method of TdistributionH Class
-#'
-#' @name TMatH
 #' @rdname TMatH-class
 #' @aliases initialize,TMatH-method
-#' @param .Object the type of object ("TMatH")
-#' @param tstamp a vector of time stamps, numeric.
-#' @param period a list of pairs with a vectorof starting time and a vector ofending time.
-#' This parameter is used alternatively to \code{tstamp} if the distributions are related to time periods
-#' instead of timestamps
-#' @param mat a \code{MatH} object
+#' @usage NULL
 setMethod("initialize", "TMatH",
   definition = function(.Object,
                         tstamp = numeric(0),
@@ -352,12 +358,26 @@ setMethod("initialize", "TMatH",
 )
 
 ## A Histogram Time Series HTS-----
-#' Class HTS
+#' Histogram time series: the HTS class
 #'
-#' Class \code{HTS} defines a histogram time series, i.e. a set of histograms observed along time
+#' The \code{HTS} class describes a histogram time series, i.e. a sequence of
+#' histograms (\code{TdistributionH} objects) observed along time.
 #'
+#' @slot data A list of \code{TdistributionH} objects.
+#' @section Creating objects:
+#' Objects are created with \code{new("HTS", epocs, ListOfTimedElements)}, where
+#' \code{epocs} is the number of time points and \code{ListOfTimedElements} a
+#' list of \code{TdistributionH} objects.
+#' @seealso \code{\link{RetHTS}} for an example dataset;
+#' \code{\link{subsetHTS}}, \code{\link{plot,HTS-method}},
+#' \code{\link{HTS.moving.averages}}, \code{\link{HTS.exponential.smoothing}},
+#' \code{\link{HTS.predict.knn}}.
+#' @examples
+#' RetHTS
+#' subsetHTS(RetHTS, from = 1, to = 5)
 #' @name HTS-class
 #' @rdname HTS-class
+#' @aliases HTS-class
 #' @exportClass HTS
 setClass(
   Class = "HTS",
@@ -389,14 +409,9 @@ setClass(
   }
 )
 ## Initialize HTS ------
-#' Constructor method of HTS Class (Histogram Time Series)
-#'
-#' @name HTS
 #' @rdname HTS-class
 #' @aliases initialize,HTS-method
-#' @param .Object the object type ("HTS") a histogram time series
-#' @param epocs the number of histograms (one for each timepoint or period)
-#' @param ListOfTimedElements a vector of \code{TdistributionH} objects
+#' @usage NULL
 setMethod("initialize", "HTS",
   definition = function(.Object, epocs = 1, ListOfTimedElements = c(new("TdistributionH"))) {
     counts <- 0

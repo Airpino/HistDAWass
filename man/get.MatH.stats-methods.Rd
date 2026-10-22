@@ -3,56 +3,32 @@
 \name{get.MatH.stats}
 \alias{get.MatH.stats}
 \alias{get.MatH.stats,MatH-method}
-\title{Method get.MatH.stats}
+\title{Statistics of the histograms of a matrix}
 \usage{
-get.MatH.stats(object, ...)
-
 \S4method{get.MatH.stats}{MatH}(object, stat = "mean", prob = 0.5)
 }
 \arguments{
-\item{object}{a \code{MatH} object}
+\item{object}{A \code{MatH} object.}
 
-\item{...}{a set of other parameters}
+\item{stat}{The statistic: \code{"mean"} (default), \code{"median"},
+\code{"min"}, \code{"max"}, \code{"std"}, \code{"skewness"},
+\code{"kurtosis"} or \code{"quantile"}.}
 
-\item{stat}{(optional) a string containing the required statistic. Default='mean'\cr
-- \code{stat='mean'} - for computing the mean of each histogram\cr
-- \code{stat='median'} - for computing the median of each histogram\cr
-- \code{stat='min'} - for computing the minimum of each histogram\cr
-- \code{stat='max'} - for computing the maximum of each histogram\cr
-- \code{stat='std'} - for computing the standard deviatio of each histogram\cr
-- \code{stat='skewness'} - for computing the skewness of each histogram\cr
-- \code{stat='kurtosis'} - for computing the kurtosis of each histogram\cr
-- \code{stat='quantile'} - for computing the quantile ot level \code{prob} of each histogram\cr}
-
-\item{prob}{(optional)a number between 0 and 1 for computing the value once choosen the \code{'quantile'} option for \code{stat}.}
+\item{prob}{A number between 0 and 1, the level of the quantile when
+\code{stat = "quantile"}.}
 }
 \value{
-A list
+A list with the name of the statistic (\code{stat}), the level
+\code{prob} (only when \code{stat = "quantile"}) and the matrix of values
+(\code{mat}).
 }
 \description{
-It returns statistics for each distribution contained in a \code{MatH} object.
+Computes a statistic (mean, median, standard deviation, ...) for each
+histogram of a \code{MatH} object.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{stat}}{- the chosen statistic}
-
-\item{\code{prob}}{- level of probability if stat='quantile'}
-
-\item{\code{MAT}}{- a matrix of values}
-}}
-
 \examples{
-get.MatH.stats(BLOOD) # the means of the distributions in BLOOD dataset
-get.MatH.stats(BLOOD, stat = "median") # the medians of the distributions in BLOOD dataset
-get.MatH.stats(BLOOD, stat = "quantile", prob = 0.5) # the same as median
-get.MatH.stats(BLOOD, stat = "min") # minima of the distributions in BLOOD dataset
-get.MatH.stats(BLOOD, stat = "quantile", prob = 0) # the same as min
-get.MatH.stats(BLOOD, stat = "max") # maxima of the distributions in BLOOD dataset
-get.MatH.stats(BLOOD, stat = "quantile", prob = 1) # the same as max
-get.MatH.stats(BLOOD, stat = "std") # standard deviations of the distributions in BLOOD dataset
-get.MatH.stats(BLOOD, stat = "skewness") # skewness indices of the distributions in BLOOD dataset
-get.MatH.stats(BLOOD, stat = "kurtosis") # kurtosis indices of the distributions in BLOOD dataset
-get.MatH.stats(BLOOD, stat = "quantile", prob = 0.05)
-# the fifth percentiles of distributions in BLOOD dataset
+get.MatH.stats(BLOOD) # means
+get.MatH.stats(BLOOD, stat = "median")
+get.MatH.stats(BLOOD, stat = "quantile", prob = 0.05) # 5th percentiles
+get.MatH.stats(BLOOD, stat = "std")
 }

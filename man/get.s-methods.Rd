@@ -3,22 +3,25 @@
 \name{get.s}
 \alias{get.s}
 \alias{get.s,distributionH-method}
-\title{Method \code{get.s}: the standard deviation of a distribution}
+\title{Standard deviation of a histogram (stored value)}
 \usage{
 get.s(object)
-
-\S4method{get.s}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object.}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A numeric positive value, the standard deviation.
+A non-negative number, the standard deviation of the distribution.
 }
 \description{
-This functon return the standard deviation of a \code{distributionH} object.
+Returns the standard deviation stored in the \code{s} slot of a
+\code{distributionH} object. To compute it from the distribution use
+\code{\link{stdH}}.
 }
 \examples{
 D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-get.s(D) # returns the standard deviation of D
+get.s(D)
+}
+\seealso{
+\code{\link{stdH}}, \code{\link{get.m}}
 }

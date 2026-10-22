@@ -3,24 +3,20 @@
 \name{subsetHTS}
 \alias{subsetHTS}
 \alias{subsetHTS,HTS,numeric,numeric-method}
-\title{Method \code{subsetHTS}: extract a subset of a histogram time series}
+\title{Subset of a histogram time series}
 \usage{
 subsetHTS(object, from, to)
-
-\S4method{subsetHTS}{HTS,numeric,numeric}(object, from, to)
 }
 \arguments{
-\item{object}{a \code{HTS} object. A histogram 1d time series}
+\item{object}{A \code{HTS} object.}
 
-\item{from}{an integer, the initioal timepont}
-
-\item{to}{an integer, a final timepoint}
+\item{from, to}{Integers, the positions of the first and of the last element.}
 }
 \value{
-a \code{HTS} object. A histogram 1d time series
+A \code{HTS} object.
 }
 \description{
-This functon return the mean of a \code{distributionH} object.
+Extracts the elements of a histogram time series between two positions.
 }
 \examples{
 SUB_RetHTS <- subsetHTS(RetHTS, from = 1, to = 20) # the first 20 elements

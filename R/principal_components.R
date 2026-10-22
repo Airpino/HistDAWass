@@ -1,43 +1,45 @@
 ## 1v PCA for quantiles -------
 # Principal components analysis  of histogram variable based on Wasserstein distance----
-#' Principal components analysis  of histogram variable based on Wasserstein distance
-#' @description The function implements a Principal components analysis of histogram variable
-#' based on Wasserstein distance. It performs a centered (not standardized) PCA on a set of quantiles of a variable.
-#' Being a distribution a multivalued description, the analysis performs a dimensional reduction and a visualization of distributions.
-#' It is a 1d (one dimension) becuse it is considered just one histogram variable.
-#' @param data A MatH object (a matrix of distributionH).
-#' @param var An integer, the variable number.
-#' @param quantiles An integer, it is the number of quantiles used in the analysis.
-#' @param plots a logical value. Default=TRUE plots are drawn.
-#' @param listaxes A vector of integers listing the axis for the 2d factorial reperesntations.
-#' @param axisequal A logical value. Default TRUE, the plot have the same scale for the x and the y axes.
-#' @param qcut  a number between 0.5 and 1, it is used for the plot of densities, and avoids very peaked densities.
-#' Default=1, all the densities are considered.
-#' @param outl a number between 0 (default)  and 0.5. For each distribution, is the amount of mass removed from the tails
-#' of the distribution. For example, if 0.1, from each distribution is cut away a left tail and a right one each containing
-#' the 0.1 of mass.
-
-#' @return a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA
-#' @references Verde, R.; Irpino, A.; Balzanella, A., "Dimension Reduction Techniques for Distributional Symbolic Data," Cybernetics, IEEE Transactions on , vol.PP, no.99, pp.1,1
-#' doi: 10.1109/TCYB.2015.2389653
-#' keywords: {Correlation;Covariance matrices;Distribution functions;Histograms;Measurement;Principal component analysis;Shape;Distributional data;Wasserstein distance;principal components analysis;quantiles},
-#' \url{https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7024099&isnumber=6352949}
-#' @details In the framework of symbolic data analysis (SDA), distribution-valued data
-#' are defined as multivalued data, where each unit is described by a distribution
-#' (e.g., a histogram, a density, or a quantile function) of a quantitative variable.
-#'  SDA provides different methods for analyzing multivalued data. Among them, the most relevant
-#'  techniques proposed for a dimensional reduction of multivalued quantitative variables is principal
-#'  component analysis (PCA). This paper gives a contribution in this context of analysis.
-#'  Starting from new association measures for distributional variables based on a peculiar metric
-#'  for distributions, the squared Wasserstein distance, a PCA approach is proposed for distribution-valued data,
-#'   represented by quantile-variables.
+#' Principal component analysis of a histogram variable
+#'
+#' Principal component analysis (PCA) of one histogram variable based on the L2
+#' Wasserstein distance: a centred (not standardised) PCA of the quantiles of the
+#' histograms. It provides a dimensional reduction and a visualization of the
+#' distributions.
+#'
+#' @param data A \code{MatH} object.
+#' @param var An integer, the column of the variable to analyse.
+#' @param quantiles An integer, the number of quantiles used in the analysis
+#' (default 10).
+#' @param plots A logical value (default \code{TRUE}). If \code{TRUE}, for each
+#' factorial plane four plots (the variables and the individuals, plain and
+#' coloured by mean and by standard deviation) are drawn on the current graphic
+#' device, in a 2 x 2 layout.
+#' @param listaxes A vector of integers, the axes of the factorial planes to
+#' plot (default \code{1:4}, i.e. the planes 1-2 and 3-4).
+#' @param axisequal A logical value (default \code{FALSE}). If \code{TRUE}, the x
+#' and y axes of the plots have the same scale.
+#' @param qcut A number between 0.5 and 1 (default 1): densities higher than
+#' their \code{qcut} quantile are cut in the plots, to avoid very peaked
+#' densities.
+#' @param outl A number between 0 (default) and 0.5, the probability mass
+#' removed from each tail of the distributions (e.g. 0.1 removes 10\% from each
+#' tail).
+#' @return A list with \code{PCAout}, the results of
+#' \code{\link[FactoMineR]{PCA}}, \code{WASSVARIANCE} (not computed, always 0)
+#' and \code{INERTIA}, the total inertia.
+#' @references Verde, R., Irpino, A., Balzanella, A. (2016). Dimension reduction
+#' techniques for distributional symbolic data. IEEE Transactions on
+#' Cybernetics, 46(2), 344-355. \doi{10.1109/TCYB.2015.2389653}
+#' @seealso \code{\link{WH.MultiplePCA}}, \code{\link{WH.plot_multiple_Spanish.funs}}
 #' @examples
 #' results <- WH.1d.PCA(data = BLOOD, var = 1, listaxes = c(1:2))
 #' @importFrom FactoMineR PCA
-#' @importFrom graphics plot abline axis hist plot.new plot.window polygon segments text title
-#' @importFrom grDevices dev.new rgb
+#' @importFrom graphics plot abline axis hist plot.new plot.window polygon segments text title par
+#' @importFrom grDevices rgb
 #' @importFrom stats density quantile
 #' @export
+
 WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4), axisequal = FALSE, qcut = 1, outl = 0) {
   if (is(data)[1] != "MatH") {
     stop("Input data must be a MatH object (A matrix of histograms)")
@@ -109,12 +111,8 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
     }
   }
 
-  for (i in 1:INDIV)
-  {
-    for (j in 1:(quantiles + 1))
-    {
-      MATQ[i, j] <- compQ(data@M[i, 1][[1]], p[j])
-    }
+  for (i in 1:INDIV) {
+    MATQ[i, ] <- .qfun(data@M[i, 1][[1]], p)
   }
   rownames(MATQ) <- rownames(data@M)
   colnames(MATQ) <- namec
@@ -139,9 +137,10 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
   TOTINE <- sum(res.pca$eig[, 1])
   ## plotting PCA results ----------------
   if (plots) {
-    # par(mfrow=c(1,1))
-    # lt's define the couple of axes
-    dev.new(noRStudioGD = FALSE)
+    # since 1.0.9: the plots are drawn on the current device, four panels
+    # for each plane (up to 1.0.8 a new device was opened for each plot)
+    oldpar <- par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+    on.exit(par(oldpar), add = TRUE)
     planes <- matrix(0, 1, 2)
     for (cc in 1:floor(length(listaxes) / 2)) {
       planes <- rbind(planes, c(listaxes[(cc * 2 - 1)], listaxes[(cc * 2)]))
@@ -247,7 +246,6 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
       )
       axis(1, pos = 0, cex.axis = 0.7) # , at=xM,labels=labX)
       axis(2, pos = 0, cex.axis = 0.7) # , at=yM,labels=labY)
-      dev.new(noRStudioGD = FALSE)
 
       # plot individuals
 
@@ -267,12 +265,7 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
         distr <- data@M[ind, 1][[1]]
         # generate 200 random points according to the QF
         rn <- 200
-        xn <- c(rep(0, rn))
-        random_no <- c(0:rn) / rn
-
-        for (i in 1:rn) {
-          xn[i] <- compQ(distr, random_no[i])
-        }
+        xn <- .qfun(distr, c(0:(rn - 1)) / rn)
         d <- density(xn, n = 128)
         matX[, ind] <- d$x
         matD[, ind] <- d$y
@@ -308,7 +301,6 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
         ym <- (yM1 + ym1) / 2 - Ylen / 2 * (1 + 0.5 * yfact)
         yM <- (yM1 + ym1) / 2 + Ylen / 2 * (1 + 1.5 * yfact)
       }
-      dev.new(noRStudioGD = FALSE)
       plot.new()
       plot.window(c(xm, xM), c(ym, yM))
       title(main = "PCA plot of distributions", sub = "Smoothed distributions")
@@ -332,8 +324,6 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
 
       title(xlab = labX)
       title(ylab = labY)
-      dev.new(noRStudioGD = FALSE)
-      # plot.new()
       plot.new()
       plot.window(c(xm, xM), c(ym, yM))
       title(main = "Coloured using the mean values")
@@ -370,14 +360,13 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
       abline(0, res.pca$quanti.sup$coord[1, 2] / res.pca$quanti.sup$coord[1, 1], lty = 3, lwd = 2, col = "red")
       title(xlab = labX)
       title(ylab = labY)
-      dev.new(noRStudioGD = FALSE)
       plot.new()
       plot.window(c(xm, xM), c(ym, yM))
       title(main = "Coloured using std values")
       for (ind in 1:INDIV) {
         x <- matX[, ind]
         y <- matD[, ind]
-        x <- (x - data@M[ind, 1][[1]]@s) / meanXRange * xfact * Xlen + res.pca$ind$coord[ind, axe1]
+        x <- (x - data@M[ind, 1][[1]]@m) / meanXRange * xfact * Xlen + res.pca$ind$coord[ind, axe1]
         x <- c(x, x[length(x)], x[1])
         y <- c(y, 0, 0) / q95D * yfact * Ylen + res.pca$ind$coord[ind, axe2]
         red <- (data@M[ind, 1][[1]]@s - minS) / (maxS - minS)
@@ -411,25 +400,28 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
   return(list(PCAout = res.pca, WASSVARIANCE = VARW, INERTIA = TOTINE))
 }
 # Principal components analysis  of a set of histogram variables based on Wasserstein distance----
-#' Principal components analysis  of a set of histogram variable based on Wasserstein distance
-#' @description (Beta version) The function implements a Principal components analysis of a set of histogram variables
-#' based on Wasserstein distance. It performs a centered (not standardized) PCA on a set of quantiles of a variable.
-#' Being a distribution a multivalued description, the analysis performs a dimensional reduction and a visualization of distributions.
-#' It is a 1d (one dimension) becuse it is considered just one histogram variable.
-#' @param data A MatH object (a matrix of distributionH).
-#' @param list.of.vars A list of  integers, the active variables.
-#' @param quantiles An integer, it is the number of quantiles used in the analysis.
-#' Default=10.
-#' @param outl a number between 0 (default)  and 0.5. For each distribution, is the amount of mass removed from the tails
-#' of the distribution. For example, if 0.1, from each distribution is cut away a left tail and a right one each containing
-#' the 0.1 of mass.
-#' @return a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA
-#' @details It is an extension of WH.1d.PCA to the multiple case.
+#' Principal component analysis of a set of histogram variables
+#'
+#' (Beta version) Principal component analysis of several histogram variables
+#' based on the L2 Wasserstein distance: a multiple factor analysis
+#' (\code{\link[FactoMineR]{MFA}}) of the quantiles of the histograms, where each
+#' variable is a group of quantiles. It extends \code{\link{WH.1d.PCA}}.
+#'
+#' @inheritParams WH.1d.PCA
+#' @param list.of.vars A vector of integers, the columns of the variables to
+#' analyse.
+#' @param graph A logical value (default \code{TRUE}): if \code{TRUE} the plots of
+#' \code{\link[FactoMineR]{MFA}} are drawn.
+#' @return The results of \code{\link[FactoMineR]{MFA}}.
+#' @seealso \code{\link{WH.plot_multiple_Spanish.funs}},
+#' \code{\link{WH.plot_multiple_indivs}}
+#' @examples
+#' res <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3), graph = FALSE)
 #' @importFrom FactoMineR MFA
 #' @importFrom stats rnorm
 #' @export
 ## MFA PCA for quantiles -------
-WH.MultiplePCA <- function(data, list.of.vars, quantiles = 10, outl = 0) {
+WH.MultiplePCA <- function(data, list.of.vars, quantiles = 10, outl = 0, graph = TRUE) {
   data <- data[, list.of.vars]
   VARS <- ncol(data@M)
   INDIV <- nrow(data@M)
@@ -453,12 +445,8 @@ WH.MultiplePCA <- function(data, list.of.vars, quantiles = 10, outl = 0) {
       }
       namec <- c(namec, "Max")
       COLnames <- c(COLnames, paste(substr(colnames(data@M)[v], 1, 4), namec, sep = "."))
-      for (i in 1:INDIV)
-      {
-        # tmp=compQ_vect(data@M[i,v][[1]],p)
-        for (j in 1:(quantiles + 1)) {
-          MATQ[i, ((v - 1) * (quantiles + 1) + j)] <- compQ(data@M[i, v][[1]], p[j])
-        }
+      for (i in 1:INDIV) {
+        MATQ[i, ((v - 1) * (quantiles + 1) + 1:(quantiles + 1))] <- .qfun(data@M[i, v][[1]], p)
       }
     }
   }
@@ -474,11 +462,8 @@ WH.MultiplePCA <- function(data, list.of.vars, quantiles = 10, outl = 0) {
         namec <- c(namec, paste0("Q(", format(p[j], digits = 2, nsmall = 2), ")"))
       }
       COLnames <- c(COLnames, paste(substr(colnames(data@M)[v], 1, 4), namec, sep = "."))
-      for (i in 1:INDIV)
-      {
-        for (j in 1:(quantiles + 1)) {
-          MATQ[i, ((v - 1) * (quantiles + 1) + j)] <- compQ(data@M[i, v][[1]], p[j])
-        }
+      for (i in 1:INDIV) {
+        MATQ[i, ((v - 1) * (quantiles + 1) + 1:(quantiles + 1))] <- .qfun(data@M[i, v][[1]], p)
       }
     }
   }
@@ -512,7 +497,7 @@ WH.MultiplePCA <- function(data, list.of.vars, quantiles = 10, outl = 0) {
   }
   MFA.res <- MFA(MATF,
     group = c(rep(quantiles + 1, length(list.of.vars))), type = c(rep("c", length(list.of.vars))),
-    ncp = 3, name.group = colnames(data@M), graph = TRUE
+    ncp = 3, name.group = colnames(data@M), graph = graph
   )
   # do Plots!!!!
   # plot Spanish-fan plot
@@ -521,27 +506,28 @@ WH.MultiplePCA <- function(data, list.of.vars, quantiles = 10, outl = 0) {
 }
 
 # Plotting Spanish fun plots for Multiple factor analysis of Histogram Variables ----
-#' Plotting Spanish fun plots for Multiple factor analysis of Histogram Variables
-#' @description The function plots the circle of correlation of the quantiles
-#' of the histogrma variables after a Multiple factor analysis.
-#' @param res Results from WH.MultiplePCA, or WH.1D.PCA.
-#' @param axes A list of  integers, the new factorial axes c(1,2) are the default.
-#' @param var A list of integers are the variables to plot.
-#' @param LABS Logical, if TRUE graph is labeled, otherwise it does not.
-#' @param multi Logical, if TRUE (default) results come from a WH.MultiplePCA,
-#'  if FALSE results come from WH.1D.PCA.
-#' @param corplot Logical, if TRUE (default) the plot reports correlations, if FALSE
-#' the coordinates of quantiles on the factorial plane
-#' @return a plot of class ggplot
+#' Plot the variables of a PCA of histogram variables (Spanish-fan plot)
+#'
+#' Plots the quantiles of the histogram variables on a factorial plane after
+#' \code{\link{WH.MultiplePCA}} (or \code{\link{WH.1d.PCA}}): the quantiles of
+#' each variable form a fan.
+#'
+#' @param res The results of \code{\link{WH.MultiplePCA}} or of
+#' \code{\link{WH.1d.PCA}}.
+#' @param axes A vector of two integers, the factorial axes (default
+#' \code{c(1, 2)}).
+#' @param var A vector of integers, the variables to plot.
+#' @param LABS A logical value (default \code{TRUE}): if \code{TRUE} the quantiles
+#' are labelled.
+#' @param multi A logical value: \code{TRUE} (default) if \code{res} comes from
+#' \code{WH.MultiplePCA}, \code{FALSE} if it comes from \code{WH.1d.PCA}.
+#' @param corplot A logical value: if \code{TRUE} (default) the correlations are
+#' plotted (circle of correlations), otherwise the coordinates.
+#' @return The plot is drawn on the current device and the \code{ggplot} object
+#' is returned invisibly.
 #' @examples
-#' # Do a MultiplePCA on the BLOOD dataset
-#' \dontrun{
-#' res <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3))
-#' }
-#' # Plot results
-#' \dontrun{
+#' res <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3), graph = FALSE)
 #' WH.plot_multiple_Spanish.funs(res, axes = c(1, 2), var = c(1:3))
-#' }
 #' @export
 WH.plot_multiple_Spanish.funs <- function(res,
                                           axes = c(1, 2), var = 1, LABS = TRUE,
@@ -638,13 +624,14 @@ WH.plot_multiple_Spanish.funs <- function(res,
   l2 <- data.frame(x = c(0, 0), y = c(-1.2, 1.2))
 
 
-  p <- ggplot(d, aes(x = v1, y = v2)) +
-    geom_polygon(aes(group = tt, fill = as.factor(VA), alpha = tt2), colour = "grey30")
+  txt_lab$lab <- rownames(txt_lab)
+  p <- ggplot(d, aes(x = .data$v1, y = .data$v2)) +
+    geom_polygon(aes(group = .data$tt, fill = as.factor(.data$VA), alpha = .data$tt2), colour = "grey30")
   if (LABS == TRUE) {
     p <- p + geom_text(data = txt_lab, aes(
-      x = v1, y = v2,
-      label = rownames(txt_lab),
-      hjust = hj, vjust = vj
+      x = .data$v1, y = .data$v2,
+      label = .data$lab,
+      hjust = .data$hj, vjust = .data$vj
     ))
   }
   if (corplot) {
@@ -668,53 +655,47 @@ WH.plot_multiple_Spanish.funs <- function(res,
   }
   p <- p + theme(plot.title = element_text(hjust = 0.5))
   if (corplot) {
-    p <- p + geom_path(data = df, aes(x = x_c, y = y_c), inherit.aes = F, linetype = 2)
+    p <- p + geom_path(data = df, aes(x = .data$x_c, y = .data$y_c), inherit.aes = FALSE, linetype = 2)
   }
   p <- p + geom_vline(xintercept = 0) + geom_hline(yintercept = 0)
 
 
   print(p)
 
-  return(p)
+  return(invisible(p))
 }
 
 # Plot histograms of individuals after a  Multiple factor analysis of Histogram Variables ----
-#'  Plot histograms of individuals after a  Multiple factor analysis of Histogram Variables
-#' @description (Beta version) The function plots histogram data of the individuals for a particular
-#' variable on a factorial palne after a Multiple factor analysis.
-#' @param data a MatH object
-#' @param res Results from WH.MultiplePCA.
-#' @param axes A list of  integers, the new factorial axes c(1,2) are the default.
-#' @param indiv A list of objects (rows) of data to plot. Default=0 all the objects of data.
-#' @param var An integer indicating an original histogrma variable to plot.
-#' @param strx a resizing factor for the domain of histograms (default=0.1 means
-#' that each distribution has a support that is one tenth of the spread of the x axis)
-#' @param stry a resizing factor for the density of histograms (default=0.1 means
-#' that each distribution has a density that is one tenth of the spread of the y axis)
-#' @param HISTO a logical value. Default=TRUE plots histograms, FALSE plot smooth densities.
-#' @param coor (optional) if 0 (Default) takes the coordinates in res, if a a matrix is passed the coordinates are those passed
-#' @param stat (optional) if 'mean'(Default) a plot of individuals labeled by the means is produced.
-#' Otherwise if 'std', 'skewness' or 'kurtosis', data are labeled with this statistic.
-#' @return a plot of class ggplot
+#' Plot the histograms of the individuals on a factorial plane
+#'
+#' (Beta version) Plots the histograms (or densities) of one variable for each
+#' individual, placed at the coordinates of the individuals on a factorial plane
+#' of \code{\link{WH.MultiplePCA}}.
+#'
+#' @param data A \code{MatH} object, the data of the analysis.
+#' @param res The results of \code{\link{WH.MultiplePCA}}.
+#' @param axes A vector of two integers, the factorial axes (default
+#' \code{c(1, 2)}).
+#' @param indiv A vector of integers, the individuals (rows) to plot. Default 0:
+#' all the individuals.
+#' @param var An integer, the variable to plot.
+#' @param strx,stry Resizing factors for the domain and for the density of the
+#' histograms (default 0.1: one tenth of the range of the axes).
+#' @param HISTO A logical value: if \code{TRUE} (default) histograms are drawn,
+#' otherwise smoothed densities.
+#' @param coor A matrix of coordinates of the individuals. Default 0: the
+#' coordinates in \code{res}.
+#' @param stat The statistic used to label and colour the histograms in the
+#' second plot: \code{"mean"} (default), \code{"std"}, \code{"skewness"} or
+#' \code{"kurtosis"}.
+#' @return The two plots are drawn on the current device and a list with the two
+#' \code{ggplot} objects is returned invisibly.
 #' @examples
-#' # Do a MultiplePCA on the BLOOD dataset
-#' \dontrun{
-#' #' results=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3))
-#' # Plot histograms of variable 1 of BLOOD dataset on the first
-#' # factorial plane showing histograms
-#' WH.plot_multiple_indivs(BLOOD, results,
-#'   axes = c(1, 2), var = 1, strx = 0.1,
-#'   stry = 0.1, HISTO = TRUE
-#' )
-#' # Plot histograms of variable 1 of BLOOD dataset on the first
-#' # factorial plane showing densities
-#'
-#' WH.plot_multiple_indivs(BLOOD, results,
-#'   axes = c(1, 2), var = 1, strx = 0.1,
-#'   stry = 0.1, HISTO = FALSE
-#' )
+#' \donttest{
+#' results <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3), graph = FALSE)
+#' WH.plot_multiple_indivs(BLOOD, results, axes = c(1, 2), var = 1, HISTO = TRUE)
+#' WH.plot_multiple_indivs(BLOOD, results, axes = c(1, 2), var = 1, HISTO = FALSE)
 #' }
-#'
 #' @export
 WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 1,
                                     strx = 0.1, stry = 0.1, HISTO = TRUE, coor = 0,
@@ -764,7 +745,7 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
     rmax <- -Inf
 
     for (i in el_ind) {
-      vals <- COMP_MQ(data@M[i, var][[1]], Mp = c(0:pt) / pt)
+      vals <- .qfun(data@M[i, var][[1]], c(0:pt) / pt)
       mm <- data@M[i, var][[1]]@m
       tmp_r <- max(vals) - min(vals)
       if (tmp_r > rmax) {
@@ -790,8 +771,8 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
   # bisogna traslare ogni oggetto e scalarlo
   # scaliamo gli oggetti tra 0 e 1
   ALL_OBJ$x <- (ALL_OBJ$x_o - minx) / (rmax)
-  # tagliamo picchi eccessivi
-  ALL_OBJ$y[ALL_OBJ$y_o > EXTRY] <- EXTRY
+  # tagliamo picchi eccessivi (up to 1.0.8 the cut was applied to a wrong column)
+  ALL_OBJ$y_o[ALL_OBJ$y_o > EXTRY] <- EXTRY
   limY <- quantile(ALL_OBJ$y_o, probs = 0.99)
   ALL_OBJ$y <- ALL_OBJ$y_o / limY
   # ogni oggetto va traslato e rimpicciolito di un fattore strech x strech y
@@ -830,15 +811,14 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
 
   colnames(coord) <- c("x", "y")
   coord <- as.data.frame(coord)
-  p <- ggplot(data = ALL_OBJ, aes(x = x_o, y = y_o)) +
-    geom_polygon(aes(group = ID_o, fill = as.factor(ID_o), alpha = 0.4), colour = "black") +
-    geom_point(data = coord, aes(x = x, y = y)) +
+  coord$lab <- rownames(coord)
+  p <- ggplot(data = ALL_OBJ, aes(x = .data$x_o, y = .data$y_o)) +
+    geom_polygon(aes(group = .data$ID_o, fill = as.factor(.data$ID_o)), alpha = 0.4, colour = "black") +
+    geom_point(data = coord, aes(x = .data$x, y = .data$y)) +
     geom_text(
       data = coord,
-      aes(
-        x = x, y = y, label = rownames(coord),
-        hjust = 0.5, vjust = 1
-      )
+      aes(x = .data$x, y = .data$y, label = .data$lab),
+      hjust = 0.5, vjust = 1
     ) +
     theme_bw() +
     xlab(labX) +
@@ -855,21 +835,18 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
   # kurtH()=get.MatH.stats(data[el_ind,var],stat="std")$mat
   ### print a plot with means
 
-  coord <- cbind(coord, Ms)
-  colnames(coord)[[3]] <- stat
+  # the label is the requested statistic (up to 1.0.8 it failed for stat != "mean")
+  coord$statval <- format(as.vector(Ms), digits = 1, nsmall = 2)
 
-  p2 <- ggplot(ALL_OBJ, aes(x = x_o, y = y_o)) +
+  p2 <- ggplot(ALL_OBJ, aes(x = .data$x_o, y = .data$y_o)) +
     scale_fill_gradient(low = "yellow", high = "red") +
-    geom_polygon(aes(group = ID_o, fill = mea, alpha = 0.4), colour = "black") +
-    geom_point(data = coord, aes(x = x, y = y)) +
+    geom_polygon(aes(group = .data$ID_o, fill = .data$mea), alpha = 0.4, colour = "black") +
+    geom_point(data = coord, aes(x = .data$x, y = .data$y)) +
     theme_bw() +
     geom_text(
       data = coord,
-      aes(
-        x = x, y = y,
-        label = format(mean, digits = 1, nsmall = 2),
-        hjust = 0.5, vjust = 1
-      )
+      aes(x = .data$x, y = .data$y, label = .data$statval),
+      hjust = 0.5, vjust = 1
     ) +
     xlab(labX) +
     ylab(labY) +
@@ -884,40 +861,7 @@ WH.plot_multiple_indivs <- function(data, res, axes = c(1, 2), indiv = 0, var = 
   print(p)
   print(p2)
 
-  return(pp = list(p, p2))
-}
-
-COMP_MQ <- function(object, Mp) {
-  res <- numeric()
-  n <- length(Mp)
-
-  for (i in 1:n) {
-    p <- Mp[i]
-    # Check for errors
-    if (p < 0 || p > 1) stop("p must be a value between 0 and 1")
-
-    if (p <= 0) {
-      q <- object@x[1]
-    } else {
-      if (p >= 1) {
-        q <- object@x[length(object@x)]
-      }
-      else {
-        ini <- max(object@x[object@p <= p])
-        pos1 <- which.max(object@x[object@p <= p])
-        pos2 <- pos1 + 1
-        fin <- object@x[pos2]
-        if (ini == fin) {
-          q <- ini
-        }
-        else {
-          q <- ini + (object@x[pos2] - object@x[pos1]) * (p - object@p[pos1]) / (object@p[pos2] - object@p[pos1])
-        }
-      }
-      res <- c(res, q)
-    }
-  }
-  return(res)
+  return(invisible(list(p, p2)))
 }
 
 COMP_POLY_H <- function(object) {

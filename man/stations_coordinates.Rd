@@ -3,18 +3,22 @@
 \docType{data}
 \name{stations_coordinates}
 \alias{stations_coordinates}
-\title{Stations coordinates of China_Month and China_Seas datasets}
+\title{Coordinates of the stations of the China datasets}
 \format{
-a data.frame
+A data frame with 60 rows and 9 columns: \code{ID}, \code{Name_ST}
+(name of the station), \code{Code_ST} (code of the station), \code{LAT.deg},
+\code{LAT.min}, \code{LON.deg}, \code{LON.min} (latitude and longitude, degrees
+and minutes), \code{Elevation}, \code{Beginning} (first year of observation).
 }
 \source{
-raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}.
-Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
-DOI: 10.3334/CDIAC/cli.tr055
+Climate Data Bases of the People's Republic of China 1841-1988 (TR055),
+\doi{10.3334/CDIAC/cli.tr055}
 }
 \description{
-A dataset containing the geographical coordinates of stations described in China_Month and China_Seas datasets
+Geographical coordinates of the 60 stations of \code{\link{China_Month}} and
+\code{\link{China_Seas}}.
 }
-\author{
-Antonio Irpino, 2014-10-05
+\examples{
+head(stations_coordinates)
 }
+\keyword{datasets}

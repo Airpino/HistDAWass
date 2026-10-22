@@ -3,28 +3,28 @@
 \docType{class}
 \name{TMatH-class}
 \alias{TMatH-class}
-\alias{TMatH}
 \alias{initialize,TMatH-method}
-\title{Class TMatH}
-\usage{
-\S4method{initialize}{TMatH}(
-  .Object,
-  tstamp = numeric(0),
-  period = list(start = -Inf, end = -Inf),
-  mat = new("MatH")
-)
-}
-\arguments{
-\item{.Object}{the type of object ("TMatH")}
-
-\item{tstamp}{a vector of time stamps, numeric.}
-
-\item{period}{a list of pairs with a vectorof starting time and a vector ofending time.
-This parameter is used alternatively to \code{tstamp} if the distributions are related to time periods
-instead of timestamps}
-
-\item{mat}{a \code{MatH} object}
-}
+\title{Matrices of histograms with a time reference: the TMatH class}
 \description{
-Class \code{TMatH} defines a matrix of histograms, a \code{TMatH} object, with a time (a timepoint or a time window).
+The \code{TMatH} class extends \code{MatH} with a time reference (timestamps or
+time periods).
+}
+\section{Slots}{
+
+\describe{
+\item{\code{tstamp}}{A numeric vector of timestamps.}
+
+\item{\code{period}}{A list of time periods (alternative to \code{tstamp}).}
+
+\item{\code{M}}{The matrix of histograms, as in \code{\link{MatH-class}}.}
+}}
+
+\section{Creating objects}{
+
+Objects are created with \code{new("TMatH", mat, tstamp, period)}, where
+\code{mat} is a \code{MatH} object.
+}
+
+\seealso{
+\code{\link{MatH-class}}, \code{\link{HTS-class}}
 }

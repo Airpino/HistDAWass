@@ -21,18 +21,20 @@ setMethod("show",
 )
 
 ## --- Plot overloading for Timed TdistributionH  TMatH and HTS----
-#' plot for a TdistributionH object
+#' Plot a histogram with a time reference
+#'
+#' Plots a \code{TdistributionH} object: see \code{\link{plot,distributionH-method}}
+#' for the types of plot.
+#'
+#' @param x A \code{TdistributionH} object.
+#' @inheritParams plot-distributionH
+#' @return The plot is drawn on the current device and the \code{ggplot} object is
+#' returned invisibly.
+#' @examples
+#' td <- new("TdistributionH", tstamp = 1, x = c(1, 2, 3), p = c(0, 0.4, 1))
+#' plot(td)
 #' @name plot-TdistributionH
-#' @docType methods
 #' @aliases plot,TdistributionH-method
-#' @description A plot function for a \code{TdistributionH} object. The function returns a representation
-#' of the histogram.
-#' @param x  a \code{TdistributionH} object
-#' @param type (optional) a string describing the type of plot, default="HISTO".\cr Other allowed types are
-#' \cr"CDF"=Cumulative distribution function, \cr"QF"= quantile function, \cr"DENS"=a density approximation,
-#' \cr"HBOXPLOT"=horizontal boxplot, \cr"VBOXPLOT"= vertical boxplot,
-#' @param col (optional) a string the color of the plot, default="green".
-#' @param border (optional) a string the color of the border of the plot, default="black".
 #' @export
 setMethod(
   "plot",
@@ -50,53 +52,54 @@ setMethod(
 #           }
 # )
 ## --- Plot overloading
-#' Method plot for a histogram time series
+#' Plot a histogram time series
+#'
+#' Plots a \code{HTS} object as a sequence of violin plots or boxplots, one for
+#' each timestamp.
+#'
+#' @param x A \code{HTS} object.
+#' @param y Not used.
+#' @param type The type of plot: \code{"VIOLIN"} (default) or \code{"BOXPLOT"}.
+#' @param border The colour of the borders (default \code{"black"}).
+#' @param maxno.perplot The maximum number of timestamps in each row of the plot
+#' (default 30): longer series are split into several rows.
+#' @return The plot is drawn on the current device and the \code{ggplot} object is
+#' returned invisibly, so that it can be further modified.
+#' @examples
+#' plot(subsetHTS(RetHTS, from = 1, to = 10))
+#' \donttest{
+#' plot(RetHTS, type = "BOXPLOT", border = "blue", maxno.perplot = 20)
+#' plot(RetHTS, type = "VIOLIN", maxno.perplot = 20)
+#' }
 #' @name plot-HTS
-#' @docType methods
 #' @rdname plot-HTS
 #' @aliases plot,HTS-method
-#' @description An overloading plot function for a \code{HTS} object. The method returns a graphical representation
-#' of a histogram time series.
-#' @param x a \code{distributionH} object
-#' @param y not used in this implementation
-#' @param type (optional) a string describing the type of plot, default="BOXPLOT".\cr
-#'  Other allowed types are \cr
-#'  "VIOLIN"=a violin-plot representation,
-#' @param border (optional) a string the color of the border of the plot, default="black".
-#' @param maxno.perplot An integer (DEFAULT=30). Maximum number of timestamps per row.
-#'  It allows a plot organized by rows, each row of the plot contains a max number of time stamps
-#'   indicated by maxno.perplot.
-#' @examples
-#' plot(subsetHTS(RetHTS, from = 1, to = 10)) # plots RetHTS dataset
-#' \dontrun{
-#' plot(RetHTS, type = "BOXPLOT", border = "blue", maxno.perplot = 20)
-#' plot(RetHTS, type = "VIOLIN", border = "blue", maxno.perplot = 20)
-#' plot(RetHTS, type = "VIOLIN", border = "blue", maxno.perplot = 10)
-#' }
 #' @export
 setMethod(
   "plot",
   signature(x = "HTS"),
   function(x, y = "missing", type = "VIOLIN", border = "black", maxno.perplot = 30) {
-    plot.HTS.1v(x, type = type, border = border, maxno.perplot = maxno.perplot)
+    .draw(.plot_HTS(x, type = type, border = border, maxno.perplot = maxno.perplot))
   }
 )
 
 
-#' Method \code{subsetHTS}: extract a subset of a histogram time series
+#' Subset of a histogram time series
+#'
+#' Extracts the elements of a histogram time series between two positions.
+#'
+#' @param object A \code{HTS} object.
+#' @param from,to Integers, the positions of the first and of the last element.
+#' @return A \code{HTS} object.
+#' @examples
+#' SUB_RetHTS <- subsetHTS(RetHTS, from = 1, to = 20) # the first 20 elements
 #' @name subsetHTS
 #' @rdname subsetHTS-methods
 #' @exportMethod subsetHTS
 setGeneric("subsetHTS", function(object, from, to) standardGeneric("subsetHTS"))
 #' @rdname subsetHTS-methods
 #' @aliases subsetHTS,HTS,numeric,numeric-method
-#' @description This functon return the mean of a \code{distributionH} object.
-#' @param object a \code{HTS} object. A histogram 1d time series
-#' @param from an integer, the initioal timepont
-#' @param to an integer, a final timepoint
-#' @return a \code{HTS} object. A histogram 1d time series
-#' @examples
-#' SUB_RetHTS <- subsetHTS(RetHTS, from = 1, to = 20) # the first 20 elements
+#' @usage NULL
 setMethod(
   f = "subsetHTS",
   signature = c(object = "HTS", from = "numeric", to = "numeric"),

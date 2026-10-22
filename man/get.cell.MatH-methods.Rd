@@ -3,26 +3,32 @@
 \name{get.cell.MatH}
 \alias{get.cell.MatH}
 \alias{get.cell.MatH,MatH,numeric,numeric-method}
-\alias{get.cell.MatH,MatH-method}
-\title{Method get.cell.MatH Returns the histogram in a cell of a matrix of distributions}
+\alias{set.cell.MatH}
+\alias{set.cell.MatH,distributionH,MatH,numeric,numeric-method}
+\title{Get or set a cell of a matrix of histograms}
 \usage{
 get.cell.MatH(object, r, c)
 
-\S4method{get.cell.MatH}{MatH,numeric,numeric}(object, r, c)
+set.cell.MatH(object, mat, r, c)
 }
 \arguments{
-\item{object}{a MatH object, a matrix of distributions.}
+\item{object}{For \code{get.cell.MatH}, a \code{MatH} object; for
+\code{set.cell.MatH}, the \code{distributionH} object to assign.}
 
-\item{r}{an integer, the row index.}
+\item{r, c}{Integers, the row and the column of the cell.}
 
-\item{c}{an integer, the column index}
+\item{mat}{A \code{MatH} object.}
 }
 \value{
-A \code{distributionH} object.
+\code{get.cell.MatH} returns a \code{distributionH} object,
+\code{set.cell.MatH} the modified \code{MatH} object.
 }
 \description{
-Returns the histogram data in the r-th row and the c-th column.
+\code{get.cell.MatH} returns the histogram in a cell of a \code{MatH} object;
+\code{set.cell.MatH} assigns a histogram to a cell.
 }
 \examples{
 get.cell.MatH(BLOOD, r = 1, c = 1)
+mydist <- distributionH(x = c(0, 1, 2, 3, 4), p = c(0, 0.1, 0.6, 0.9, 1))
+MAT <- set.cell.MatH(mydist, BLOOD, r = 1, c = 1)
 }

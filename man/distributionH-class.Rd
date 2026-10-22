@@ -3,84 +3,70 @@
 \docType{class}
 \name{distributionH-class}
 \alias{distributionH-class}
-\alias{distributionH}
 \alias{initialize,distributionH-method}
-\title{Class distributionH.}
+\alias{distributionH}
+\title{Histogram objects: the distributionH class}
 \usage{
-\S4method{initialize}{distributionH}(
-  .Object,
-  x = numeric(0),
-  p = numeric(0),
-  m = numeric(0),
-  s = numeric(0)
-)
-
 distributionH(x = numeric(0), p = numeric(0))
 }
 \arguments{
-\item{.Object}{the type ("distributionH")}
+\item{x}{A numeric vector, the bounds of the bins, in non-decreasing order.
+A single value defines an impulse distribution.}
 
-\item{x}{a numeric vector. it is the domain of the distribution (i.e. the
-extremes of bins).}
-
-\item{p}{a numeric vector (of the same lenght of x). It is the cumulative distribution function CDF.}
-
-\item{m}{(optional) a numeric value. Is the mean of the histogram.}
-
-\item{s}{(optional) a numeric positive value. It is the standard deviation of a histogram.}
+\item{p}{A numeric vector of the same length of \code{x}, the values of the
+cdf at \code{x}, non-decreasing from 0 to 1.}
 }
 \value{
-A \code{distributionH} object
+\code{distributionH()} returns a \code{distributionH} object.
 }
 \description{
-Class \code{"distributionH"} desfines an histogram object
-The class describes a histogram by means of its cumulative distribution
-function. The methods are develoved accordingly to the L2 Wasserstein
-distance between distributions.
+The \code{distributionH} class describes a histogram (a distribution) by means
+of its cumulative distribution function (cdf): the bounds of the bins and the
+values of the cdf at the bounds. All the methods of the package are based on
+the L2 Wasserstein distance between distributions.
+}
+\section{Slots}{
 
-A histogram object can be created also with the function \code{distributionH(...)}, the costructor function for creating an object containing the description of
-a histogram.
-}
-\details{
-Class \code{distributionH} defines a histogram object
-}
-\section{Objects from the Class}{
- Objects can be created by calls of the form
-\code{new("distributionH", x, p, m, s)}.
+\describe{
+\item{\code{x}}{A non-decreasing numeric vector: the bounds of the bins (the domain of
+the distribution).}
+
+\item{\code{p}}{A non-decreasing numeric vector of the same length of \code{x}, from 0
+to 1: the cdf at the values in \code{x}.}
+
+\item{\code{m}}{The mean of the distribution.}
+
+\item{\code{s}}{The standard deviation of the distribution.}
+}}
+
+\section{Creating objects}{
+
+Objects are created with \code{distributionH(x, p)} or, equivalently, with
+\code{new("distributionH", x, p, m, s)}, where the optional \code{m} and
+\code{s} (mean and standard deviation) are computed when not given.
+
+Empty bins, i.e. bins with zero weight (two consecutive equal values in
+\code{p}), may produce numerical problems. Since version 1.0.9 each empty bin
+gets a weight of \code{1e-8} and the cdf is renormalised when the object is
+created (see also \code{\link{checkEmptyBins}}).
 }
 
 \examples{
-#---- initialize a distributionH object mydist
-# from a simple histogram
-# ----------------------------
-# | Bins    |  Prob  | cdf   |
-# ----------------------------
-# | [1,2)   |  0.4   | 0.4   |
-# | [2,3]   |  0.6   | 1.0   |
-# ----------------------------
-# | Tot.    |  1.0   | -     |
-# ----------------------------
-mydist <- new("distributionH", c(1, 2, 3), c(0, 0.4, 1))
-str(mydist)
-# OUTPUT
-# Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#   ..@ x: num [1:3] 1 2 3 the quantiles
-#   ..@ p: num [1:3] 0 0.4 1 the cdf
-#   ..@ m: num 2.1 the mean
-#   ..@ s: num 0.569 the standard deviation
-# or using
+# the histogram
+# | Bins  | Prob | cdf |
+# | [1,2) | 0.4  | 0.4 |
+# | [2,3] | 0.6  | 1.0 |
 mydist <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
+mydist
+str(mydist)
 }
 \references{
-Irpino, A., Verde, R. (2015) \emph{Basic
-statistics for distributional symbolic variables: a new metric-based
-approach} Advances in Data Analysis and Classification, DOI
-10.1007/s11634-014-0176-4
+Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+distributional symbolic variables: a new metric-based approach}, Advances in
+Data Analysis and Classification, 9(2), 143-175.
+\doi{10.1007/s11634-014-0176-4}
 }
 \seealso{
-\code{\link{meanH}} computes the mean. \code{\link{stdH}} computes the standard deviation.
+\code{\link{data2hist}} to build a histogram from raw data;
+\code{\link{meanH}}, \code{\link{stdH}}, \code{\link{plot,distributionH-method}}.
 }
-\author{
-Antonio Irpino
-}
-\keyword{classes}

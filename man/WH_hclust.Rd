@@ -14,41 +14,44 @@ WH_hclust(
 )
 }
 \arguments{
-\item{x}{A MatH object (a matrix of distributionH).}
+\item{x}{A \code{MatH} object.}
 
-\item{simplify}{A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.}
+\item{simplify}{A logical value (default \code{FALSE}). If \code{TRUE}, each
+histogram is approximated by \code{qua} equally spaced quantiles: the
+computations are much faster for large datasets, with a small approximation
+error.}
 
-\item{qua}{An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.}
+\item{qua}{An integer, the number of quantiles used when \code{simplify = TRUE}
+(default 10).}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
+\item{standardize}{A logical value (default \code{FALSE}). If \code{TRUE}, the
+variables are standardised by their Wasserstein-based standard deviation.}
 
-\item{distance}{A string default "WDIST" the L2 Wasserstein distance (other distances will be implemented)}
+\item{distance}{The distance: only \code{"WDIST"}, the L2 Wasserstein
+distance, is available.}
 
-\item{method}{A string, default="complete", is the the agglomeration method to be used.
-This should be (an unambiguous abbreviation of) one of "\code{ward.D}", "\code{ward.D2}",
- "\code{single}", "\code{complete}", "\code{average}" (= UPGMA), "\code{mcquitty}"
- (= WPGMA), "\code{median}" (= WPGMC) or "\code{centroid}" (= UPGMC).}
+\item{method}{The agglomeration method, as in \code{\link[stats]{hclust}}:
+one of \code{"ward.D"}, \code{"ward.D2"}, \code{"single"}, \code{"complete"}
+(default), \code{"average"}, \code{"mcquitty"}, \code{"median"} or
+\code{"centroid"}.}
 }
 \value{
-An object of class hclust which describes the tree produced by
- the clustering process.
+An object of class \code{hclust}.
 }
 \description{
-The function implements a Hierarchical clustering
- for a set of histogram-valued data, based on the L2 Wassertein distance.
- Extends the \code{hclust} function of the \pkg{stat} package.
+Hierarchical clustering of the individuals of a \code{MatH} object, based on
+the L2 Wasserstein distance. It is a wrapper of \code{\link[stats]{hclust}}.
 }
 \examples{
 results <- WH_hclust(x = BLOOD, simplify = TRUE, method = "complete")
-plot(results) # it plots the dendrogram
-cutree(results, k = 5) # it returns the labels for 5 clusters
+plot(results)
+cutree(results, k = 5)
 }
 \references{
-Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering
-of histogram symbolic data. In: Batanjeli et al. Data Science and Classification, IFCS 2006. p. 185-192,
- BERLIN:Springer, ISBN: 3-540-34415-2
+Irpino A., Verde R. (2006). A new Wasserstein based distance for
+the hierarchical clustering of histogram symbolic data. In: Batanjeli et al.
+(eds.) Data Science and Classification, IFCS 2006, Springer, 185-192.
 }
 \seealso{
-\code{\link{hclust}} of \pkg{stat} package for further details.
+\code{\link{WH_MAT_DIST}}
 }

@@ -5,19 +5,19 @@
 \alias{Agronomique}
 \title{Agronomique data}
 \format{
-a \code{MatH} object, a matrix of distributions.
+A \code{MatH} object with 22 rows (regions) and 4 columns: \code{Y_TSC} (total costs of a
+farm), \code{X_Wheat} (costs for wheat), \code{X_Pig} (costs for pigs),
+\code{X_Cmilk} (costs for cow milk).
 }
 \source{
-Rosanna Verde, Antonio Irpino, Second University of Naples; Dominique Desbois, UMR Economie
-publique, INRA-AgroParisTech, How to cope with modelling and privacy concerns? A regression model and a visualization tool for
-aggregated data,  Conference of European Statistics Stakeholders,
-Rome, November, 24-25,2014
+Verde, R., Irpino, A., Desbois, D. (2014). \emph{How to cope with
+modelling and privacy concerns? A regression model and a visualization tool for
+aggregated data}, Conference of European Statistics Stakeholders, Rome.
 }
 \description{
-A dataset with the distributions of marginal costs of farms in 22 France regions. It contains four
-histogram variables: "Y_TSC" (Total costs of a farm),  "X_Wheat" (Costs for Wheat), "X_Pig" (Costs for Pigs)
-"X_Cmilk" (Costs for Cow Milk)
+Distributions of the marginal costs of farms in 22 French regions.
 }
-\author{
-Antonio Irpino, 2014-10-05
+\examples{
+Agronomique
 }
+\keyword{datasets}

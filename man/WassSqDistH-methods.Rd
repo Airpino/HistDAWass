@@ -3,44 +3,43 @@
 \name{WassSqDistH}
 \alias{WassSqDistH}
 \alias{WassSqDistH,distributionH,distributionH-method}
-\alias{WassSqDistH,distributionH-method}
-\title{Method \code{WassSqDistH}}
+\title{Squared L2 Wasserstein distance between two histograms}
 \usage{
-WassSqDistH(object1, object2, ...)
-
 \S4method{WassSqDistH}{distributionH,distributionH}(object1 = object1, object2 = object2, details = FALSE)
 }
 \arguments{
-\item{object1}{is an object of \env{distributionH} class}
+\item{object1, object2}{Two \code{distributionH} objects.}
 
-\item{object2}{is an object of \env{distributionH} class}
-
-\item{...}{optional parameters}
-
-\item{details}{(optional, default=FALSE) is a logical value, if TRUE returns the decomposition of the distance}
+\item{details}{A logical value (default \code{FALSE}). If \code{TRUE}, the
+decomposition of the distance is returned.}
 }
 \value{
-If \code{details=FALSE}, the function returns the squared L2 Wasserstein distance.\cr
-If \code{details=TRUE}, the function returns list containing the squared distance, its
-decomposition in three parts (position, size and shape) and the correlation coefficient between the quantile functions.
+If \code{details = FALSE}, a number, the squared distance. If
+\code{details = TRUE}, a named vector with the squared distance
+(\code{SQ_W_dist}), its position (\code{POSITION}), size (\code{SIZE}) and
+shape (\code{SHAPE}) components, and the correlation between the quantile
+functions (\code{rQQ}).
 }
 \description{
-Computes the squared L2 Wasserstein distance between two \code{distributionH} objects.
+Computes the squared L2 Wasserstein distance between two \code{distributionH}
+objects, i.e. the integral of the squared difference of their quantile
+functions. Optionally it returns its decomposition into a position, a size and
+a shape component.
 }
 \examples{
-## ---- create two distributionH objects ----
 mydist1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
 mydist2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
-# -- compute the squared L2 Waaserstein distance
 WassSqDistH(mydist1, mydist2)
-# -- compute the squared L2 Waaserstein distance with details
 WassSqDistH(mydist1, mydist2, details = TRUE)
 }
 \references{
 Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets:
-Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.\cr
-Irpino, A., Verde, R. (2015) \emph{Basic
-statistics for distributional symbolic variables: a new metric-based
-approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
+Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.
+
+Irpino, A., Verde, R. (2015) \emph{Basic statistics for distributional
+symbolic variables: a new metric-based approach}, Advances in Data Analysis
+and Classification, 9(2), 143-175. \doi{10.1007/s11634-014-0176-4}
 }
-\keyword{distribution}
+\seealso{
+\code{\link{WH_MAT_DIST}} for the distance matrix of a \code{MatH}.
+}

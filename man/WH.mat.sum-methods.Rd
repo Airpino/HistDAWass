@@ -4,28 +4,21 @@
 \alias{WH.mat.sum}
 \alias{WH.mat.sum,MatH,MatH-method}
 \alias{WH.mat.sum,MatH-method}
-\title{Method WH.mat.sum}
+\title{Sum of two matrices of histograms}
 \usage{
 WH.mat.sum(object1, object2)
-
-\S4method{WH.mat.sum}{MatH,MatH}(object1, object2)
 }
 \arguments{
-\item{object1}{a \code{MatH} object}
-
-\item{object2}{a \code{MatH} object}
+\item{object1, object2}{Two \code{MatH} objects with the same dimensions.}
 }
 \value{
-a \code{MatH} object,
+A \code{MatH} object.
 }
 \description{
-It sums two \code{MatH} objects, i.e. two matrices of distributions,
-by summing the quantile functions of histograms. This sum is consistent with
-a set of distributions equipped with a L2 wasserstein metric.
+Sums two \code{MatH} objects of the same dimensions, cell by cell, by summing
+the quantile functions of the histograms (a sum consistent with the L2
+Wasserstein metric).
 }
 \examples{
-# binding by row
-M1 <- BLOOD[1:5, ]
-M2 <- BLOOD[6:10, ]
-MAT <- WH.mat.sum(M1, M2)
+MAT <- WH.mat.sum(BLOOD[1:5, ], BLOOD[6:10, ])
 }

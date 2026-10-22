@@ -3,22 +3,25 @@
 \name{get.distr}
 \alias{get.distr}
 \alias{get.distr,distributionH-method}
-\title{Method \code{get.distr}: show the distribution}
+\title{Cumulative distribution function of a histogram}
 \usage{
 get.distr(object)
-
-\S4method{get.distr}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object.}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A data frame: the first column contains the domain the second the CDF values.
+A \code{data.frame} with two columns: \code{x}, the bounds of the
+bins, and \code{p}, the values of the cdf at \code{x}.
 }
 \description{
-This functon return the cumulative distribution function of a \code{distributionH} object.
+Returns the points of the cumulative distribution function (cdf) of a
+\code{distributionH} object.
 }
 \examples{
 D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-get.distr(D) # a data.frame describing the CDF of D
+get.distr(D)
+}
+\seealso{
+\code{\link{get.histo}}
 }

@@ -3,19 +3,18 @@
 \docType{data}
 \name{BloodBRITO}
 \alias{BloodBRITO}
-\title{Blood dataset from Brito P. for Histogram data analysis}
+\title{Blood data from Brito}
 \format{
-a \code{MatH} istance, 1 row per patient.
+A \code{MatH} object with 10 rows (patients) and 2 columns (variables).
 }
 \source{
-Dias, S. and Brito P. Distribution and Symmetric Distribution
-Regression Model for Histogram-Valued Variables, ArXiv, arXiv:1303.6199
-[stat.ME]
+Dias, S. and Brito P. (2013). \emph{Distribution and Symmetric Distribution
+Regression Model for Histogram-Valued Variables}, arXiv:1303.6199.
 }
 \description{
-The dataset contains a MatH (matrix of histogram-valued data) object This
-data set list 10 patients described by 2 variables.
+Histograms of hematocrit and hemoglobin for 10 patients.
 }
-\author{
-Antonio Irpino, 2014-10-05
+\examples{
+BloodBRITO
 }
+\keyword{datasets}

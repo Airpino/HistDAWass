@@ -1,3 +1,52 @@
+# Empty bins -------------------------------------------------------------
+# Weight assigned to empty (zero-weight) bins. The same value is used in the
+# C++ code (see EMPTY_BIN_W in src/Utility_fun.cpp).
+.EMPTY_BIN_W <- 1e-8
+
+# Fix the empty bins of a cdf vector.
+# Bins with weight lower than `eps/2` (zero-weight bins, and tiny negative
+# weights due to floating point rounding) get weight `eps`; the cdf is then
+# renormalised so that it starts at 0 and ends at 1.
+# The detection threshold (eps/2) is lower than the assigned weight, so that
+# the function is idempotent: after the renormalisation the weight of a fixed
+# bin is slightly lower than eps, and it must not be detected again.
+# Returns a list with the (possibly) modified cdf `p` and a flag `fixed`
+# that is TRUE if the cdf has been changed.
+.fix_empty_bins_p <- function(p, eps = .EMPTY_BIN_W) {
+  n <- length(p)
+  if (n > 1) {
+    w <- p[-1L] - p[-n]
+    if (any(w < eps / 2)) {
+      w[w < eps / 2] <- eps
+      p <- c(0, cumsum(w)) / sum(w)
+      p[n] <- 1
+      return(list(p = p, fixed = TRUE))
+    }
+  }
+  list(p = p, fixed = FALSE)
+}
+
+# Validate x and p of a distribution, returns TRUE or an error message
+.check_xp <- function(x, p) {
+  n <- length(x)
+  if (n != length(p)) {
+    return("the x and p vectors must be of the same length")
+  }
+  if (anyNA(x) || anyNA(p)) {
+    return("x and p cannot contain missing values")
+  }
+  if (n > 1) {
+    if (any(diff(x) < 0)) {
+      return("the x must be in not descending order")
+    }
+    # a small tolerance for the rounding of cumulated sums
+    if (any(diff(p) < -1e-10)) {
+      return("the p must be in not descending order from 0 to 1")
+    }
+  }
+  TRUE
+}
+
 # res=Prepare(x,simplify,qua,standardize)
 Prepare <- function(x, simplify, qua, standardize) {
   resu <- c_Prepare(x, simplify, qua, standardize)
@@ -210,36 +259,37 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ <- function(MM, proto, memb, m, lambdas, thet
   return(list(SSQ = sum(SSQ_det), SSQ_det = SSQ_det, ProtoGEN = GP))
 }
 
-#' From real data to distributionH.
+#' Build a histogram from raw data
 #'
-#' @param data a set of numeric values.
-#' @param algo (optional) a string. Default is "histogram", i.e. the function "histogram"
-#' defined in the \code{\link[histogram]{histogram}}  package. \cr If "base"
-#' the \code{\link[graphics]{hist}} function is used. \cr
-#' "FixedQuantiles" computes the histogram using as breaks a fixed number of quantiles.\cr
-#' "ManualBreaks" computes a histogram where braks are provided as a vector of values.\cr
-#' "PolyLine" computes a histogram using a piecewise linear approximation of the empirical
-#' cumulative distribution function using the "Ramer-Douglas-Peucker algorithm",
-#'  \url{https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm}.
-#'  An \code{epsilon} parameter is required.
-#'  The data are scaled in order to have a standard deviation equal to one.
-#' @param type (optional) a string. Default is "combined" and generates
-#' a histogram having regularly spaced breaks (i.e., equi-width bins) and
-#' irregularly spaced ones. The choice is done accordingly with the penalization method described in
-#' \code{\link[histogram]{histogram}}. "regular" returns equi-width binned histograms, "irregular" returns
-#' a histogram without equi-width histograms.
-#' @param qua a positive integer to provide if \code{algo="FixedQuantiles"} is chosen. Default=10.
-#' @param breaks a vector of values to provide if  \code{algo="ManualBreaks"} is chosen.
-#' @param epsilon a number between 0 and 1 to provide if \code{algo="PolyLine"} is chosen. Default=0.01.
-#' @return A \code{distributionH} object, i.e. a distribution.
-#' @importFrom histogram histogram
-#' @importFrom stats quantile sd
-#' @export
+#' Builds a \code{distributionH} object from a vector of numeric values, using
+#' one of several algorithms for choosing the bins.
+#'
+#' @param data A numeric vector.
+#' @param algo The algorithm: \code{"histogram"} (default), the penalised
+#' likelihood method of \code{\link[histogram]{histogram}} (accurate but slow
+#' for large datasets); \code{"base"}, the bins of \code{\link[graphics]{hist}};
+#' \code{"FixedQuantiles"}, \code{qua} bins with equal probability;
+#' \code{"ManualBreaks"}, the bins given in \code{breaks}; \code{"PolyLine"}, a
+#' piecewise linear approximation of the empirical cdf obtained with the
+#' Ramer-Douglas-Peucker algorithm (see \code{\link{DouglasPeucker}}).
+#' @param type For \code{algo = "histogram"}: \code{"combined"} (default),
+#' \code{"regular"} (equal-width bins) or \code{"irregular"}, see
+#' \code{\link[histogram]{histogram}}.
+#' @param qua For \code{algo = "FixedQuantiles"}, the number of bins (default 10).
+#' @param breaks For \code{algo = "ManualBreaks"}, a vector of breaks.
+#' @param epsilon For \code{algo = "PolyLine"}, the tolerance of the
+#' approximation (default 0.01; the data are scaled to unit standard deviation).
+#' @return A \code{distributionH} object. Empty bins (without observations) get a
+#' weight of \code{1e-8}.
+#' @seealso \code{\link{distributionH}}, \code{\link[histogram]{histogram}}
 #' @examples
 #' data <- rnorm(n = 1000, mean = 2, sd = 3)
 #' mydist <- data2hist(data)
 #' plot(mydist)
-#' @seealso \code{\link[histogram]{histogram}} function
+#' data2hist(data, algo = "FixedQuantiles", qua = 20)
+#' @importFrom histogram histogram
+#' @importFrom stats quantile sd
+#' @export
 data2hist <- function(data,
                       algo = "histogram",
                       type = "combined",
@@ -261,10 +311,10 @@ data2hist <- function(data,
     3
   )
   if (a == 1) {
-    h <- hist(data)
+    h <- hist(data, plot = FALSE) # (up to 1.0.8 the histogram was also drawn)
     x <- h$breaks
     counts <- h$counts
-    counts[which(counts == 0)] <- 0.001
+    # empty bins (zero counts) get a weight of 1e-8 in distributionH()
     p <- c(0, cumsum(counts / sum(counts)))
   }
   if (a == 2) {
@@ -279,7 +329,7 @@ data2hist <- function(data,
     }
     x <- h$breaks
     counts <- h$counts
-    counts[which(counts == 0)] <- 0.001
+    # empty bins (zero counts) get a weight of 1e-8 in distributionH()
     p <- c(0, cumsum(counts / sum(counts)))
   }
   if (a == 3) {
@@ -324,13 +374,20 @@ data2hist <- function(data,
   mydist <- distributionH(x, p)
   return(mydist)
 }
-#' Ramer-Douglas-Peucker algorithm for curve fitting with a PolyLine
+#' Ramer-Douglas-Peucker algorithm
 #'
-#' @param points a 2D matrix with the coordinates of 2D points
-#' @param epsilon an number between 0 and 1. Recomended 0.01.
-#' @return A matrix with the points of segments of a Poly Line.
-#' @export
-#' @seealso \code{\link[HistDAWass]{data2hist}} function
+#' Approximates a curve, given by a sequence of 2d points, with a polyline
+#' (Ramer-Douglas-Peucker algorithm). It is used by \code{\link{data2hist}} with
+#' \code{algo = "PolyLine"}.
+#'
+#' @param points A two-column matrix with the coordinates of the points.
+#' @param epsilon A positive number, the tolerance of the approximation
+#' (recommended 0.01).
+#' @return A two-column matrix with the vertices of the polyline.
+#' @seealso \code{\link{data2hist}}, \code{\link{ShortestDistance}}
+#' @examples
+#' x <- seq(0, 1, length.out = 50)
+#' DouglasPeucker(cbind(x, x^2), epsilon = 0.01)
 #' @export
 DouglasPeucker <- function(points, epsilon) {
   dmax <- 0
@@ -361,13 +418,17 @@ DouglasPeucker <- function(points, epsilon) {
   colnames(ResultList) <- c("x", "p")
   return(ResultList)
 }
-#' Shortes distance from a point o a 2d segment
+#' Distance between a point and a line
 #'
-#' @param p coordinates of a point
-#' @param line a 2x2 matrix with the coordinates of two points defining a line
-#' @return A numeric value, the Euclidean distance of point \code{p} to the \code{line}.
-#' @export
-#' @seealso \code{\link[HistDAWass]{data2hist}} function and \code{\link[HistDAWass]{DouglasPeucker}} function
+#' Computes the Euclidean distance between a point and the line through two
+#' points (used by \code{\link{DouglasPeucker}}).
+#'
+#' @param p A vector with the coordinates of the point.
+#' @param line A 2 x 2 matrix with the coordinates of two points of the line.
+#' @return A number, the distance of \code{p} from \code{line}.
+#' @seealso \code{\link{DouglasPeucker}}
+#' @examples
+#' ShortestDistance(c(0, 1), rbind(c(0, 0), c(1, 0)))
 #' @export
 ShortestDistance <- function(p, line) {
   x1 <- line[1, 1]
@@ -488,7 +549,7 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
             num <- (prod(apply(distances[, , 1], MARGIN = c(1), sum)))^(1 / vars)
             denom <- max(sum(distances[variables, , 1]), 1e-10)
             if ((num == 0) & (denom == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             lambdas[(variables * 2 - 1), cluster] <- num / denom
             lambdas[(variables * 2), cluster] <- num / denom
@@ -502,13 +563,13 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
             num <- (prod(apply(distances[, , 1], MARGIN = c(1), sum)))^(1 / vars)
             denom <- max(sum(distances[variables, , 1]), 1e-10)
             if ((num == 0) & (denom == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             lambdas[(variables * 2 - 1), cluster] <- num / denom
             num <- (prod(apply(distances[, , 2], MARGIN = c(1), sum)))^(1 / vars)
             denom <- max(sum(distances[variables, , 2]), 1e-10)
             if ((num == 0) & (denom == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             lambdas[(variables * 2), cluster] <- num / denom
           }
@@ -521,7 +582,7 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
           num <- (prod(distances[, cluster, 1]))^(1 / vars)
           denom <- max(distances[variables, cluster, 1], 1e-10)
           if ((num == 0) & (denom == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2 - 1), cluster] <- num / denom
           lambdas[(variables * 2), cluster] <- num / denom
@@ -530,13 +591,13 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
           num <- (prod(distances[, cluster, 1]))^(1 / vars)
           denom <- max(distances[variables, cluster, 1], 1e-10)
           if ((num == 0) & (denom == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2 - 1), cluster] <- num / denom
           num <- (prod(distances[, cluster, 2]))^(1 / vars)
           denom <- max(distances[variables, cluster, 2], 1e-10)
           if ((num == 0) & (denom == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2), cluster] <- num / denom
         }
@@ -546,12 +607,12 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
             num1 <- (prod(apply(distances[, , 1], MARGIN = c(1), sum)))^(1 / (2 * vars))
             denom1 <- max(sum(distances[variables, , 1]), 1e-10)
             if ((num1 == 0) & (denom1 == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             num2 <- (prod(apply(distances[, , 2], MARGIN = c(1), sum)))^(1 / (2 * vars))
             denom2 <- max(sum(distances[variables, , 2]), 1e-10)
             if ((num2 == 0) & (denom2 == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             lambdas[(variables * 2 - 1), cluster] <- (num1 * num2) / denom1
             lambdas[(variables * 2), cluster] <- (num1 * num2) / denom2
@@ -566,13 +627,13 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
           num <- (prod(distances[, cluster, 1]) * prod(distances[, cluster, 2]))^(1 / (2 * vars))
           denom <- max(distances[variables, cluster, 1], 1e-10)
           if ((num == 0) & (denom == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2 - 1), cluster] <- num / denom
           # num=(prod(distances[,cluster,2]))^(1/vars)
           denom <- max(distances[variables, cluster, 2], 1e-10)
           if ((num == 0) & (denom == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2), cluster] <- num / denom
         }
@@ -583,7 +644,7 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
             num <- rep(sum(distances[variables, , 1]), vars)
             den <- apply(distances[, , 1], 1, sum)
             if ((num == 0) & (den == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             lambdas[(variables * 2 - 1), cluster] <- 1 / sum((num / den)^(1 / (theta - 1)))
             lambdas[(variables * 2), cluster] <- lambdas[(variables * 2 - 1), cluster]
@@ -597,13 +658,13 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
             num <- rep(sum(distances[variables, , 1]), vars)
             den <- apply(distances[, , 1], 1, sum)
             if ((num == 0) & (den == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             lambdas[(variables * 2 - 1), cluster] <- 1 / sum((num / den)^(1 / (theta - 1)))
             num <- rep(sum(distances[variables, , 2]), vars)
             den <- apply(distances[, , 2], 1, sum)
             if ((num == 0) & (den == 0)) {
-              browser()
+              stop("null distances in the computation of the adaptive weights")
             }
             lambdas[(variables * 2), cluster] <- 1 / sum((num / den)^(1 / (theta - 1)))
           }
@@ -616,7 +677,7 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
           num <- rep(distances[variables, cluster, 1], vars)
           den <- distances[, cluster, 1]
           if ((num == 0) & (den == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2 - 1), cluster] <- 1 / sum((num / den)^(1 / (theta - 1)))
           lambdas[(variables * 2), cluster] <- lambdas[(variables * 2 - 1), cluster]
@@ -625,14 +686,14 @@ ADA_F_DIST <- function(distances, k, vars, ind, schema, weight.sys, theta = 2, m
           num <- rep(distances[variables, cluster, 1], vars)
           den <- distances[, cluster, 1]
           if ((num == 0) & (den == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2 - 1), cluster] <- 1 / sum((num / den)^(1 / (theta - 1)))
 
           num <- rep(distances[variables, cluster, 2], vars)
           den <- distances[, cluster, 2]
           if ((num == 0) & (den == 0)) {
-            browser()
+            stop("null distances in the computation of the adaptive weights")
           }
           lambdas[(variables * 2), cluster] <- 1 / sum((num / den)^(1 / (theta - 1)))
         }

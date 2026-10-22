@@ -1,26 +1,25 @@
 
-#' Fuzzy c-means of a dataset of histogram-valued data
-#' @description The function implements the fuzzy c-means for a set of histogram-valued data.
-#' @param x A MatH object (a matrix of distributionH).
-#' @param k An integer, the number of groups.
-#' @param m A number grater than 0, a fuzziness coefficient (default \code{m}=1.6).
-#' @param rep An integer, maximum number of repetitions of the algorithm (default \code{rep}=5).
-#' @param simplify A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.
-#' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @return a list with the results of the fuzzy c-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
-#' @slot solution A list.Returns the best solution among the \code{rep}etitions, i.e.
-#' the one having the minimum sum of squares deviation.
-#' @slot solution$membership A matrix. The membership degree of each unit to each cluster.
-#' @slot solution$IDX A vector. The crisp assignement to a cluster.
-#' @slot solution$cardinality A vector. The cardinality of each final cluster (after the crisp assignement).
-#' @slot solution$Crit A number. The criterion (Sum of square deviation
-#' from the prototypes) value at the end of the run.
-#' @slot quality A number. The percentage of Sum of square deviation explained by the model.
-#' (The higher the better)
+#' Fuzzy c-means clustering of histogram data
+#'
+#' Fuzzy c-means of the individuals of a \code{MatH} object, based on the L2
+#' Wasserstein distance between histograms.
+#'
+#' @inheritParams WH_kmeans
+#' @param m A number greater than 1, the fuzziness coefficient (default 1.6).
+#' @return A list with:
+#' \item{solution}{The best solution among the repetitions: a list with
+#' \code{membership} (the matrix of membership degrees), \code{IDX} (the crisp
+#' assignment of each individual), \code{cardinality} (the size of each crisp
+#' cluster), \code{proto} (a \code{MatH} object with the prototypes) and
+#' \code{Crit} (the criterion).}
+#' \item{quality}{The proportion of the total sum of squares explained by the
+#' partition (the higher the better).}
+#' and further details on the decomposition of the sum of squares.
+#' @seealso \code{\link{WH_adaptive_fcmeans}}, \code{\link{WH_kmeans}}
 #' @examples
-#' results <- WH_fcmeans(x = BLOOD, k = 2, m = 1.5, rep = 10, 
+#' results <- WH_fcmeans(x = BLOOD, k = 2, m = 1.5, rep = 10,
 #'                       simplify = TRUE, qua = 10, standardize = TRUE)
+#' results$solution$membership
 #' @export
 WH_fcmeans <- function(x, k, m = 1.6, rep,
                        simplify = FALSE,
@@ -154,34 +153,35 @@ WH_fcmeans <- function(x, k, m = 1.6, rep,
 }
 
 
-#' @title Fuzzy c-means with adaptive distances for histogram-valued data
-#' @description Fuzzy c-means of a dataset of histogram-valued data using different adaptive distances based on the L2 Wasserstein metric.
+#' Fuzzy c-means clustering of histogram data with adaptive distances
 #'
-#' @param x A MatH object (a matrix of distributionH).
-#' @param k An integer, the number of groups.
-#' @param schema An integer. 1=one weight per variable, 2=two weights per variables (one for each component: the mean and the variability component),
-#' 3=one weight per variable and per cluster, 4= two weights per variable and per cluster.
-#' @param m A number grater than 0, a fuzziness coefficient (default \code{m}=1.6).
-#' @param rep An integer, maximum number of repetitions of the algorithm (default \code{rep}=5).
-#' @param simplify A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.
-#' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @param init.weights A string. (default='EQUAL'). EQUAL, all variables or components have the same weight; 'RANDOM', a random assignment is done.
-#' @param weight.sys  A string. (default='PROD') PROD, Weights product is equal to one. SUM, the weights sum up to one.
-#' @param theta A number. (default=2) A parameter for the system of weights summing up to one.
-#' @param verbose A logic value (default is FALSE). If TRUE  some details are provided.
-#' @return The results of the fuzzy c-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
-#' \item{solution}{A list.Returns the best solution among the \code{rep}etitions, i.e. the ona having the minimum sum of squares deviation.}
-#' \item{solution$membership}{A matrix. The membership degree of each unit to each cluster.}
-#' \item{solution$IDX}{A vector. The crisp assignement to a cluster.}
-#' \item{solution$cardinality}{A vector. The cardinality of each final cluster (after the crisp assignement).}
-#' \item{solution$Crit}{A number. The criterion (Sum od square deviation from the prototypes) value at the end of the run.}
-#' \item{quality}{A number. The percentage of Sum of square deviation explained by the model. (The higher the better)}
+#' Fuzzy c-means of the individuals of a \code{MatH} object based on adaptive L2
+#' Wasserstein distances: the algorithm also estimates a weight for each variable
+#' (or for each component of the variables, and/or for each cluster).
+#'
+#' @inheritParams WH_kmeans
+#' @inheritParams WH_adaptive.kmeans
+#' @param m A number greater than 1, the fuzziness coefficient (default 1.6).
+#' @param schema An integer, the system of weights: 1 = a weight for each
+#' variable; 2 = a weight for the position and one for the variability component
+#' of each variable; 3 = as 1, with a different set of weights for each cluster;
+#' 4 = as 2, with a different set of weights for each cluster.
+#' @return A list with:
+#' \item{solution}{The best solution among the repetitions: a list with
+#' \code{var.weights} (the weights), \code{membership} (the matrix of membership
+#' degrees), \code{IDX} (the crisp assignment of each individual),
+#' \code{cardinality} (the size of each crisp cluster), \code{proto} (a
+#' \code{MatH} object with the prototypes) and \code{Crit} (the criterion).}
+#' \item{quality}{The proportion of the total sum of squares explained by the
+#' partition (the higher the better).}
+#' and further details on the decomposition of the sum of squares.
+#' @seealso \code{\link{WH_fcmeans}}, \code{\link{WH_adaptive.kmeans}}
 #' @examples
 #' results <- WH_adaptive_fcmeans(
 #'   x = BLOOD, k = 2, schema = 4, m = 1.5, rep = 3, simplify = TRUE,
 #'   qua = 10, standardize = TRUE, init.weights = "EQUAL", weight.sys = "PROD"
 #' )
+#' results$solution$var.weights
 #' @export
 WH_adaptive_fcmeans <- function(x, k = 5,
                                 schema, # 1=one weight per variable

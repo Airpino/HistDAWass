@@ -2,31 +2,39 @@
 % Please edit documentation in R/principal_components.R
 \name{WH.MultiplePCA}
 \alias{WH.MultiplePCA}
-\title{Principal components analysis  of a set of histogram variable based on Wasserstein distance}
+\title{Principal component analysis of a set of histogram variables}
 \usage{
-WH.MultiplePCA(data, list.of.vars, quantiles = 10, outl = 0)
+WH.MultiplePCA(data, list.of.vars, quantiles = 10, outl = 0, graph = TRUE)
 }
 \arguments{
-\item{data}{A MatH object (a matrix of distributionH).}
+\item{data}{A \code{MatH} object.}
 
-\item{list.of.vars}{A list of  integers, the active variables.}
+\item{list.of.vars}{A vector of integers, the columns of the variables to
+analyse.}
 
-\item{quantiles}{An integer, it is the number of quantiles used in the analysis.
-Default=10.}
+\item{quantiles}{An integer, the number of quantiles used in the analysis
+(default 10).}
 
-\item{outl}{a number between 0 (default)  and 0.5. For each distribution, is the amount of mass removed from the tails
-of the distribution. For example, if 0.1, from each distribution is cut away a left tail and a right one each containing
-the 0.1 of mass.}
+\item{outl}{A number between 0 (default) and 0.5, the probability mass
+removed from each tail of the distributions (e.g. 0.1 removes 10\% from each
+tail).}
+
+\item{graph}{A logical value (default \code{TRUE}): if \code{TRUE} the plots of
+\code{\link[FactoMineR]{MFA}} are drawn.}
 }
 \value{
-a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA
+The results of \code{\link[FactoMineR]{MFA}}.
 }
 \description{
-(Beta version) The function implements a Principal components analysis of a set of histogram variables
-based on Wasserstein distance. It performs a centered (not standardized) PCA on a set of quantiles of a variable.
-Being a distribution a multivalued description, the analysis performs a dimensional reduction and a visualization of distributions.
-It is a 1d (one dimension) becuse it is considered just one histogram variable.
+(Beta version) Principal component analysis of several histogram variables
+based on the L2 Wasserstein distance: a multiple factor analysis
+(\code{\link[FactoMineR]{MFA}}) of the quantiles of the histograms, where each
+variable is a group of quantiles. It extends \code{\link{WH.1d.PCA}}.
 }
-\details{
-It is an extension of WH.1d.PCA to the multiple case.
+\examples{
+res <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3), graph = FALSE)
+}
+\seealso{
+\code{\link{WH.plot_multiple_Spanish.funs}},
+\code{\link{WH.plot_multiple_indivs}}
 }

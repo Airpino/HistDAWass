@@ -3,18 +3,20 @@
 \docType{data}
 \name{BLOOD}
 \alias{BLOOD}
-\title{Blood dataset for Histogram data analysis}
+\title{Blood data}
 \format{
-a \code{MatH} istance, 1 row per group.
+A \code{MatH} object with 14 rows (groups of patients) and 3 columns (variables).
 }
 \source{
-Billard L. and Diday E. (2006). Symbolic Data Analysis: Conceptual
-Statistics and Data Mining, Wiley.
+Billard L. and Diday E. (2006). \emph{Symbolic Data Analysis: Conceptual
+Statistics and Data Mining}, Wiley.
 }
 \description{
-The dataset contains a MatH (matrix of histogram-valued data) object This
-data set list 14 groups of patients described by 3 variables.
+Histograms of cholesterol, hemoglobin and hematocrit for 14 groups of patients
+(by sex and age).
 }
-\author{
-Antonio Irpino, 2014-10-05
+\examples{
+BLOOD
+plot(BLOOD)
 }
+\keyword{datasets}

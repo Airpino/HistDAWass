@@ -2,31 +2,44 @@
 % Please edit documentation in R/Met_MatH.R
 \name{get.MatH.main.info}
 \alias{get.MatH.main.info}
+\alias{get.MatH.nrows}
+\alias{get.MatH.nrows,MatH-method}
+\alias{get.MatH.ncols}
+\alias{get.MatH.ncols,MatH-method}
+\alias{get.MatH.rownames}
+\alias{get.MatH.rownames,MatH-method}
+\alias{get.MatH.varnames}
+\alias{get.MatH.varnames,MatH-method}
 \alias{get.MatH.main.info,MatH-method}
-\title{Method get.MatH.main.info}
+\title{Dimensions and names of a matrix of histograms}
 \usage{
-get.MatH.main.info(object)
+get.MatH.nrows(object)
 
-\S4method{get.MatH.main.info}{MatH}(object)
+get.MatH.ncols(object)
+
+get.MatH.rownames(object)
+
+get.MatH.varnames(object)
+
+get.MatH.main.info(object)
 }
 \arguments{
-\item{object}{a \code{MatH} object}
+\item{object}{A \code{MatH} object.}
 }
 \value{
-A list of char, the labels of the columns, or the names of the variables.
+\code{get.MatH.nrows} and \code{get.MatH.ncols} return an integer;
+\code{get.MatH.rownames} and \code{get.MatH.varnames} return a character
+vector; \code{get.MatH.main.info} returns a list with all of them
+(\code{nrows}, \code{ncols}, \code{rownames}, \code{varnames}).
 }
 \description{
-It returns the number of rows, of columns the labels of rows and columns of a \code{MatH} object.
+Functions returning the number of rows and of columns, the names of the rows
+(individuals) and of the columns (variables) of a \code{MatH} object.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{nrows}}{- the number of rows}
-
-\item{\code{ncols}}{- the number of columns}
-
-\item{\code{rownames}}{- a vector of char, the names of rows}
-
-\item{\code{varnames}}{- a vector of char, the names of columns}
-}}
-
+\examples{
+get.MatH.nrows(BLOOD)
+get.MatH.ncols(BLOOD)
+get.MatH.rownames(BLOOD)
+get.MatH.varnames(BLOOD)
+get.MatH.main.info(BLOOD)
+}

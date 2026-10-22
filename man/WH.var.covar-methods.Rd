@@ -2,39 +2,66 @@
 % Please edit documentation in R/Met_MatH.R
 \name{WH.var.covar}
 \alias{WH.var.covar}
+\alias{WH.SSQ}
+\alias{WH.correlation}
+\alias{WH.SSQ2}
+\alias{WH.var.covar2}
+\alias{WH.correlation2}
+\alias{WH.SSQ,MatH-method}
 \alias{WH.var.covar,MatH-method}
-\title{Method WH.var.covar}
+\alias{WH.correlation,MatH-method}
+\alias{WH.SSQ2,MatH,MatH-method}
+\alias{WH.SSQ2,MatH-method}
+\alias{WH.var.covar2,MatH,MatH-method}
+\alias{WH.var.covar2,MatH-method}
+\alias{WH.correlation2,MatH,MatH-method}
+\alias{WH.correlation2,MatH-method}
+\title{Sum of squares, covariance and correlation of histogram variables}
 \usage{
-WH.var.covar(object, ...)
+\S4method{WH.SSQ}{MatH}(object, w = numeric(0))
 
 \S4method{WH.var.covar}{MatH}(object, w = numeric(0))
+
+\S4method{WH.correlation}{MatH}(object, w = numeric(0))
+
+\S4method{WH.SSQ2}{MatH,MatH}(object1, object2, w = numeric(0))
+
+\S4method{WH.var.covar2}{MatH,MatH}(object1, object2, w = numeric(0))
+
+\S4method{WH.correlation2}{MatH,MatH}(object1, object2, w = numeric(0))
 }
 \arguments{
-\item{object}{a \code{MatH} object}
+\item{object}{A \code{MatH} object.}
 
-\item{...}{some optional parameters}
+\item{object1, object2}{Two \code{MatH} objects with the same number of rows.}
 
-\item{w}{it is possible to add a vector of weights (positive numbers)
-having the same size of the rows of the \code{MatH object},
-default = equal weight for each row}
+\item{w}{A vector of non-negative weights, one for each row (individual).
+Default: equal weights.}
 }
 \value{
-a squared \code{matrix} with the (weighted) variance-covariance values
+A numeric matrix.
 }
 \description{
-Compute the variance-covariance matrix of a \code{MatH} object, i.e.
-a matrix of values consistent with
-a set of distributions equipped with a L2 wasserstein metric.
+Compute the matrix of the sums of squared deviations from the mean
+(\code{WH.SSQ}), the variance-covariance matrix (\code{WH.var.covar}) and the
+correlation matrix (\code{WH.correlation}) of the variables of a \code{MatH}
+object, according to the L2 Wasserstein metric. The functions with suffix 2
+compute the same (rectangular) matrices between the variables of two
+\code{MatH} objects with the same number of rows.
 }
 \examples{
+WH.SSQ(BLOOD)
 WH.var.covar(BLOOD)
-# generate a set of random weights
+WH.correlation(BLOOD)
+# weighted, with random weights
 RN <- runif(get.MatH.nrows(BLOOD))
 WH.var.covar(BLOOD, w = RN)
+# between two sets of variables
+WH.correlation2(BLOOD[, 1], BLOOD[, 2:3])
 }
 \references{
-Irpino, A., Verde, R. (2015) \emph{Basic
-statistics for distributional symbolic variables: a new metric-based
-approach} Advances in Data Analysis and Classification, DOI
-10.1007/s11634-014-0176-4
+Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+distributional symbolic variables: a new metric-based approach}, Advances in
+Data Analysis and Classification, 9(2), 143-175.
+\doi{10.1007/s11634-014-0176-4}
 }

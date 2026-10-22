@@ -18,6 +18,194 @@ knitr::opts_chunk$set(
 #HistDAWass 
 ##(Histogram-valued Data analysis using Wasserstein metric)
 
+## What's new in version 1.0.9
+
+Changes and improvements with respect to version 1.0.8.
+
+HistDAWass 1.0.9 is a maintenance release. It fixes a memory bug reported by
+the Rcpp team, introduces a consistent treatment of empty (zero-weight) bins,
+fixes several numerical bugs and makes the C++ distance computations
+considerably faster, and revises the graphics for ggplot2 4.x. Results on data
+without empty bins are **numerically identical** to version 1.0.8.
+
+---
+
+### 1. Rcpp compatibility fix (Rcpp PR #1513)
+
+The next Rcpp release checks that a vector assigned into a matrix row has the
+same length as the row. With that check the example of `WH_adaptive.kmeans()`
+failed with:
+
+```
+Error: cannot assign a vector of length 2 to a target of length 3
+```
+
+**Cause.** In `c_WH_ADPT_KMEANS_TOTALSSQ()` (`src/Utility_fun.cpp`) the vector
+of cluster weights was allocated with `k` elements (the number of clusters)
+but assigned into a row of a matrix with `vars` columns (the number of
+variables). When `k < vars`, released Rcpp read past the end of the vector, so
+the weights of the remaining variables came from uninitialised memory.
+
+**Fix.** Each row of the weight matrix is now filled directly with `vars`
+copies of the cluster weight. The function is used by `WH_adaptive.kmeans()`
+and by the adaptive Kohonen maps.
+
+**Verified** by running all the examples and `R CMD check --as-cran` against
+both the released Rcpp and the Rcpp development branch of PR #1513
+(version 1.1.2.4, with the length checks enabled).
+
+Two further out-of-bounds accesses in the C++ code were fixed:
+
+* `whichLowerEQThanX()` could read one element beyond the end of the vector;
+* `c_DISTA_M2()` accessed the second element of a list of length one when the
+  data had a single variable.
+
+---
+
+### 2. Empty bins (zero-weight bins)
+
+A histogram may have bins with zero weight, i.e. two consecutive equal values
+in the cdf `p`. In 1.0.8 they were handled in different and inconsistent ways
+(a weight of 0.001 counts in `data2hist()`, `1e-14` in the C++ registration,
+`1e-13` in `checkEmptyBins()`, nothing in the constructor).
+
+**New rule (everywhere):** each empty bin gets a weight of **`1e-8`** and the
+cdf is renormalised so that it starts at 0 and ends at 1. Bins are detected
+with a threshold of `0.5e-8`, so that applying the rule twice does not change
+an already fixed distribution.
+
+The rule is applied:
+
+* when a `distributionH` or `TdistributionH` object is created
+  (`distributionH()`, `new("distributionH", ...)`); mean and standard
+  deviation are recomputed on the fixed cdf;
+* in `data2hist()` (all algorithms, including `"ManualBreaks"`, that did not
+  handle empty bins at all);
+* in `checkEmptyBins()`, which now also has a method for `MatH` objects
+  (useful for objects created with previous versions or modified by direct
+  slot assignment);
+* in the C++ functions that register distributions on a common grid of cdf
+  values (`REGISTER2()` and `PREPARE_A_VEC_MAT()`), so that objects created
+  with older versions are handled correctly too.
+
+**Why it matters — a real bug, not only a numerical nicety.** In 1.0.8, when a
+distribution had repeated values of `p`, the C++ code that puts several
+distributions on a common grid misaligned the quantiles. Distances,
+clusterings and other statistics on such data were wrong: on the
+`China_Seas` data the L2 Wasserstein distances computed by `WH_MAT_DIST()`
+had relative errors up to **7%** with respect to a brute-force numerical
+integration of the squared difference of the quantile functions. In 1.0.9 the
+error is about `1e-5` (due only to the `1e-8` weights and to the brute-force
+grid), also for objects created with older versions.
+
+**Datasets.** The shipped datasets `China_Seas` (345 distributions),
+`China_Month` (296) and `Age_Pyramids_2014` (42) contained empty bins and have
+been fixed with the same rule. Results on these datasets differ slightly from
+1.0.8 (and are now correct).
+
+---
+
+### 3. Other bug fixes
+
+| Function | Problem in 1.0.8 | Example |
+|---|---|---|
+| `compQ()` | wrong quantile when `x` has repeated values (it used `which.max()` on the values of `x`) | `compQ(distributionH(c(1,2,2,3), c(0,.3,.6,1)), 0.7)` returned `2`, now `2.25` |
+| `compP()` | wrong value in presence of empty bins | `compP(distributionH(c(1,2,3,4), c(0,.5,.5,1)), 3.5)` returned `0.5`, now `0.75` |
+| `distributionH` validity | the check on `p` never worked (wrong logical condition), so decreasing cdfs were accepted | `distributionH(c(1,2,3), c(0,.6,.5))` now gives an error |
+| `data2hist(algo = "base")` | drew a histogram as a side effect (`hist()` without `plot = FALSE`) | no plot is drawn |
+| `distributionH(x)` with a single value | failed, although documented as an impulse distribution | `distributionH(5)` now returns `x = c(5, 5)`, `p = c(0, 1)` |
+
+---
+
+### 4. Performance
+
+The C++ functions computing squared L2 Wasserstein distances between quantile
+functions (`c_MM_L2_SQ_WASS_D()`, `c_DISTA_M()`, `c_DISTA_M2()`,
+`c_Fast_D_Mat()`, `c_STEP_2_ADA_KMEANS()`, `c_ComputeFast_L2_SQ_WASS_DMAT()`,
+`c_ComputeFast_L2_SQ_WASS_DMAT_simple()`) have been rewritten:
+
+* no temporary vectors are allocated in the inner loops (Rcpp sugar
+  expressions were replaced by plain loops on pointers to the data);
+* the quantiles and the mean of the prototypes are read from the S4 objects
+  once, outside the loops, instead of once for each individual;
+* in `c_WH_ADPT_KMEANS_TOTALSSQ()` the distances between each histogram and
+  the general prototype, which do not depend on the cluster, are computed
+  once instead of `k` times.
+
+The new kernels perform exactly the same floating point operations in the same
+order, so results are **bit-for-bit identical** to 1.0.8 (checked on 37
+functions of the package, on data without empty bins).
+
+Median times on a `MatH` of 300 histograms x 4 variables (R 4.3.3, Linux):
+
+| Function | 1.0.8 | 1.0.9 | Speed-up |
+|---|---:|---:|---:|
+| `WH_MAT_DIST()` | 618 ms | 28 ms | ~22x |
+| `WH_hclust()` | 561 ms | 29 ms | ~19x |
+| `WH_kmeans()` (k = 6) | 832 ms | 137 ms | ~6x |
+| `WH_adaptive.kmeans()` (k = 6) | 1616 ms | 407 ms | ~4x |
+| `WH_2d_Kohonen_maps()` (3x3) | 1183 ms | 451 ms | ~2.6x |
+| `WH_2d_Adaptive_Kohonen_maps()` (3x3) | 1184 ms | 370 ms | ~3.2x |
+| `WH_fcmeans()` (k = 6) | 61 ms | 35 ms | ~1.7x |
+
+---
+
+### 5. Graphics
+
+| Problem in 1.0.8 | 1.0.9 |
+|---|---|
+| `plot()` on `distributionH` and `MatH` returned the ggplot without drawing it: nothing was shown inside loops, functions or `source()` | every plot method draws on the current device and returns the `ggplot` invisibly (`p <- plot(x); p + theme_bw()` still works) |
+| `WH.1d.PCA()` opened a new graphic window for each plot with `dev.new()` (outside the RStudio Plots pane) | the four plots of each plane are drawn on the current device in a 2 x 2 layout; graphical parameters are restored |
+| `WH.plot_multiple_Spanish.funs()` and `WH.plot_multiple_indivs()` printed their plots twice | each plot is printed once, objects are returned invisibly |
+| deprecation warnings with ggplot2 >= 3.4 (`size` for lines, `guides(fill = FALSE)`, `aes_all()`) | code updated, no warnings with ggplot2 4.0.3; `Imports: ggplot2 (>= 3.4.0)` |
+| `HTS` violin plot: rows after the first one showed the data of the first block of timestamps | fixed; the plot is a single ggplot with one facet per block |
+| `WH.plot_multiple_indivs(..., stat = "std")` failed | fixed (also for skewness and kurtosis) |
+| densities of the plot "Coloured using std values" of `WH.1d.PCA()` were centred on the std | centred on the mean |
+| plot data built with `rbind()` in loops and one quantile at a time | vectorised: the `HTS` violin plot and `summaryHTS()` are about twice as fast |
+
+`WH.MultiplePCA()` has a new argument `graph` (default `TRUE`) to switch off
+the graphs of `FactoMineR::MFA()`.
+
+### 6. Tests and package infrastructure
+
+* Documentation revised and regenerated with roxygen2 8: descriptive titles,
+  one usage per method, accurate return values, related functions documented
+  together (e.g. `?WH.var.covar` covers sums of squares, covariances and
+  correlations; `?"Arith-distributionH"` the arithmetic operators), and an
+  overview of the package in `?HistDAWass`.
+
+* Added a `testthat` test suite (`tests/testthat`) covering
+  empty bins, the shipped datasets, `compQ()`/`compP()`, the validity checks,
+  the adaptive k-means with `k` lower than the number of variables, and the
+  agreement of `WH_MAT_DIST()` with pairwise `WassSqDistH()` and with a
+  brute-force computation of the distance. The tests fail on 1.0.8 and pass
+  on 1.0.9.
+* `DESCRIPTION`: version 1.0.9, `Suggests: testthat`, `URL` and `BugReports`
+  pointing to <https://github.com/Airpino/HistDAWass>; removed the fields
+  generated by CRAN (`Packaged`, `Repository`, `Date/Publication`, `MD5`).
+* Added `NEWS.md`, `cran-comments.md`, an RStudio project file and a
+  `.Rbuildignore`.
+
+### 7. Compatibility notes
+
+* Results are unchanged for data without empty bins.
+* Results change slightly (and become correct) for data with empty bins,
+  including the `China_Seas`, `China_Month` and `Age_Pyramids_2014` datasets.
+* `data2hist()` with `algo = "base"` or `"histogram"` gives empty bins a weight
+  of `1e-8` instead of the equivalent of 0.001 observations: differences in
+  the cdf are of the order of `1e-6`.
+* Creating a `distributionH` with a decreasing cdf is now an error.
+* Plot methods now draw the plot when called (also inside functions) and
+  return the `ggplot` invisibly; `WH.1d.PCA()` draws on the current device.
+
+### 8. Check results
+
+`R CMD check --as-cran`: 0 errors, 0 warnings, only NOTEs related to the
+local build environment, with both the released Rcpp and the Rcpp development
+branch of PR #1513.
+
+---
+
 In this document we describe the main features of the HistDAWass package.
 The name is the acronym for Histogram-valued Data analysis using Wasserstein metric. The implemented classes and functions are related to the analysis of data tables containing histograms in each cell instead of the classical numeric values.
 

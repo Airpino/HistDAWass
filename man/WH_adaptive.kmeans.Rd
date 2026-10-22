@@ -2,7 +2,7 @@
 % Please edit documentation in R/unsuperv_classification.R
 \name{WH_adaptive.kmeans}
 \alias{WH_adaptive.kmeans}
-\title{K-means of a dataset of histogram-valued data using adaptive  Wasserstein distances}
+\title{K-means clustering of histogram data with adaptive distances}
 \usage{
 WH_adaptive.kmeans(
   x,
@@ -20,67 +20,66 @@ WH_adaptive.kmeans(
 )
 }
 \arguments{
-\item{x}{A MatH object (a matrix of distributionH).}
+\item{x}{A \code{MatH} object.}
 
-\item{k}{An integer, the number of groups.}
+\item{k}{An integer, the number of clusters.}
 
-\item{schema}{a number from 1 to 4 \cr
-1=A weight for each variable (default) \cr
-2=A weight for the average and the dispersion component of each variable\cr
-3=Same as 1 but a different set of weights for each cluster\cr
-4=Same as 2 but a different set of weights for each cluster}
+\item{schema}{An integer, the system of weights: 1 = a weight for each
+variable (default); 2 = a weight for the position and one for the variability
+component of each variable; 3 = as 1, with a different set of weights for
+each cluster; 4 = as 2, with a different set of weights for each cluster.}
 
-\item{init}{(optional, do not use) initialization for partitioning the data default is 'RPART', other strategies shoul be implemented.}
+\item{init}{Not used.}
 
-\item{rep}{An integer, maximum number of repetitions of the algorithm (default \code{rep}=5).}
+\item{rep}{An integer, the number of repetitions of the algorithm (with
+random starting partitions); the best solution is returned. Default 5.}
 
-\item{simplify}{A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.}
+\item{simplify}{A logical value (default \code{FALSE}). If \code{TRUE}, each
+histogram is approximated by \code{qua} equally spaced quantiles: the
+computations are much faster for large datasets, with a small approximation
+error.}
 
-\item{qua}{An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.}
+\item{qua}{An integer, the number of quantiles used when \code{simplify = TRUE}
+(default 10).}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
+\item{standardize}{A logical value (default \code{FALSE}). If \code{TRUE}, the
+variables are standardised by their Wasserstein-based standard deviation.}
 
-\item{weight.sys}{a string. Weights may add to one ('SUM') or their product is equal to 1 ('PROD', default).}
+\item{weight.sys}{The constraint on the weights: \code{"PROD"} (default), the
+product of the weights is one; \code{"SUM"}, the weights sum to one.}
 
-\item{theta}{a number. A parameter if \code{weight.sys='SUM'}, default is 2.}
+\item{theta}{A number, the exponent of the weights when
+\code{weight.sys = "SUM"} (default 2).}
 
-\item{init.weights}{a string how to initialize weights: 'EQUAL' (default), all weights are the same,
-'RANDOM', weights are initalised at random.}
+\item{init.weights}{The initial weights: \code{"EQUAL"} (default) or
+\code{"RANDOM"}.}
 
-\item{verbose}{A logic value (default is FALSE). If TRUE, details on computations are shown.}
+\item{verbose}{A logical value (default \code{FALSE}). If \code{TRUE}, details
+of the computations are printed.}
 }
 \value{
-a list with the results of the k-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
+A list with \code{IDX} (the cluster of each individual),
+\code{cardinality} (the size of each cluster), \code{proto} (a \code{MatH}
+object with the prototypes), \code{weights} (the weights of the variables or
+components), \code{Crit} (the criterion), \code{TOTSSQ}, \code{BSQ},
+\code{WSQ} (total, between and within sums of squares) and \code{quality} (the
+proportion of the total sum of squares explained by the partition).
 }
 \description{
-The function implements the k-means using adaptive distance for a set of histogram-valued data.
+K-means of the individuals of a \code{MatH} object based on adaptive L2
+Wasserstein distances: the algorithm also estimates a weight for each variable
+(or for each component of the variables, and/or for each cluster).
 }
-\section{Slots}{
-
-\describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e.
-the one having the minimum sum of squares criterion.}
-
-\item{\code{solution$IDX}}{A vector. The clusters at which the objects are assigned.}
-
-\item{\code{solution$cardinality}}{A vector. The cardinality of each final cluster.}
-
-\item{\code{solution$centers}}{A \code{MatH} object with the description of centers.}
-
-\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation
-from the centers) value at the end of the run.}
-
-\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model.
-(The higher the better)}
-}}
-
 \examples{
-results <- WH_adaptive.kmeans(x = BLOOD, k = 2, rep = 10, 
+results <- WH_adaptive.kmeans(x = BLOOD, k = 2, rep = 10,
             simplify = TRUE, qua = 10, standardize = TRUE)
+results$weights
 }
 \references{
-Irpino A., Rosanna V., De Carvalho F.A.T. (2014). Dynamic clustering of histogram data
-based on adaptive squared Wasserstein distances. EXPERT SYSTEMS WITH APPLICATIONS, vol. 41, p. 3351-3366,
-ISSN: 0957-4174, doi: http://dx.doi.org/10.1016/j.eswa.2013.12.001
+Irpino A., Verde R., De Carvalho F.A.T. (2014). Dynamic clustering
+of histogram data based on adaptive squared Wasserstein distances. Expert
+Systems with Applications, 41, 3351-3366. \doi{10.1016/j.eswa.2013.12.001}
+}
+\seealso{
+\code{\link{WH_kmeans}}, \code{\link{WH_adaptive_fcmeans}}
 }

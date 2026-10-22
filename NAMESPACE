@@ -25,7 +25,6 @@ export(data2hist)
 export(distributionH)
 export(plotPredVsObs)
 export(plot_errors)
-export(rQQ)
 export(summaryHTS)
 exportClasses(HTS)
 exportClasses(MatH)
@@ -81,34 +80,40 @@ exportMethods(subsetHTS)
 import(ggplot2)
 import(grid)
 import(methods)
-importFrom(FactoMineR,MFA)
-importFrom(FactoMineR,PCA)
+importFrom(FactoMineR,
+  MFA,
+  PCA
+)
 importFrom(Rcpp,evalCpp)
 importFrom(class,somgrid)
 importFrom(ggridges,geom_density_ridges)
-importFrom(grDevices,dev.new)
 importFrom(grDevices,rgb)
-importFrom(graphics,abline)
-importFrom(graphics,axis)
-importFrom(graphics,hist)
-importFrom(graphics,plot)
-importFrom(graphics,plot.new)
-importFrom(graphics,plot.window)
-importFrom(graphics,polygon)
-importFrom(graphics,segments)
-importFrom(graphics,text)
-importFrom(graphics,title)
+importFrom(graphics,
+  abline,
+  axis,
+  hist,
+  par,
+  plot,
+  plot.new,
+  plot.window,
+  polygon,
+  segments,
+  text,
+  title
+)
 importFrom(histogram,histogram)
-importFrom(stats,as.dist)
-importFrom(stats,as.formula)
-importFrom(stats,density)
-importFrom(stats,dist)
-importFrom(stats,hclust)
-importFrom(stats,lm)
-importFrom(stats,quantile)
-importFrom(stats,rnorm)
-importFrom(stats,runif)
-importFrom(stats,sd)
-importFrom(stats,variable.names)
+importFrom(stats,
+  as.dist,
+  as.formula,
+  density,
+  dist,
+  hclust,
+  lm,
+  quantile,
+  rnorm,
+  runif,
+  sd,
+  variable.names
+)
 importFrom(utils,write.table)
 useDynLib(HistDAWass)

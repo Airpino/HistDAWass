@@ -1,27 +1,14 @@
-#' Wrapper function of \code{MatH} class
-#'
-#' This function create a matrix of histogram data, i.e. a \code{MatH}
-#' object
-#'
-#' @name MatH
 #' @rdname MatH-class
+#' @param x A list of \code{distributionH} objects (default \code{NULL}, an empty
+#' matrix).
+#' @param nrows,ncols Integers, the number of rows (individuals) and of columns
+#' (variables). Default 1.
+#' @param rownames,varnames Character vectors (or lists of strings), the names
+#' of the rows and of the columns (variables). Default \code{NULL}.
+#' @param by.row A logical value (default \code{FALSE}): if \code{TRUE} the matrix
+#' is filled by rows, otherwise by columns.
+#' @return \code{MatH()} returns a \code{MatH} object.
 #' @export
-#' @param x (optional, default= an empty \code{distributionH} object) a list of
-#' \code{distributionH} objects
-#' @param nrows (optional, default=1)an integer, the number of rows.
-#' @param ncols (optional, default=1) an integer, the number of columns (aka
-#' variables).
-#' @param rownames (optional, default=NULL) a list of strings containing the
-#' names of the rows.
-#' @param varnames (optional, default=NULL) a list of strings containing the
-#' names of the columns (aka variables).
-#' @param by.row (optional, default=FALSE) a logical value, TRUE the matrix is
-#' row wise filled, FALSE the matrix is filled column wise.
-#' @return A \code{matH} object
-#' @examples
-#'
-#' # bulding an empty 10 by 4 matrix of histograms
-#' MAT <- MatH(nrows = 10, ncols = 4)
 MatH <- function(x = NULL, nrows = 1, ncols = 1, rownames = NULL, varnames = NULL, by.row = FALSE) {
   MAT <- new("MatH",
     nrows = nrows,
@@ -34,21 +21,22 @@ MatH <- function(x = NULL, nrows = 1, ncols = 1, rownames = NULL, varnames = NUL
 }
 
 # overriding of "[" operator for MatH object ----
-#' extract from a MatH Method [
-#' @name [
-#' @rdname extract-methods
-#' @aliases [,MatH,ANY,ANY,ANY-method
-#' [,MatH-method
-#' @description This method overrides the "[" operator for a  \code{matH} object.
-#' @param x a \code{matH} object
-#' @param i  a set of integer values identifying the rows
-#' @param j  a set of integer values identifying the columns
-#' @param ... not useful
-#' @param drop a logical value inherited from the basic method "[" but not used (default=TRUE)
-#' @return A \code{matH} object
+#' Extract a sub-matrix of histograms
+#'
+#' Extracts rows and/or columns of a \code{MatH} object, as for an ordinary
+#' matrix.
+#'
+#' @param x A \code{MatH} object.
+#' @param i,j Row and column indices (integers, names or logical vectors).
+#' @param ... Not used.
+#' @param drop Not used (the result is always a \code{MatH} object).
+#' @return A \code{MatH} object.
 #' @examples
-#' D <- BLOOD # the BLOOD dataset
 #' SUB_D <- BLOOD[c(1, 2, 5), c(1, 2)]
+#' SUB_D
+#' @name extract-MatH
+#' @rdname extract-methods
+#' @aliases [,MatH,ANY,ANY,ANY-method [,MatH-method
 #' @importFrom stats variable.names
 #' @export
 setMethod(
@@ -80,14 +68,27 @@ setMethod(
 # methods for getting information from a MatH
 
 setGeneric("get.MatH.nrows", function(object) standardGeneric("get.MatH.nrows"))
-#' Method get.MatH.nrows
-#' @name get.MatH.nrows
-#' @description It returns the number of rows of a \code{MatH} object
-#' @param object  a \code{MatH} object
-#' @return An integer, the number of rows.
+#' Dimensions and names of a matrix of histograms
+#'
+#' Functions returning the number of rows and of columns, the names of the rows
+#' (individuals) and of the columns (variables) of a \code{MatH} object.
+#'
+#' @param object A \code{MatH} object.
+#' @return \code{get.MatH.nrows} and \code{get.MatH.ncols} return an integer;
+#' \code{get.MatH.rownames} and \code{get.MatH.varnames} return a character
+#' vector; \code{get.MatH.main.info} returns a list with all of them
+#' (\code{nrows}, \code{ncols}, \code{rownames}, \code{varnames}).
+#' @examples
+#' get.MatH.nrows(BLOOD)
+#' get.MatH.ncols(BLOOD)
+#' get.MatH.rownames(BLOOD)
+#' get.MatH.varnames(BLOOD)
+#' get.MatH.main.info(BLOOD)
+#' @name get.MatH.main.info
+#' @rdname get.MatH.main.info-methods
+#' @aliases get.MatH.nrows get.MatH.nrows,MatH-method
+#' @usage get.MatH.nrows(object)
 #' @exportMethod get.MatH.nrows
-#' @rdname get.MatH.nrows-methods
-#' @aliases get.MatH.nrows,MatH-method
 
 setMethod(
   f = "get.MatH.nrows", signature = c(object = "MatH"),
@@ -95,70 +96,52 @@ setMethod(
     return(nrow(object@M))
   }
 )
-#' Method get.MatH.ncols
-#' @name get.MatH.ncols
-#' @rdname get.MatH.ncols-methods
+#' @rdname get.MatH.main.info-methods
+#' @aliases get.MatH.ncols
 #' @exportMethod get.MatH.ncols
 
 setGeneric("get.MatH.ncols", function(object) standardGeneric("get.MatH.ncols"))
-#' @rdname get.MatH.ncols-methods
+#' @rdname get.MatH.main.info-methods
 #' @aliases get.MatH.ncols,MatH-method
-#' @description It returns the number of columns of a \code{MatH} object
-#' @param object  a \code{MatH} object
-#' @return An integer, the number of columns.
+#' @usage NULL
 setMethod(
   f = "get.MatH.ncols", signature = c(object = "MatH"),
   function(object) {
     return(ncol(object@M))
   }
 )
-#' Method get.MatH.rownames
-#' @name get.MatH.rownames
-#' @rdname get.MatH.rownames-methods
+#' @rdname get.MatH.main.info-methods
+#' @aliases get.MatH.rownames
 #' @exportMethod get.MatH.rownames
 setGeneric("get.MatH.rownames", function(object) standardGeneric("get.MatH.rownames"))
-#' @rdname get.MatH.rownames-methods
+#' @rdname get.MatH.main.info-methods
 #' @aliases get.MatH.rownames,MatH-method
-#' @description It returns the labels of the rows of a \code{MatH} object
-#' @param object  a \code{MatH} object
-#' @return A vector of char, the label of the rows.
+#' @usage NULL
 setMethod(
   f = "get.MatH.rownames", signature = c(object = "MatH"),
   function(object) {
     return(rownames(object@M))
   }
 )
-#' Method get.MatH.varnames
-#' @name get.MatH.varnames
-#' @rdname get.MatH.varnames-methods
+#' @rdname get.MatH.main.info-methods
+#' @aliases get.MatH.varnames
 #' @exportMethod get.MatH.varnames
 setGeneric("get.MatH.varnames", function(object) standardGeneric("get.MatH.varnames"))
-#' @rdname get.MatH.varnames-methods
+#' @rdname get.MatH.main.info-methods
 #' @aliases get.MatH.varnames,MatH-method
-#' @description It returns the labels of the columns, or the names of the variables, of a \code{MatH} object
-#' @param object  a \code{MatH} object
-#' @return A vector of char, the labels of the columns, or the names of the variables.
+#' @usage NULL
 setMethod(
   f = "get.MatH.varnames", signature = c(object = "MatH"),
   function(object) {
     return(colnames(object@M))
   }
 )
-#' Method get.MatH.main.info
-#' @name get.MatH.main.info
 #' @rdname get.MatH.main.info-methods
 #' @exportMethod get.MatH.main.info
 setGeneric("get.MatH.main.info", function(object) standardGeneric("get.MatH.main.info"))
 #' @rdname get.MatH.main.info-methods
 #' @aliases get.MatH.main.info,MatH-method
-#' @description It returns the number of rows, of columns the labels of rows and columns of a \code{MatH} object.
-#' @param object  a \code{MatH} object
-#' @return A list of char, the labels of the columns, or the names of the variables.
-#' @slot nrows - the number of rows
-#' @slot ncols - the number of columns
-#' @slot rownames - a vector of char, the names of rows
-#' @slot varnames - a vector of char, the names of columns
-#'
+#' @usage NULL
 setMethod(
   f = "get.MatH.main.info", signature = c(object = "MatH"),
   function(object) {
@@ -168,44 +151,33 @@ setMethod(
     ))
   }
 )
-#' Method get.MatH.stats
+#' Statistics of the histograms of a matrix
+#'
+#' Computes a statistic (mean, median, standard deviation, ...) for each
+#' histogram of a \code{MatH} object.
+#'
+#' @param object A \code{MatH} object.
+#' @param stat The statistic: \code{"mean"} (default), \code{"median"},
+#' \code{"min"}, \code{"max"}, \code{"std"}, \code{"skewness"},
+#' \code{"kurtosis"} or \code{"quantile"}.
+#' @param prob A number between 0 and 1, the level of the quantile when
+#' \code{stat = "quantile"}.
+#' @return A list with the name of the statistic (\code{stat}), the level
+#' \code{prob} (only when \code{stat = "quantile"}) and the matrix of values
+#' (\code{mat}).
+#' @examples
+#' get.MatH.stats(BLOOD) # means
+#' get.MatH.stats(BLOOD, stat = "median")
+#' get.MatH.stats(BLOOD, stat = "quantile", prob = 0.05) # 5th percentiles
+#' get.MatH.stats(BLOOD, stat = "std")
 #' @name get.MatH.stats
 #' @rdname get.MatH.stats-methods
+#' @usage NULL
 #' @exportMethod get.MatH.stats
 setGeneric("get.MatH.stats", function(object, ...) standardGeneric("get.MatH.stats"))
 
 #' @rdname get.MatH.stats-methods
 #' @aliases get.MatH.stats,MatH-method
-#' @description It returns statistics for each distribution contained in a \code{MatH} object.
-#' @param object  a \code{MatH} object
-#' @param ... a set of other parameters
-#' @param stat (optional) a string containing the required statistic. Default='mean'\cr
-#' - \code{stat='mean'} - for computing the mean of each histogram\cr
-#' - \code{stat='median'} - for computing the median of each histogram\cr
-#' - \code{stat='min'} - for computing the minimum of each histogram\cr
-#' - \code{stat='max'} - for computing the maximum of each histogram\cr
-#' - \code{stat='std'} - for computing the standard deviatio of each histogram\cr
-#' - \code{stat='skewness'} - for computing the skewness of each histogram\cr
-#' - \code{stat='kurtosis'} - for computing the kurtosis of each histogram\cr
-#' - \code{stat='quantile'} - for computing the quantile ot level \code{prob} of each histogram\cr
-#' @param prob (optional)a number between 0 and 1 for computing the value once choosen the \code{'quantile'} option for \code{stat}.
-#' @return A list
-#' @slot stat - the chosen statistic
-#' @slot prob - level of probability if stat='quantile'
-#' @slot MAT - a matrix of values
-#' @examples
-#' get.MatH.stats(BLOOD) # the means of the distributions in BLOOD dataset
-#' get.MatH.stats(BLOOD, stat = "median") # the medians of the distributions in BLOOD dataset
-#' get.MatH.stats(BLOOD, stat = "quantile", prob = 0.5) # the same as median
-#' get.MatH.stats(BLOOD, stat = "min") # minima of the distributions in BLOOD dataset
-#' get.MatH.stats(BLOOD, stat = "quantile", prob = 0) # the same as min
-#' get.MatH.stats(BLOOD, stat = "max") # maxima of the distributions in BLOOD dataset
-#' get.MatH.stats(BLOOD, stat = "quantile", prob = 1) # the same as max
-#' get.MatH.stats(BLOOD, stat = "std") # standard deviations of the distributions in BLOOD dataset
-#' get.MatH.stats(BLOOD, stat = "skewness") # skewness indices of the distributions in BLOOD dataset
-#' get.MatH.stats(BLOOD, stat = "kurtosis") # kurtosis indices of the distributions in BLOOD dataset
-#' get.MatH.stats(BLOOD, stat = "quantile", prob = 0.05)
-#' # the fifth percentiles of distributions in BLOOD dataset
 setMethod(
   f = "get.MatH.stats", signature = c(object = "MatH"),
   function(object, stat = "mean", prob = 0.5) {
@@ -256,31 +228,36 @@ setMethod(
 
 
 # methods for collating by row or by column two MatHs ----
-#' Method WH.bind.row
-#' @name WH.bind.row
-#' @rdname WH.bind.row-methods
+#' Bind matrices of histograms
+#'
+#' \code{WH.bind.row} binds by rows two \code{MatH} objects with the same number
+#' of columns, \code{WH.bind.col} binds by columns two \code{MatH} objects with
+#' the same number of rows. \code{WH.bind} does one of the two according to
+#' \code{byrow}.
+#'
+#' @param object1,object2 Two \code{MatH} objects.
+#' @param byrow A logical value: if \code{TRUE} the objects are bound by rows,
+#' otherwise by columns.
+#' @return A \code{MatH} object.
+#' @examples
+#' WH.bind.row(BLOOD[1:3, ], BLOOD[5:8, ])
+#' WH.bind.col(BLOOD[1:10, 1], BLOOD[1:10, 3])
+#' WH.bind(BLOOD[1:10, 1], BLOOD[1:10, 3], byrow = FALSE)
+#' @name WH.bind
+#' @rdname WH.bind-methods
+#' @aliases WH.bind.row
 #' @exportMethod WH.bind.row
 setGeneric("WH.bind.row", function(object1, object2) standardGeneric("WH.bind.row")) #
-#' Method WH.bind.col
-#' @name WH.bind.col
-#' @rdname WH.bind.col-methods
+#' @rdname WH.bind-methods
+#' @aliases WH.bind.col
 #' @exportMethod WH.bind.col
 setGeneric("WH.bind.col", function(object1, object2) standardGeneric("WH.bind.col")) #
-#' Method WH.bind
-#' @name WH.bind
 #' @rdname WH.bind-methods
 #' @exportMethod WH.bind
 setGeneric("WH.bind", function(object1, object2, byrow) standardGeneric("WH.bind")) #
-#' @rdname WH.bind.row-methods
+#' @rdname WH.bind-methods
 #' @aliases WH.bind.row,MatH-method
-#' @description It attaches two \code{MatH} objects with the same columns by row.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @return a \code{MatH} object,
-#' @examples
-#' M1 <- BLOOD[1:3, ]
-#' M2 <- BLOOD[5:8, ]
-#' MAT <- WH.bind.row(M1, M2)
+#' @usage NULL
 setMethod(
   f = "WH.bind.row", signature = c(object1 = "MatH", object2 = "MatH"),
   function(object1, object2) {
@@ -295,16 +272,9 @@ setMethod(
     return(object1)
   }
 )
-#' @rdname WH.bind.col-methods
+#' @rdname WH.bind-methods
 #' @aliases WH.bind.col,MatH-method
-#' @description It attaches two \code{MatH} objects with the same rows by colums.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @return a \code{MatH} object,
-#' @examples
-#' M1 <- BLOOD[1:10, 1]
-#' M2 <- BLOOD[1:10, 3]
-#' MAT <- WH.bind.col(M1, M2)
+#' @usage NULL
 setMethod(
   f = "WH.bind.col", signature = c(object1 = "MatH", object2 = "MatH"),
   function(object1, object2) {
@@ -322,21 +292,7 @@ setMethod(
 )
 #' @rdname WH.bind-methods
 #' @aliases WH.bind,MatH-method
-#' @description It attaches two \code{MatH} objects with the same columns by row, or the same rows by colum.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @param byrow  a logical value (default=TRUE) attaches the objects by row
-#' @return a \code{MatH} object,
-#' @examples
-#' # binding by row
-#' M1 <- BLOOD[1:10, 1]
-#' M2 <- BLOOD[1:10, 3]
-#' MAT <- WH.bind(M1, M2, byrow = TRUE)
-#' # binding by col
-#' M1 <- BLOOD[1:10, 1]
-#' M2 <- BLOOD[1:10, 3]
-#' MAT <- WH.bind(M1, M2, byrow = FALSE)
-#' @seealso \code{\link{WH.bind.row}} for binding by row, \code{\link{WH.bind.col}} for binding by column
+#' @usage NULL
 setMethod(
   f = "WH.bind", signature = c(object1 = "MatH", object2 = "MatH"),
   function(object1, object2, byrow = TRUE) {
@@ -355,29 +311,40 @@ setMethod(
 )
 
 # methods for MatH based on the L2 Wasserstein distance between distributions ----
-#' Method WH.mat.sum
+#' Sum of two matrices of histograms
+#'
+#' Sums two \code{MatH} objects of the same dimensions, cell by cell, by summing
+#' the quantile functions of the histograms (a sum consistent with the L2
+#' Wasserstein metric).
+#'
+#' @param object1,object2 Two \code{MatH} objects with the same dimensions.
+#' @return A \code{MatH} object.
+#' @examples
+#' MAT <- WH.mat.sum(BLOOD[1:5, ], BLOOD[6:10, ])
 #' @name WH.mat.sum
 #' @rdname WH.mat.sum-methods
 #' @exportMethod WH.mat.sum
 setGeneric("WH.mat.sum", function(object1, object2) standardGeneric("WH.mat.sum")) # ok matrix sum
-#' Method WH.mat.prod
+#' Product of two matrices of histograms
+#'
+#' Matrix product of two \code{MatH} objects, where the product of two cells is
+#' the dot product of the histograms inducing the L2 Wasserstein metric (see
+#' \code{\link{dotpW}}).
+#'
+#' @param object1,object2 Two \code{MatH} objects with conformable dimensions.
+#' @param traspose1,traspose2 Logical values (default \code{FALSE}): if
+#' \code{TRUE} the corresponding matrix is transposed.
+#' @return A numeric matrix.
+#' @examples
+#' MAT <- WH.mat.prod(BLOOD[1:5, ], BLOOD[6:10, ], traspose1 = TRUE)
 #' @name WH.mat.prod
 #' @rdname WH.mat.prod-methods
+#' @usage NULL
 #' @exportMethod WH.mat.prod
 setGeneric("WH.mat.prod", function(object1, object2, ...) standardGeneric("WH.mat.prod")) # ok matrix product
 #' @rdname WH.mat.sum-methods
 #' @aliases WH.mat.sum,MatH-method
-#' @description It sums two \code{MatH} objects, i.e. two matrices of distributions,
-#' by summing the quantile functions of histograms. This sum is consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @return a \code{MatH} object,
-#' @examples
-#' # binding by row
-#' M1 <- BLOOD[1:5, ]
-#' M2 <- BLOOD[6:10, ]
-#' MAT <- WH.mat.sum(M1, M2)
+#' @usage NULL
 setMethod(
   f = "WH.mat.sum", signature = c(object1 = "MatH", object2 = "MatH"),
   # sums two MatH, i.e.  two matrices of distributionsH
@@ -414,20 +381,6 @@ setMethod(
 )
 #' @rdname WH.mat.prod-methods
 #' @aliases WH.mat.prod,MatH-method
-#' @description It is the matrix product of two \code{MatH} objects, i.e. two matrices of distributions,
-#' by using the dot product of two histograms that is consistent with
-#'  a set of distributions equipped with a L2 wasserstein metric.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @param ... other optional parameters
-#' @param traspose1 a logical value, default=FALSE. If TRUE trasposes object1
-#' @param traspose2 a logical value, default=FALSE. If TRUE trasposes object2
-#' @return a matrix of numbers
-#' @examples
-#'
-#' M1 <- BLOOD[1:5, ]
-#' M2 <- BLOOD[6:10, ]
-#' MAT <- WH.mat.prod(M1, M2, traspose1 = TRUE, traspose2 = FALSE)
 setMethod(
   f = "WH.mat.prod", signature = c(object1 = "MatH", object2 = "MatH"),
   # sums two MatH, i.e.  two matrics of distributionsH
@@ -472,63 +425,94 @@ setMethod(
 )
 
 # L2 Wasserstein basic operations and basic statistics for matrices of distributionH ----
-#' Method WH.vec.sum
-#' @name WH.vec.sum
-#' @rdname WH.vec.sum-methods
-#' @exportMethod WH.vec.sum
-setGeneric("WH.vec.sum", function(object, ...) standardGeneric("WH.vec.sum")) # OK weighted sum of a vector of distributionH
-#' Method WH.vec.mean
+#' Weighted sum and mean of the histograms of a matrix
+#'
+#' \code{WH.vec.sum} and \code{WH.vec.mean} compute the (weighted) sum and the
+#' (weighted) mean of all the histograms of a \code{MatH} object, consistently
+#' with the L2 Wasserstein metric: the result is the histogram whose quantile
+#' function is the (weighted) sum or mean of the quantile functions. The mean is
+#' the Wasserstein barycenter of the histograms.
+#'
+#' @param object A \code{MatH} object.
+#' @param w A vector of non-negative weights, one for each cell of the matrix.
+#' Default: equal weights.
+#' @return A \code{distributionH} object.
+#' @examples
+#' WH.vec.mean(BLOOD)
+#' WH.vec.sum(BLOOD)
+#' # weighted mean with random weights
+#' RN <- runif(get.MatH.nrows(BLOOD) * get.MatH.ncols(BLOOD))
+#' WH.vec.mean(BLOOD, w = RN)
 #' @name WH.vec.mean
 #' @rdname WH.vec.mean-methods
+#' @aliases WH.vec.sum
+#' @usage NULL
+#' @exportMethod WH.vec.sum
+setGeneric("WH.vec.sum", function(object, ...) standardGeneric("WH.vec.sum")) # OK weighted sum of a vector of distributionH
+#' @rdname WH.vec.mean-methods
+#' @usage NULL
 #' @exportMethod WH.vec.mean
 setGeneric("WH.vec.mean", function(object, ...) standardGeneric("WH.vec.mean")) # OK weighted mean of a vector of distributionH
-#' Method WH.SSQ
-#' @name WH.SSQ
-#' @rdname WH.SSQ-methods
-#' @exportMethod WH.SSQ
-setGeneric("WH.SSQ", function(object, ...) standardGeneric("WH.SSQ")) # weighted de-codeviance matrix
-#' Method WH.var.covar
+#' Sum of squares, covariance and correlation of histogram variables
+#'
+#' Compute the matrix of the sums of squared deviations from the mean
+#' (\code{WH.SSQ}), the variance-covariance matrix (\code{WH.var.covar}) and the
+#' correlation matrix (\code{WH.correlation}) of the variables of a \code{MatH}
+#' object, according to the L2 Wasserstein metric. The functions with suffix 2
+#' compute the same (rectangular) matrices between the variables of two
+#' \code{MatH} objects with the same number of rows.
+#'
+#' @param object A \code{MatH} object.
+#' @param object1,object2 Two \code{MatH} objects with the same number of rows.
+#' @param w A vector of non-negative weights, one for each row (individual).
+#' Default: equal weights.
+#' @return A numeric matrix.
+#' @references Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+#' distributional symbolic variables: a new metric-based approach}, Advances in
+#' Data Analysis and Classification, 9(2), 143-175.
+#' \doi{10.1007/s11634-014-0176-4}
+#' @examples
+#' WH.SSQ(BLOOD)
+#' WH.var.covar(BLOOD)
+#' WH.correlation(BLOOD)
+#' # weighted, with random weights
+#' RN <- runif(get.MatH.nrows(BLOOD))
+#' WH.var.covar(BLOOD, w = RN)
+#' # between two sets of variables
+#' WH.correlation2(BLOOD[, 1], BLOOD[, 2:3])
 #' @name WH.var.covar
 #' @rdname WH.var.covar-methods
+#' @aliases WH.SSQ
+#' @usage NULL
+#' @exportMethod WH.SSQ
+setGeneric("WH.SSQ", function(object, ...) standardGeneric("WH.SSQ")) # weighted de-codeviance matrix
+#' @rdname WH.var.covar-methods
+#' @usage NULL
 #' @exportMethod WH.var.covar
 setGeneric("WH.var.covar", function(object, ...) standardGeneric("WH.var.covar")) # weighted variance variance matrix
-#' Method WH.correlation
-#' @name WH.correlation
-#' @rdname WH.correlation-methods
+#' @rdname WH.var.covar-methods
+#' @aliases WH.correlation
+#' @usage NULL
 #' @exportMethod WH.correlation
 setGeneric("WH.correlation", function(object, ...) standardGeneric("WH.correlation")) # weighted corelation matrix
-#' Method WH.SSQ2
-#' @name WH.SSQ2
-#' @rdname WH.SSQ2-methods
+#' @rdname WH.var.covar-methods
+#' @aliases WH.SSQ2
+#' @usage NULL
 #' @exportMethod WH.SSQ2
 setGeneric("WH.SSQ2", function(object1, object2, ...) standardGeneric("WH.SSQ2")) # weighted de-codeviance matrix
-#' Method WH.var.covar2
-#' @name WH.var.covar2
-#' @rdname WH.var.covar2-methods
+#' @rdname WH.var.covar-methods
+#' @aliases WH.var.covar2
+#' @usage NULL
 #' @exportMethod WH.var.covar2
 setGeneric("WH.var.covar2", function(object1, object2, ...) standardGeneric("WH.var.covar2")) # weighted variance variance matrix
-#' Method WH.correlation2
-#' @name WH.correlation2
-#' @rdname WH.correlation2-methods
+#' @rdname WH.var.covar-methods
+#' @aliases WH.correlation2
+#' @usage NULL
 #' @exportMethod WH.correlation2
 setGeneric("WH.correlation2", function(object1, object2, ...) standardGeneric("WH.correlation2")) # weighted corelation matrix
 
-#' @rdname WH.vec.sum-methods
+#' @rdname WH.vec.mean-methods
 #' @aliases WH.vec.sum,MatH-method
-#' @description Compute a histogram that is the weighted sum of the set of histograms contained
-#' in a \code{MatH} object, i.e. a matrix of histograms, consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object  a \code{MatH} object
-#' @param ... optional arguments
-#' @param w it is possible to add a vector of weights (positive numbers) having the same size of the \code{MatH object},
-#' default = equal weights for all cells
-#' @return a \code{distributionH} object, i.e. a histogram
-#' @examples
-#' hsum <- WH.vec.sum(BLOOD)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD) * get.MatH.ncols(BLOOD))
-#' hsum <- WH.vec.sum(BLOOD, w = RN)
-#' ### SUM of distributions ----
 setMethod(
   f = "WH.vec.sum", signature = c(object = "MatH"),
   function(object, w = numeric(0)) {
@@ -559,19 +543,6 @@ setMethod(
 )
 #' @rdname WH.vec.mean-methods
 #' @aliases WH.vec.mean,MatH-method
-#' @description Compute a histogram that is the weighted mean of the set of histograms contained
-#' in a \code{MatH} object, i.e. a matrix of histograms, consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object  a \code{MatH} object
-#' @param ... optional arguments
-#' @param w it is possible to add a vector of weights (positive numbers) having the same size of
-#'  the \code{MatH object}, default = equal weights for all
-#' @return a \code{distributionH} object, i.e. a histogram
-#' @examples
-#' hmean <- WH.vec.mean(BLOOD)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD) * get.MatH.ncols(BLOOD))
-#' hmean <- WH.vec.mean(BLOOD, w = RN)
 setMethod(
   f = "WH.vec.mean", signature = c(object = "MatH"),
   function(object, w = numeric(0)) {
@@ -607,22 +578,8 @@ setMethod(
     return(MEAN)
   }
 )
-#' @rdname WH.SSQ-methods
+#' @rdname WH.var.covar-methods
 #' @aliases WH.SSQ,MatH-method
-#' @description Compute the sum-of-squares-deviations (from the mean) matrix of a \code{MatH} object, i.e.
-#' a matrix of numbers, consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object  a \code{MatH} object
-#' @param ... some optional parameters
-#' @param w it is possible to add a vector of weights (positive numbers)
-#' having the same size of the rows of the \code{MatH object},
-#' default = equal weight for each row
-#' @return a squared \code{matrix} with the weighted sum of squares
-#' @examples
-#' WH.SSQ(BLOOD)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD))
-#' WH.SSQ(BLOOD, w = RN)
 setMethod(
   f = "WH.SSQ", signature = c(object = "MatH"),
   function(object, w = numeric(0)) {
@@ -679,24 +636,6 @@ setMethod(
 )
 #' @rdname WH.var.covar-methods
 #' @aliases WH.var.covar,MatH-method
-#' @description Compute the variance-covariance matrix of a \code{MatH} object, i.e.
-#' a matrix of values consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object  a \code{MatH} object
-#' @param ... some optional parameters
-#' @param w it is possible to add a vector of weights (positive numbers)
-#' having the same size of the rows of the \code{MatH object},
-#' default = equal weight for each row
-#' @return a squared \code{matrix} with the (weighted) variance-covariance values
-#' @references Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI
-#' 10.1007/s11634-014-0176-4
-#' @examples
-#' WH.var.covar(BLOOD)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD))
-#' WH.var.covar(BLOOD, w = RN)
 setMethod(
   f = "WH.var.covar", signature = c(object = "MatH"),
   function(object, w = numeric(0)) {
@@ -720,26 +659,8 @@ setMethod(
     return(COV_MAT)
   }
 )
-#' @rdname WH.correlation-methods
+#' @rdname WH.var.covar-methods
 #' @aliases WH.correlation,MatH-method
-#' @description Compute the correlation matrix of a \code{MatH} object, i.e.
-#' a matrix of values consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object  a \code{MatH} object
-#' @param ... some optional parameters
-#' @param w it is possible to add a vector of weights (positive numbers)
-#' having the same size of the rows of the \code{MatH object},
-#' default = equal weight for each row
-#' @return a squared \code{matrix} with the (weighted) correlations indices
-#' @references Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI
-#' 10.1007/s11634-014-0176-4
-#' @examples
-#' WH.correlation(BLOOD)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD))
-#' WH.correlation(BLOOD, w = RN)
 setMethod(
   f = "WH.correlation", signature = c(object = "MatH"),
   function(object, w = numeric(0)) {
@@ -780,25 +701,8 @@ setMethod(
     return(CORR_MAT)
   }
 )
-#' @rdname WH.SSQ2-methods
+#' @rdname WH.var.covar-methods
 #' @aliases WH.SSQ2,MatH-method
-#' @description Compute the sum-of-squares-deviations (from the mean) matrix using two  \code{MatH} objects having the same number of rows,
-#'  It returns a rectangular a matrix of numbers, consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @param ... some optional parameters
-#' @param w it is possible to add a vector of weights (positive numbers)
-#' having the same size of the rows of the \code{MatH object},
-#' default = equal weight for each row
-#' @return a rectangular \code{matrix} with the weighted sum of squares
-#' @examples
-#' M1 <- BLOOD[, 1]
-#' M2 <- BLOOD[, 2:3]
-#' WH.SSQ2(M1, M2)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD))
-#' WH.SSQ2(M1, M2, w = RN)
 setMethod(
   f = "WH.SSQ2", signature = c(object1 = "MatH", object2 = "MatH"),
   function(object1, object2, w = numeric(0)) {
@@ -857,25 +761,8 @@ setMethod(
     }
   }
 )
-#' @rdname WH.var.covar2-methods
+#' @rdname WH.var.covar-methods
 #' @aliases WH.var.covar2,MatH-method
-#' @description Compute the covariance matrix using two  \code{MatH} objects having the same number of rows,
-#'  It returns a rectangular a matrix of numbers, consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @param ... some optional parameters
-#' @param w it is possible to add a vector of weights (positive numbers)
-#' having the same size of the rows of the \code{MatH object},
-#' default = equal weight for each row
-#' @return a rectangular \code{matrix} with the weighted sum of squares
-#' @examples
-#' M1 <- BLOOD[, 1]
-#' M2 <- BLOOD[, 2:3]
-#' WH.var.covar2(M1, M2)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD))
-#' WH.var.covar2(M1, M2, w = RN)
 setMethod(
   f = "WH.var.covar2", signature = c(object1 = "MatH", object2 = "MatH"),
   function(object1, object2, w = numeric(0)) {
@@ -934,25 +821,8 @@ setMethod(
     }
   }
 )
-#' @rdname WH.correlation2-methods
+#' @rdname WH.var.covar-methods
 #' @aliases WH.correlation2,MatH-method
-#' @description Compute the correlation matrix using two  \code{MatH} objects having the same number of rows,
-#'  It returns a rectangular a matrix of numbers, consistent with
-#' a set of distributions equipped with a L2 wasserstein metric.
-#' @param object1  a \code{MatH} object
-#' @param object2  a \code{MatH} object
-#' @param ... some optional parameters
-#' @param w it is possible to add a vector of weights (positive numbers)
-#' having the same size of the rows of the \code{MatH object},
-#' default = equal weight for each row
-#' @return a rectangular \code{matrix} with the weighted sum of squares
-#' @examples
-#' M1 <- BLOOD[, 1]
-#' M2 <- BLOOD[, 2:3]
-#' WH.correlation2(M1, M2)
-#' # generate a set of random weights
-#' RN <- runif(get.MatH.nrows(BLOOD))
-#' WH.correlation2(M1, M2, w = RN)
 setMethod(
   f = "WH.correlation2", signature = c(object1 = "MatH", object2 = "MatH"),
   function(object1, object2, w = numeric(0)) {
@@ -996,45 +866,37 @@ setMethod(
 )
 
 # Utility methods for registration of distributions ----
-#' Method is.registeredMH
-#' @name is.registeredMH
-#' @rdname is.registeredMH-methods
-#' @exportMethod is.registeredMH
-setGeneric("is.registeredMH", function(object) standardGeneric("is.registeredMH")) # OK
-#' @rdname is.registeredMH-methods
-#' @aliases is.registeredMH,MatH-method
-#' @description Checks if a \code{MatH} contains histograms described by the same number of
-#' bins and the same cdf.
+#' Register the histograms of a matrix on a common cdf
 #'
-#' @param object A \code{MatH} object
-#' @return a \code{logical} value \code{TRUE} if the distributions share the
-#' same cdf, \code{FALSE} otherwise.
-#' @author Antonio Irpino
+#' \code{registerMH} recomputes all the histograms of a \code{MatH} object so that
+#' they share the same cdf values (the same \code{p} slot), without changing the
+#' distributions. This allows a fast computation of all the methods based on the
+#' L2 Wasserstein metric. \code{is.registeredMH} checks whether the histograms
+#' already share the same cdf.
+#'
+#' @param object A \code{MatH} object.
+#' @return \code{registerMH} returns a \code{MatH} object whose histograms share
+#' the same cdf; \code{is.registeredMH} returns \code{TRUE} or \code{FALSE}.
 #' @references Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
 #' clustering of histograms using Wasserstein metric} In: Rizzi, A., Vichi, M.
-#' (eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.\cr Irpino, A.,Verde,
-#' R. (2006): \emph{A new Wasserstein based distance for the hierarchical
-#' clustering of histogram symbolic data} In: Batanjeli, V., Bock, H.H.,
-#' Ferligoj, A., Ziberna, A. (eds.) Data Science and Classification, IFCS 2006.
-#' Springer, Berlin, 185-192.
-#' @keywords distribution
+#' (eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.
 #' @examples
-#'
-#' ## ---- initialize three distributionH objects mydist1 and mydist2
-#' mydist1 <- new("distributionH", c(1, 2, 3), c(0, 0.4, 1))
-#' mydist2 <- new("distributionH", c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
-#' mydist3 <- new("distributionH", c(9, 11, 20), c(0, 0.8, 1))
-#' ## create a MatH object
-#' MyMAT <- new("MatH", nrows = 1, ncols = 3, ListOfDist = c(mydist1, mydist2, mydist3), 1, 3)
-#' is.registeredMH(MyMAT)
-#' ## [1] FALSE #the distributions do not share the same cdf
-#' ## Hint: check with str(MyMAT)
-#'
-#' ## register the two distributions
+#' mydist1 <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
+#' mydist2 <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
+#' mydist3 <- distributionH(c(9, 11, 20), c(0, 0.8, 1))
+#' MyMAT <- MatH(x = list(mydist1, mydist2, mydist3), nrows = 1, ncols = 3)
+#' is.registeredMH(MyMAT) # FALSE
 #' MATregistered <- registerMH(MyMAT)
-#' is.registeredMH(MATregistered)
-#' ## TRUE #the distributions share the same cdf
-#' ## Hint: check with str(MATregistered)
+#' is.registeredMH(MATregistered) # TRUE
+#' MATregistered@M[[1, 1]]@p
+#' @name registerMH
+#' @rdname registerMH-methods
+#' @aliases is.registeredMH
+#' @exportMethod is.registeredMH
+setGeneric("is.registeredMH", function(object) standardGeneric("is.registeredMH")) # OK
+#' @rdname registerMH-methods
+#' @aliases is.registeredMH,MatH-method
+#' @usage NULL
 setMethod(
   f = "is.registeredMH", signature = c(object = "MatH"),
   # check if all the distributions share the same cdf
@@ -1065,66 +927,12 @@ setMethod(
     }
   }
 )
-#' Method registerMH
-#' @name registerMH
 #' @rdname registerMH-methods
 #' @exportMethod registerMH
 setGeneric("registerMH", function(object) standardGeneric("registerMH")) # OK
 #' @rdname registerMH-methods
 #' @aliases registerMH,MatH-method
-#' @description \code{registerMH} method registers a set of distributions of a \code{MatH} object
-#' All the
-#' distribution are recomputed to obtain distributions sharing the same
-#' \code{p} slot. This methods is useful for using fast computation of all
-#' methods based on L2 Wasserstein metric. The distributions will have the same
-#' number of element in the \code{x} slot without modifing their density
-#' function.
-#'
-#'
-#' @param object  A \code{MatH} object (a matrix of distributions)
-#' @return A \code{MatH} object, a matrix of distributions sharing the same
-#' \code{p} slot (i.e. the same cdf).
-#' @author Antonio Irpino
-#' @references Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
-#' clustering of histograms using Wasserstein metric} In: Rizzi, A., Vichi, M.
-#' (eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.\cr Irpino, A.,Verde,
-#' R. (2006): \emph{A new Wasserstein based distance for the hierarchical
-#' clustering of histogram symbolic data} In: Batanjeli, V., Bock, H.H.,
-#' Ferligoj, A., Ziberna, A. (eds.) Data Science and Classification, IFCS 2006.
-#' Springer, Berlin, 185-192.
-#' @keywords distribution
-#' @examples
-#' # initialize three distributionH objects mydist1 and mydist2
-#' mydist1 <- new("distributionH", c(1, 2, 3), c(0, 0.4, 1))
-#' mydist2 <- new("distributionH", c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
-#' mydist3 <- new("distributionH", c(9, 11, 20), c(0, 0.8, 1))
-#' # create a MatH object
-#'
-#' MyMAT <- new("MatH", nrows = 1, ncols = 3, ListOfDist = c(mydist1, mydist2, mydist3), 1, 3)
-#' # register the two distributions
-#' MATregistered <- registerMH(MyMAT)
-#' #
-#' # OUTPUT the structure of MATregstered
-#' str(MATregistered)
-#' #   Formal class 'MatH' [package "HistDAWass"] with 1 slots
-#' #   .. @@ M:List of 3
-#' #   .. ..$ :Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#' #   .. .. .. ..@@ x: num [1:6] 1 1.5 2 2.5 2.67 ...
-#' #   .. .. .. ..@@ p: num [1:6] 0 0.2 0.4 0.7 0.8 1
-#' #   ...
-#' #   .. ..$ :Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#' #   .. .. .. ..@@ x: num [1:6] 7 8 8.8 10 11.7 ...
-#' #   .. .. .. ..@@ p: num [1:6] 0 0.2 0.4 0.7 0.8 1
-#' #   ...
-#' #   .. ..$ :Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#' #   .. .. .. ..@@ x: num [1:6] 9 9.5 10 10.8 11 ...
-#' #   .. .. .. ..@@ p: num [1:6] 0 0.2 0.4 0.7 0.8 1
-#' #   ...
-#' #   .. ..- attr(*, "dim")= int [1:2] 1 3
-#' #   .. ..- attr(*, "dimnames")=List of 2
-#' #   .. .. ..$ : chr "I1"
-#' #   .. .. ..$ : chr [1:3] "X1" "X2" "X3"
-#' #
+#' @usage NULL
 setMethod(
   f = "registerMH", signature = c(object = "MatH"),
   # register a row or a column vector of qfs of distributionH:
@@ -1174,20 +982,22 @@ setMethod(
 
 
 
-#' Method Center.cell.MatH Centers all the cells of a matrix of distributions
+#' Centre the histograms of a matrix
+#'
+#' Shifts each histogram of a \code{MatH} object so that its mean is zero.
+#'
+#' @param object A \code{MatH} object.
+#' @return A \code{MatH} object whose histograms have zero mean.
+#' @examples
+#' CEN_BLOOD <- Center.cell.MatH(BLOOD)
+#' get.MatH.stats(CEN_BLOOD, stat = "mean")
 #' @name Center.cell.MatH
 #' @rdname Center.cell.MatH-methods
 #' @exportMethod Center.cell.MatH
 setGeneric("Center.cell.MatH", function(object) standardGeneric("Center.cell.MatH")) # OK
 #' @rdname Center.cell.MatH-methods
 #' @aliases Center.cell.MatH,MatH-method
-#' @description The function transform a MatH object (i.e. a matrix of distributions),
-#' such that each distribution is shifted and has a mean equal to zero
-#' @param object a MatH object, a matrix of distributions.
-#' @return A \code{MatH} object, having each distribution with a zero mean.
-#' @examples
-#' CEN_BLOOD <- Center.cell.MatH(BLOOD)
-#' get.MatH.stats(BLOOD, stat = "mean")
+#' @usage NULL
 setMethod(
   f = "Center.cell.MatH", signature = c(object = "MatH"),
   function(object) {
@@ -1204,21 +1014,18 @@ setMethod(
   }
 )
 ## Show overridding ----
-#' Method show for MatH
+#' Print a matrix of histograms
+#'
+#' Prints a \code{MatH} object showing, for each histogram, its mean and its
+#' standard deviation.
+#'
+#' @param object A \code{MatH} object.
+#' @return Invisibly \code{NULL}; called for its side effect.
+#' @examples
+#' BLOOD
 #' @name show-MatH
 #' @rdname show-MatH-methods
-#' @docType methods
-# @aliases show,distributionH-method
-# @name show
-# @rdname show-MatH
 #' @aliases show,MatH-method
-#' @description An overriding show method for a \code{MatH} object. The method returns a representation
-#' of the matrix using the mean and the standard deviation for each histogram.
-#' @param object  a \code{MatH} object
-#' @examples
-#' show(BLOOD)
-#' print(BLOOD)
-#' BLOOD
 setMethod("show",
   signature(object = "MatH"),
   definition = function(object) {
@@ -1282,28 +1089,28 @@ if (!isGeneric("plot")) {
   )
 }
 #   Plot overloading ----
-#' Method plot for a matrix  of histograms
+#' Plot a matrix of histograms
+#'
+#' Plots all the histograms of a \code{MatH} object: one panel for each variable,
+#' one row for each individual.
+#'
+#' @param x A \code{MatH} object.
+#' @param y Not used.
+#' @param type The type of plot: \code{"HISTO"} (default, histograms),
+#' \code{"DENS"} (kernel density approximations) or \code{"BOXPLOT"} (boxplots).
+#' @param border The colour of the borders (default \code{"black"}).
+#' @param angL Not used (kept for compatibility).
+#' @return The plot is drawn on the current device and the \code{ggplot} object is
+#' returned invisibly, so that it can be further modified.
+#' @examples
+#' plot(BLOOD)
+#' \donttest{
+#' plot(BLOOD, type = "DENS", border = "blue")
+#' plot(BLOOD, type = "BOXPLOT")
+#' }
 #' @name plot-MatH
-#' @docType methods
 #' @rdname plot-MatH
 #' @aliases plot,MatH-method
-#' @description An overloading plot function for a \code{MatH} object. The method returns a graphical representation
-#' of the matrix of histograms.
-#' @param x a \code{distributionH} object
-#' @param y not used in this implementation
-#' @param type (optional) a string describing the type of plot, default="HISTO".\cr
-#'  Other allowed types are \cr
-#'  "DENS"=a density approximation, \cr
-#'  "BOXPLOT"=l boxplot
-#' @param border (optional) a string the color of the border of the plot, default="black".
-#' @param angL (optional) angle of labels of rows (DEFAULT=330).
-#' @examples
-#' plot(BLOOD) # plots BLOOD dataset
-#' \dontrun{
-#' plot(BLOOD, type = "HISTO", border = "blue") # plots a matrix of histograms
-#' plot(BLOOD, type = "DENS", border = "blue") # plots a matrix of densities
-#' plot(BLOOD, type = "BOXPLOT") # plots a  boxplots
-#' }
 #' @importFrom utils write.table
 #' @export
 
@@ -1311,24 +1118,31 @@ setMethod(
   "plot",
   signature(x = "MatH"),
   function(x, y = "missing", type = "HISTO", border = "black", angL = 330) {
-    plot.M(x, type = type, border = border, angL = angL)
+    .draw(.plot_MatH(x, type = type, border = border, angL = angL))
   }
 )
-#' Method get.cell.MatH Returns the histogram in a cell of a matrix of distributions
+#' Get or set a cell of a matrix of histograms
+#'
+#' \code{get.cell.MatH} returns the histogram in a cell of a \code{MatH} object;
+#' \code{set.cell.MatH} assigns a histogram to a cell.
+#'
+#' @param object For \code{get.cell.MatH}, a \code{MatH} object; for
+#' \code{set.cell.MatH}, the \code{distributionH} object to assign.
+#' @param mat A \code{MatH} object.
+#' @param r,c Integers, the row and the column of the cell.
+#' @return \code{get.cell.MatH} returns a \code{distributionH} object,
+#' \code{set.cell.MatH} the modified \code{MatH} object.
+#' @examples
+#' get.cell.MatH(BLOOD, r = 1, c = 1)
+#' mydist <- distributionH(x = c(0, 1, 2, 3, 4), p = c(0, 0.1, 0.6, 0.9, 1))
+#' MAT <- set.cell.MatH(mydist, BLOOD, r = 1, c = 1)
 #' @name get.cell.MatH
 #' @rdname get.cell.MatH-methods
 #' @exportMethod get.cell.MatH
 setGeneric("get.cell.MatH", function(object, r, c) standardGeneric("get.cell.MatH")) # OK
 #' @rdname get.cell.MatH-methods
-#' @aliases get.cell.MatH,MatH-method
-#' @description Returns the histogram data in the r-th row and the c-th column.
-#' @param object a MatH object, a matrix of distributions.
-#' @param r an integer, the row index.
-#' @param c an integer, the column index
-#'
-#' @return A \code{distributionH} object.
-#' @examples
-#' get.cell.MatH(BLOOD, r = 1, c = 1)
+#' @aliases get.cell.MatH,MatH,numeric,numeric-method
+#' @usage NULL
 setMethod(
   f = "get.cell.MatH", signature = c(object = "MatH", r = "numeric", c = "numeric"),
   function(object, r, c) {
@@ -1347,23 +1161,13 @@ setMethod(
 )
 
 
-#' Method set.cell.MatH assign a histogram to a cell of a matrix of histograms
-#' @name set.cell.MatH
-#' @rdname set.cell.MatH-methods
+#' @rdname get.cell.MatH-methods
+#' @aliases set.cell.MatH
 #' @exportMethod set.cell.MatH
 setGeneric("set.cell.MatH", function(object, mat, r, c) standardGeneric("set.cell.MatH")) # OK
-#' @rdname set.cell.MatH-methods
-#' @aliases set.cell.MatH,MatH-method
-#' @description Assign a histogram data to the r-th row and the c-th column of a matrix of histograms.
-#' @param object a distributionH object, a matrix of distributions.
-#' @param mat a MatH object, a matrix of distributions.
-#' @param r an integer, the row index.
-#' @param c an integer, the column index
-#'
-#' @return A \code{MatH} object.
-#' @examples
-#' mydist <- distributionH(x = c(0, 1, 2, 3, 4), p = c(0, 0.1, 0.6, 0.9, 1))
-#' MAT <- set.cell.MatH(mydist, BLOOD, r = 1, c = 1)
+#' @rdname get.cell.MatH-methods
+#' @aliases set.cell.MatH,distributionH,MatH,numeric,numeric-method
+#' @usage NULL
 setMethod(
   f = "set.cell.MatH", signature = c(object = "distributionH", mat = "MatH", r = "numeric", c = "numeric"),
   function(object, mat, r, c) {

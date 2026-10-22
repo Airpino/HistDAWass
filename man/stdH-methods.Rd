@@ -3,30 +3,24 @@
 \name{stdH}
 \alias{stdH}
 \alias{stdH,distributionH-method}
-\title{Method \code{stdH}: computes the standard deviation of a distribution}
+\title{Standard deviation of a histogram}
 \usage{
 stdH(object)
-
-\S4method{stdH}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A value for the standard deviation
+A non-negative number, the standard deviation of the distribution.
 }
 \description{
-Standard deviation of a histogram (i.e., the square root of the centered
-second moment)
+Computes the standard deviation (square root of the second centred moment)
+of a \code{distributionH} object.
 }
 \examples{
-
-## ---- A mydist distribution ----
 mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-## ---- Compute the standard deviation of mydist ----
-stdH(mydist) #---> 2.563851
+stdH(mydist) # 2.563851
 }
-\author{
-Antonio Irpino
+\seealso{
+\code{\link{meanH}}, \code{\link{skewH}}, \code{\link{kurtH}}
 }
-\keyword{distribution}

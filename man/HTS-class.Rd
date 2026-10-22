@@ -3,19 +3,32 @@
 \docType{class}
 \name{HTS-class}
 \alias{HTS-class}
-\alias{HTS}
 \alias{initialize,HTS-method}
-\title{Class HTS}
-\usage{
-\S4method{initialize}{HTS}(.Object, epocs = 1, ListOfTimedElements = c(new("TdistributionH")))
-}
-\arguments{
-\item{.Object}{the object type ("HTS") a histogram time series}
-
-\item{epocs}{the number of histograms (one for each timepoint or period)}
-
-\item{ListOfTimedElements}{a vector of \code{TdistributionH} objects}
-}
+\title{Histogram time series: the HTS class}
 \description{
-Class \code{HTS} defines a histogram time series, i.e. a set of histograms observed along time
+The \code{HTS} class describes a histogram time series, i.e. a sequence of
+histograms (\code{TdistributionH} objects) observed along time.
+}
+\section{Slots}{
+
+\describe{
+\item{\code{data}}{A list of \code{TdistributionH} objects.}
+}}
+
+\section{Creating objects}{
+
+Objects are created with \code{new("HTS", epocs, ListOfTimedElements)}, where
+\code{epocs} is the number of time points and \code{ListOfTimedElements} a
+list of \code{TdistributionH} objects.
+}
+
+\examples{
+RetHTS
+subsetHTS(RetHTS, from = 1, to = 5)
+}
+\seealso{
+\code{\link{RetHTS}} for an example dataset;
+\code{\link{subsetHTS}}, \code{\link{plot,HTS-method}},
+\code{\link{HTS.moving.averages}}, \code{\link{HTS.exponential.smoothing}},
+\code{\link{HTS.predict.knn}}.
 }

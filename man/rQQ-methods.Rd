@@ -3,38 +3,28 @@
 \name{rQQ}
 \alias{rQQ}
 \alias{rQQ,distributionH,distributionH-method}
-\alias{rQQ,distributionH-method}
-\title{Method \code{rQQ}}
+\title{Correlation between the quantile functions of two histograms}
 \usage{
 rQQ(e1, e2)
-
-\S4method{rQQ}{distributionH,distributionH}(e1, e2)
 }
 \arguments{
-\item{e1}{A \code{distributionH} object}
-
-\item{e2}{A \code{distributionH} object}
+\item{e1, e2}{Two \code{distributionH} objects.}
 }
 \value{
-Pearson correlation index between quantiles
+A number, the correlation between the quantile functions.
 }
 \description{
-Quantile-Quantile correlation between two distributions
+Computes the correlation between the quantile functions of two
+\code{distributionH} objects.
 }
 \examples{
-
-## ---- initialize two distributionH object mydist1 and mydist2
 mydist1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
 mydist2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
-## computes the rQQ
-rQQ(mydist1, mydist2)
-## OUTPUT 0.916894
+rQQ(mydist1, mydist2) # 0.916894
 }
 \references{
-Irpino, A., Verde, R. (2015) \emph{Basic
-statistics for distributional symbolic variables: a new metric-based
-approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
-}
-\author{
-Antonio Irpino
+Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+distributional symbolic variables: a new metric-based approach}, Advances in
+Data Analysis and Classification, 9(2), 143-175.
+\doi{10.1007/s11634-014-0176-4}
 }

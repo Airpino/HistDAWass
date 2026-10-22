@@ -2,37 +2,39 @@
 % Please edit documentation in R/Met_MatH.R
 \name{WH.bind}
 \alias{WH.bind}
+\alias{WH.bind.row}
+\alias{WH.bind.col}
+\alias{WH.bind.row,MatH,MatH-method}
+\alias{WH.bind.row,MatH-method}
+\alias{WH.bind.col,MatH,MatH-method}
+\alias{WH.bind.col,MatH-method}
 \alias{WH.bind,MatH,MatH-method}
 \alias{WH.bind,MatH-method}
-\title{Method WH.bind}
+\title{Bind matrices of histograms}
 \usage{
-WH.bind(object1, object2, byrow)
+WH.bind.row(object1, object2)
 
-\S4method{WH.bind}{MatH,MatH}(object1, object2, byrow = TRUE)
+WH.bind.col(object1, object2)
+
+WH.bind(object1, object2, byrow)
 }
 \arguments{
-\item{object1}{a \code{MatH} object}
+\item{object1, object2}{Two \code{MatH} objects.}
 
-\item{object2}{a \code{MatH} object}
-
-\item{byrow}{a logical value (default=TRUE) attaches the objects by row}
+\item{byrow}{A logical value: if \code{TRUE} the objects are bound by rows,
+otherwise by columns.}
 }
 \value{
-a \code{MatH} object,
+A \code{MatH} object.
 }
 \description{
-It attaches two \code{MatH} objects with the same columns by row, or the same rows by colum.
+\code{WH.bind.row} binds by rows two \code{MatH} objects with the same number
+of columns, \code{WH.bind.col} binds by columns two \code{MatH} objects with
+the same number of rows. \code{WH.bind} does one of the two according to
+\code{byrow}.
 }
 \examples{
-# binding by row
-M1 <- BLOOD[1:10, 1]
-M2 <- BLOOD[1:10, 3]
-MAT <- WH.bind(M1, M2, byrow = TRUE)
-# binding by col
-M1 <- BLOOD[1:10, 1]
-M2 <- BLOOD[1:10, 3]
-MAT <- WH.bind(M1, M2, byrow = FALSE)
-}
-\seealso{
-\code{\link{WH.bind.row}} for binding by row, \code{\link{WH.bind.col}} for binding by column
+WH.bind.row(BLOOD[1:3, ], BLOOD[5:8, ])
+WH.bind.col(BLOOD[1:10, 1], BLOOD[1:10, 3])
+WH.bind(BLOOD[1:10, 1], BLOOD[1:10, 3], byrow = FALSE)
 }

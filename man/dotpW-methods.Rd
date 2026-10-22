@@ -3,56 +3,34 @@
 \name{dotpW}
 \alias{dotpW}
 \alias{dotpW,distributionH,distributionH-method}
-\alias{dotpW,distributionH-method}
 \alias{dotpW,numeric,distributionH-method}
 \alias{dotpW,distributionH,numeric-method}
-\title{Method \code{dotpW}}
+\title{Dot product of two histograms}
 \usage{
 dotpW(e1, e2)
-
-\S4method{dotpW}{distributionH,distributionH}(e1, e2)
-
-\S4method{dotpW}{numeric,distributionH}(e1, e2)
-
-\S4method{dotpW}{distributionH,numeric}(e1, e2)
 }
 \arguments{
-\item{e1}{a \code{distributionH} object or a number}
-
-\item{e2}{a \code{distributionH} object or a number}
+\item{e1, e2}{Two \code{distributionH} objects, or a \code{distributionH} and a
+number.}
 }
 \value{
-A numeric value
+A number.
 }
 \description{
-The dot product of two distributions inducing the L2 Wasserstein metric
-
-The dot product of a number (considered as an impulse distribution function) and a distribution
-
-The dot product of a distribution and a number (considered as an impulse distribution function).
+Computes the dot product, inducing the L2 Wasserstein metric, between two
+\code{distributionH} objects, or between a \code{distributionH} and a number
+(considered as an impulse distribution).
 }
 \examples{
-
-## let's define two distributionH objects
 mydist1 <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
 mydist2 <- distributionH(x = c(5, 7, 15), p = c(0, 0.7, 1))
-
-## the dot product between the distributions
-dotpW(mydist1, mydist2) #---> 39.51429
-
-## the dot product between a distribution and a numeric
-dotpW(mydist1, 3) #---> 13.2
-dotpW(3, mydist1) #---> 13.2
-
-
-# DOTPW method -----
+dotpW(mydist1, mydist2) # 39.51429
+dotpW(mydist1, 3) # 13.2
+dotpW(3, mydist1) # 13.2
 }
 \references{
-Irpino, A., Verde, R. (2015) \emph{Basic
-statistics for distributional symbolic variables: a new metric-based
-approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
+Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+distributional symbolic variables: a new metric-based approach}, Advances in
+Data Analysis and Classification, 9(2), 143-175.
+\doi{10.1007/s11634-014-0176-4}
 }
-\author{
-Antonio Irpino
-}
-\keyword{distribution}

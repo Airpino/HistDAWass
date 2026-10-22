@@ -2,39 +2,40 @@
 % Please edit documentation in R/Plotting_with_ggplot.R
 \name{plotPredVsObs}
 \alias{plotPredVsObs}
-\title{A function for comparing observed vs predicted histograms}
+\title{Plot observed versus predicted histograms}
 \usage{
 plotPredVsObs(PRED, OBS, type = "HISTO", ncolu = 2)
 }
 \arguments{
-\item{PRED}{a \code{MatH} object with one column, the predicted data}
+\item{PRED}{A \code{MatH} object with one column, the predicted histograms.}
 
-\item{OBS}{a \code{MatH} object with one column, the observed data}
+\item{OBS}{A \code{MatH} object with one column, the observed histograms.}
 
-\item{type}{a string. "HISTO" (default), if ones want to compare histograms\cr
-"CDF", if ones want to compare cumulative distribution functions;\cr
-"DENS" if ones want to compare approximated densities (using KDE);\cr}
+\item{type}{The type of plot: \code{"HISTO"} (default, histograms), \code{"CDF"}
+(cumulative distribution functions) or \code{"DENS"} (kernel density
+approximations).}
 
-\item{ncolu}{number of columns in which is arranged the plot, default is 2. If you have a lot of data consider
-to choose higher values.}
+\item{ncolu}{The number of columns of panels (default 2).}
 }
 \value{
-A plot with compared histogram-valued data.
+The plot is drawn on the current device and the \code{ggplot} object
+is returned invisibly.
 }
 \description{
-This function allows the representation of observed vs predicted histograms. It can
-be used as a tool for interpreting preditive methods (for exampe, the regression of histogrma data)
+Compares observed and predicted histograms (e.g. from
+\code{\link{WH.regression.two.components.predict}}), one panel for each
+individual.
 }
 \examples{
-## do a regression
 pars <- WH.regression.two.components(BLOOD, Yvar = 1, Xvars = c(2:3))
-## predict data
 PRED <- WH.regression.two.components.predict(data = BLOOD[, 2:3], parameters = pars)
-## define observed data
-\dontrun{
 OBS <- BLOOD[, 1]
 plotPredVsObs(PRED, OBS, "HISTO")
+\donttest{
 plotPredVsObs(PRED, OBS, "CDF")
 plotPredVsObs(PRED, OBS, "DENS")
 }
+}
+\seealso{
+\code{\link{plot_errors}}
 }

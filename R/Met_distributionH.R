@@ -1,16 +1,6 @@
 # Constructor
-#' Wrapper function distributionH
-#'
-#' A histogram object can be created also with the function \code{distributionH(...)}, the costructor function for creating an object containing the description of
-#' a histogram.
-#'
-#' @name distributionH
 #' @rdname distributionH-class
 #' @export
-#' @return A \code{distributionH} object
-#' @examples
-#' # or using
-#' mydist <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
 #' @import methods
 distributionH <- function(x = numeric(0), p = numeric(0)) {
   object <- new("distributionH", x = x, p = p)
@@ -19,19 +9,23 @@ distributionH <- function(x = numeric(0), p = numeric(0)) {
 
 # Get methods -----
 
-#' Method \code{get.m}: the mean of a distribution
+#' Mean of a histogram (stored value)
+#'
+#' Returns the mean stored in the \code{m} slot of a \code{distributionH} object.
+#' To compute it from the distribution use \code{\link{meanH}}.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A number, the mean of the distribution.
+#' @seealso \code{\link{meanH}}, \code{\link{get.s}}
+#' @examples
+#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
+#' get.m(D)
 #' @name get.m
 #' @rdname get.m-methods
 #' @exportMethod get.m
 setGeneric("get.m", function(object) standardGeneric("get.m"))
 #' @rdname get.m-methods
-#' @aliases get.m,distributionH-method
-#' @description This functon return the mean of a \code{distributionH} object.
-#' @param object a \code{distributionH} object
-#' @return A numeric value
-#' @examples
-#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-#' get.m(D) # returns the mean of D
+#' @usage NULL
 setMethod(
   "get.m", "distributionH",
   function(object) {
@@ -43,20 +37,25 @@ setMethod(
   }
 )
 
-#' Method \code{get.s}: the standard deviation of a distribution
+#' Standard deviation of a histogram (stored value)
+#'
+#' Returns the standard deviation stored in the \code{s} slot of a
+#' \code{distributionH} object. To compute it from the distribution use
+#' \code{\link{stdH}}.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A non-negative number, the standard deviation of the distribution.
+#' @seealso \code{\link{stdH}}, \code{\link{get.m}}
+#' @examples
+#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
+#' get.s(D)
 #' @name get.s
 #' @rdname get.s-methods
 #' @exportMethod get.s
 setGeneric("get.s", function(object) standardGeneric("get.s"))
 
 #' @rdname get.s-methods
-#' @aliases get.s,distributionH-method
-#' @description This functon return the standard deviation of a \code{distributionH} object.
-#' @param object a \code{distributionH} object.
-#' @return A numeric positive value, the standard deviation.
-#' @examples
-#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-#' get.s(D) # returns the standard deviation of D
+#' @usage NULL
 setMethod(
   "get.s", "distributionH",
   function(object) {
@@ -67,20 +66,25 @@ setMethod(
     }
   }
 )
-#' Method \code{get.distr}: show the distribution
+#' Cumulative distribution function of a histogram
+#'
+#' Returns the points of the cumulative distribution function (cdf) of a
+#' \code{distributionH} object.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A \code{data.frame} with two columns: \code{x}, the bounds of the
+#' bins, and \code{p}, the values of the cdf at \code{x}.
+#' @seealso \code{\link{get.histo}}
+#' @examples
+#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
+#' get.distr(D)
 #' @name get.distr
 #' @rdname get.distr-methods
 #' @exportMethod get.distr
 setGeneric("get.distr", function(object) standardGeneric("get.distr"))
 
 #' @rdname get.distr-methods
-#' @aliases get.distr,distributionH-method
-#' @description This functon return the cumulative distribution function of a \code{distributionH} object.
-#' @param object a \code{distributionH} object.
-#' @return A data frame: the first column contains the domain the second the CDF values.
-#' @examples
-#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-#' get.distr(D) # a data.frame describing the CDF of D
+#' @usage NULL
 setMethod(
   "get.distr", "distributionH",
   function(object) {
@@ -93,7 +97,18 @@ setMethod(
     }
   }
 )
-#' Method \code{get.histo}: show the distribution with bins
+#' Bins of a histogram
+#'
+#' Returns the bins of a \code{distributionH} object and their probabilities.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A \code{data.frame} with one row for each bin and three columns:
+#' \code{min.x} and \code{max.x}, the bounds of the bin, and \code{p}, its
+#' probability (relative frequency).
+#' @seealso \code{\link{get.distr}}
+#' @examples
+#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
+#' get.histo(D)
 #' @name get.histo
 #' @rdname get.histo-methods
 #' @exportMethod get.histo
@@ -101,13 +116,7 @@ setGeneric("get.histo", function(object) standardGeneric("get.histo"))
 
 # Get the distribution of a histogram
 #' @rdname get.histo-methods
-#' @aliases get.histo,distributionH-method
-#' @description This functon return a data.frame describing the histogram of a \code{distributionH} object.
-#' @param object a \code{distributionH} object.
-#' @return A matrix: the two columns contains the bounds of the histogram the third contains the probablity (or the relative frequency) of the bin.
-#' @examples
-#' D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-#' get.histo(D) # returns the histogram representation of D by a data.frame
+#' @usage NULL
 setMethod(
   "get.histo", "distributionH",
   function(object) {
@@ -127,45 +136,89 @@ setMethod(
 )
 
 # Basic statistics of distributions --------
-#' Method \code{meanH}: computes the mean of a distribution
+#' Mean of a histogram
+#'
+#' Computes the mean (first moment) of a \code{distributionH} object.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A number, the mean of the distribution.
+#' @seealso \code{\link{stdH}}, \code{\link{skewH}}, \code{\link{kurtH}}
+#' @examples
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' meanH(mydist) # 4.4
 #' @name meanH
 #' @rdname meanH-methods
 #' @exportMethod meanH
 setGeneric("meanH", function(object) standardGeneric("meanH"))
-#' Method \code{stdH}: computes the standard deviation of a distribution
+#' Standard deviation of a histogram
+#'
+#' Computes the standard deviation (square root of the second centred moment)
+#' of a \code{distributionH} object.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A non-negative number, the standard deviation of the distribution.
+#' @seealso \code{\link{meanH}}, \code{\link{skewH}}, \code{\link{kurtH}}
+#' @examples
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' stdH(mydist) # 2.563851
 #' @name stdH
 #' @rdname stdH-methods
 #' @exportMethod stdH
 setGeneric("stdH", function(object) standardGeneric("stdH"))
-#' Method \code{skewH}: computes the skewness of a distribution
+#' Skewness of a histogram
+#'
+#' Computes the skewness (third standardised moment) of a \code{distributionH}
+#' object.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A number, the skewness index.
+#' @seealso \code{\link{meanH}}, \code{\link{stdH}}, \code{\link{kurtH}}
+#' @examples
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' skewH(mydist) # 0.7148855
 #' @name skewH
 #' @rdname skewH-methods
 #' @exportMethod skewH
 setGeneric("skewH", function(object) standardGeneric("skewH"))
-#' Method \code{kurtH}: computes the kurthosis of a distribution
+#' Kurtosis of a histogram
+#'
+#' Computes the kurtosis (fourth standardised moment) of a \code{distributionH}
+#' object.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A number, the kurtosis index (3 for a Gaussian distribution).
+#' @seealso \code{\link{meanH}}, \code{\link{stdH}}, \code{\link{skewH}}
+#' @examples
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' kurtH(mydist) # 2.133533
 #' @name kurtH
 #' @rdname kurtH-methods
 #' @exportMethod kurtH
 setGeneric("kurtH", function(object) standardGeneric("kurtH"))
-#' Method \code{crwtransform}: returns the centers and the radii of bins of a distribution
+#' Centres, radii and weights of the bins of a histogram
+#'
+#' Computes the centre (midpoint), the radius (half-width) and the weight
+#' (probability) of each bin of a \code{distributionH} object. This
+#' representation allows a fast computation of the statistics based on the L2
+#' Wasserstein distance.
+#'
+#' @param object A \code{distributionH} object.
+#' @return A list with three numeric vectors: \code{Centers}, the midpoints of
+#' the bins; \code{Radii}, the half-widths of the bins; \code{Weights}, the
+#' probabilities of the bins (summing to one).
+#' @references Irpino, A., Verde, R., Lechevallier, Y. (2006) \emph{Dynamic
+#' clustering of histograms using Wasserstein metric}, In: Proceedings of
+#' COMPSTAT 2006, Physica-Verlag, 869-876.
+#' @examples
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' crwtransform(mydist)
 #' @name crwtransform
 #' @rdname crwtransform-methods
 #' @exportMethod crwtransform
 setGeneric("crwtransform", function(object) standardGeneric("crwtransform"))
 
 #' @rdname meanH-methods
-#' @aliases meanH,distributionH-method
-#' @description Mean of a histogram (First moment of the distribution)
-#' @param object a \code{distributionH} object
-#' @return the mean of the distribution
-#' @author Antonio Irpino
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- A mydist distribution ----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' ## ---- Compute the mean of mydist ----
-#' meanH(mydist) #---> 4.4
+#' @usage NULL
 setMethod(
   "meanH", "distributionH", # Mean of a distr --------
   function(object) {
@@ -183,20 +236,7 @@ setMethod(
   }
 )
 #' @rdname stdH-methods
-#' @aliases stdH,distributionH-method
-#' @description Standard deviation of a histogram (i.e., the square root of the centered
-#' second moment)
-#'
-#' @param object a \code{distributionH} object
-#' @return A value for the standard deviation
-#' @author Antonio Irpino
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- A mydist distribution ----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' ## ---- Compute the standard deviation of mydist ----
-#' stdH(mydist) #---> 2.563851
+#' @usage NULL
 setMethod(
   "stdH", "distributionH", # Std of a distr --------
   function(object) {
@@ -215,19 +255,7 @@ setMethod(
   }
 )
 #' @rdname skewH-methods
-#' @aliases skewH,distributionH-method
-#' @description Skewness of a histogram (using the third standardized moment)
-#'
-#' @param object a \code{distributionH} object
-#' @return A value for the skewness index
-#' @author Antonio Irpino
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- A mydist distribution ----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' ## ---- Compute the skewness of mydist ----
-#' skewH(mydist) #---> -1.186017
+#' @usage NULL
 setMethod(
   "skewH", "distributionH", # skewness of a distr --------
   function(object) {
@@ -245,19 +273,7 @@ setMethod(
   }
 )
 #' @rdname kurtH-methods
-#' @aliases kurtH,distributionH-method
-#' @description Kurtosis of a histogram (using the fourth standardized moment)
-#' @param object a \code{distributionH} object
-#' @return A value for the kurtosis index, 3 is the kurtosis of a Gaussian
-#' distribution
-#' @author Antonio Irpino
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- A mydist distribution ----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' ## ---- Compute the kurtosis of mydist ----
-#' kurtH(mydist) #---> 1.473242
+#' @usage NULL
 setMethod(
   "kurtH", "distributionH", # Kurtosis of a distr --------
   function(object) {
@@ -275,27 +291,7 @@ setMethod(
   }
 )
 #' @rdname crwtransform-methods
-#' @aliases crwtransform,distributionH-method
-#'
-#' @description Centers and ranges calculation for bins of a histogram. It is useful for a
-#' very fast computation of statistics and methods based on the L2 Wassertein
-#' distance between histograms.
-#' @param object a \code{distributionH} object
-#' @return A list containing \item{$Centers }{The midpoints of the bins of the
-#' histogram} \item{$Radii }{The half-lenghts of the bins of the histogram}
-#' \item{$Weights }{The relative frequencies or the probailities associated with
-#' each bin (the sum is equal to 1)}
-#' @author Antonio Irpino
-#' @references Irpino, A., Verde, R., Lechevallier, Y. (2006) \emph{Dynamic
-#' clustering of histograms using Wasserstein metric}, In: Proceedings of
-#' COMPSTAT 2006, Physica-Verlag, 869-876
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- A mydist distribution ----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' ## ---- Compute the cfd value for q=5 (not observed) ----
-#' crwtransform(mydist)
+#' @usage NULL
 setMethod(
   "crwtransform", "distributionH", # crw transform -----
   function(object) {
@@ -312,17 +308,36 @@ setMethod(
   }
 )
 # Overloading of the sum of two distribution according to the L2 w --------
-#' Method +
-#' @name +
-#' @aliases +,distributionH,distributionH-method
-#' @description the sum of two distribution according to the L2 Wasssertein
-#' @param e1 a \code{distributionH} object or a number
-#' @param e2 a \code{distributionH} object or a number
-#' @return a \code{distributionH} object
-#' @export
-#' @docType methods
-#' @rdname plus-methods
+#' Arithmetic operators for histograms
 #'
+#' Sum, difference and product of \code{distributionH} objects and numbers,
+#' consistent with the L2 Wasserstein metric: the operations are applied to the
+#' quantile functions of the distributions.
+#' \itemize{
+#' \item \code{e1 + e2}: the sum of the quantile functions. A number is treated as
+#' an impulse distribution, so \code{x + a} shifts \code{x} by \code{a}.
+#' \item \code{e1 - e2}: the difference of the quantile functions. The difference
+#' of two distributions is a distribution only if \code{e1} is more variable
+#' than \code{e2} (the result must be a non-decreasing quantile function);
+#' otherwise it may not be valid. \code{x - a} shifts \code{x} by \code{-a}.
+#' \item \code{a * x} or \code{x * a}: the product of a distribution and a number,
+#' i.e. a rescaling of \code{x}.
+#' }
+#'
+#' @param e1,e2 Two \code{distributionH} objects, or a \code{distributionH} and a
+#' number.
+#' @return A \code{distributionH} object.
+#' @examples
+#' d1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
+#' d2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
+#' d1 + d2
+#' d2 + 10
+#' 2 * d1
+#' d2 - d1
+#' @name Arith-distributionH
+#' @rdname Arith-distributionH
+#' @aliases +,distributionH,distributionH-method
+#' @export
 setMethod(
   "+",
   signature(e1 = "distributionH", e2 = "distributionH"),
@@ -343,13 +358,10 @@ setMethod(
     #            OBJ_NEW=new("distributionH",x,tmp[[1]]@p,(tmp[[1]]@m+tmp[[2]]@m))
   }
 )
-#' Method +
-#' @name +
+#' @rdname Arith-distributionH
 #' @aliases +,numeric,distributionH-method
-#' @description the sum of a number and a distribution according to the L2 Wasssertein
+#' @usage NULL
 #' @export
-#' @docType methods
-#' @rdname plus-methods
 
 setMethod(
   "+",
@@ -359,13 +371,10 @@ setMethod(
     OBJ_NEW <- new("distributionH", x, e2@p, (e1 + e2@m), e2@s)
   }
 )
-#' Method +
-#' @name +
+#' @rdname Arith-distributionH
 #' @aliases +,distributionH,numeric-method
-#' @description the sum of adistribution and a number according to the L2 Wasssertein
+#' @usage NULL
 #' @export
-#' @docType methods
-#' @rdname plus-methods
 setMethod(
   "+",
   signature(e1 = "distributionH", e2 = "numeric"),
@@ -375,10 +384,8 @@ setMethod(
   }
 )
 # Overloading of the difference of two distributions according to the L2 wasserstein --------
-#' Method -
-#' @name minus
+#' @rdname Arith-distributionH
 #' @aliases -,distributionH,distributionH-method
-#' @description the difference of two distribution according to the L2 Wasssertein
 #' @export
 setMethod(
   "-",
@@ -395,12 +402,9 @@ setMethod(
     OBJ_NEW <- new("distributionH", x, e1@p)
   }
 )
-#' Method -
-#' @name minus
+#' @rdname Arith-distributionH
 #' @aliases -,numeric,distributionH-method
-#' @param e1 a \code{distributionH} object or a number
-#' @param e2 a \code{distributionH} object or a number
-#' @description the difference of a number and a distribution according to the L2 Wasssertein
+#' @usage NULL
 setMethod(
   "-",
   signature(e1 = "numeric", e2 = "distributionH"),
@@ -409,11 +413,9 @@ setMethod(
     OBJ_NEW <- new("distributionH", x, e2@p)
   }
 )
-#' Method -
-#' @name minus
+#' @rdname Arith-distributionH
 #' @aliases -,distributionH,numeric-method
-#' @description the difference of a distribution and a number according to the L2 Wasssertein
-#' @note it may not works properly if the difference is not a distribution
+#' @usage NULL
 setMethod(
   "-",
   signature(e1 = "distributionH", e2 = "numeric"),
@@ -424,12 +426,8 @@ setMethod(
 )
 
 # Overloading of the product of a number by a distribution according to the L2 w --------
-#' Method *
-#' @name *-methods
+#' @rdname Arith-distributionH
 #' @aliases *,distributionH,distributionH-method
-#' @description the product of a number and a distribution according to the L2 Wasssertein
-#' @param e1 a \code{distributionH} object or a number
-#' @param e2 a \code{distributionH} object or a number
 #' @export
 setMethod(
   "*",
@@ -438,10 +436,9 @@ setMethod(
     stop("please use dotpW function product between distributions")
   }
 )
-#' Method *
-#' @name *-methods
+#' @rdname Arith-distributionH
 #' @aliases *,numeric,distributionH-method
-#' @description the product of a number and a distribution according to the L2 Wasssertein
+#' @usage NULL
 setMethod(
   "*",
   signature(e1 = "numeric", e2 = "distributionH"),
@@ -455,10 +452,9 @@ setMethod(
     return(e2)
   }
 )
-#' Method *
-#' @name *-methods
+#' @rdname Arith-distributionH
 #' @aliases *,distributionH,numeric-method
-#' @description the product of a number and a distribution according to the L2 Wasssertein
+#' @usage NULL
 setMethod(
   "*",
   signature(e1 = "distributionH", e2 = "numeric"),
@@ -473,65 +469,91 @@ setMethod(
 )
 
 # Utilities for single or couples of distributionH --------------------------------
-#' Method \code{checkEmptyBins}
+#' Fix the empty bins of histograms
+#'
+#' Checks for empty bins, i.e. bins with zero weight (two consecutive equal values
+#' of the cdf). Each empty bin gets a weight of \code{1e-8} and the cdf is
+#' renormalised. Since version 1.0.9 empty bins are fixed when a
+#' \code{distributionH} object is created (see \code{\link{distributionH}}), so
+#' this method is useful for objects created with previous versions of the
+#' package or modified by assigning their slots directly. The \code{MatH} method
+#' applies the check to all the cells of the matrix.
+#'
+#' @param object A \code{distributionH} or a \code{MatH} object.
+#' @return An object of the same class of \code{object}, without empty bins.
+#' @examples
+#' ## an empty bin in an object modified by slot assignment
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.5, 0.6, 1))
+#' mydist@p <- c(0, 0.5, 0.5, 1)
+#' diff(checkEmptyBins(mydist)@p)
+#' ## all the distributions of a MatH
+#' newMat <- checkEmptyBins(China_Seas[1:5, 1:3])
 #' @name checkEmptyBins
 #' @rdname checkEmptyBins-methods
 #' @exportMethod checkEmptyBins
 setGeneric("checkEmptyBins", function(object) standardGeneric("checkEmptyBins"))
-#' Method \code{compQ}
+#' Quantile of a histogram
+#'
+#' Computes the quantile of a \code{distributionH} object at a given level,
+#' i.e. the value \eqn{Q(p) = F^{-1}(p)} of its quantile function.
+#'
+#' @param object A \code{distributionH} object.
+#' @param p A number between 0 and 1.
+#' @return A number, the quantile of order \code{p}.
+#' @seealso \code{\link{compP}}
+#' @examples
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' compQ(mydist, 0.5) # the median
+#' compQ(mydist, 0) # the minimum
+#' compQ(mydist, 1) # the maximum
+#' compQ(mydist, 0.25) # the first quartile
 #' @name compQ
 #' @rdname compQ-methods
 #' @exportMethod compQ
 setGeneric("compQ", function(object, p) standardGeneric("compQ"))
-#' Method \code{compP}
+#' Cumulative distribution function of a histogram at a value
+#'
+#' Computes the value \eqn{F(q)} of the cumulative distribution function of a
+#' \code{distributionH} object.
+#'
+#' @param object A \code{distributionH} object.
+#' @param q A number.
+#' @return A number between 0 and 1.
+#' @seealso \code{\link{compQ}}
+#' @examples
+#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' compP(mydist, 5)
 #' @name compP
 #' @rdname compP-methods
 #' @exportMethod compP
 setGeneric("compP", function(object, q) standardGeneric("compP"))
-#' Method \code{register}
+#' Register two histograms on a common cdf
+#'
+#' Given two \code{distributionH} objects, returns two equivalent
+#' distributions sharing the same cdf values (the union of the two \code{p}
+#' vectors). This is the basis for computing the statistics based on the L2
+#' Wasserstein distance.
+#'
+#' @param object1,object2 Two \code{distributionH} objects.
+#' @return A list: the two \code{distributionH} objects, with the same \code{p}
+#' slot, and a matrix with their quantiles and the common cdf.
+#' @references Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
+#' clustering of histograms using Wasserstein metric} In: Rizzi, A., Vichi, M.
+#' (eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.
+#' @examples
+#' mydist1 <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
+#' mydist2 <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
+#' regDist <- register(mydist1, mydist2)
+#' regDist[[1]]@p
+#' regDist[[1]]@x
+#' regDist[[2]]@x
 #' @name register
 #' @rdname register-methods
 #' @exportMethod register
 setGeneric("register", function(object1, object2) standardGeneric("register"))
 
 #' @rdname register-methods
-#' @aliases register,distributionH-method
-#' @description Given two \code{distributionH} objects, it returns two equivalent distributions such that
-#' they share the same cdf values. This function is useful for computing basic statistics.
-#'
-#' @param object1 A \code{distributionH} object
-#' @param object2 A \code{distributionH} object
-#' @return The two \code{distributionH} objects in input sharing the same cdf (the \code{p}
-#' slot)
-#' @author Antonio Irpino
-#' @references Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
-#' clustering of histograms using Wasserstein metric} In: Rizzi, A., Vichi, M.
-#' (eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.\cr Irpino, A.,Verde,
-#' R. (2006): \emph{A new Wasserstein based distance for the hierarchical
-#' clustering of histogram symbolic data} In: Batanjeli, V., Bock, H.H.,
-#' Ferligoj, A., Ziberna, A. (eds.) Data Science and Classification, IFCS 2006.
-#' Springer, Berlin, 185-192.
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- initialize two distributionH objects mydist1 and mydist2
-#' mydist1 <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
-#' mydist2 <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
-#' ## register the two distributions
-#' regDist <- register(mydist1, mydist2)
-#'
-#' ## OUTPUT:
-#' ## regDist$[[1]]
-#' ## An object of class "distributionH"
-#' ## Slot "x": [1] 1.0 1.5 2.0 2.5 3.0
-#' ## Slot "p": [1] 0.0 0.2 0.4 0.7 1.0
-#' ## ...
-#' ## regDist$[[2]]
-#' ## An object of class "distributionH"
-#' ## Slot "x": [1] 7.0 8.0 8.8 10.0 15.0
-#' ## Slot "p": [1] 0.0 0.2 0.4  0.7  1.0
-#' ## ...
-#' # The REGISTER function ----
+#' @usage NULL
 setMethod(
   f = "register", signature = c(object1 = "distributionH", object2 = "distributionH"),
   function(object1, object2) {
@@ -590,55 +612,32 @@ setMethod(
   }
 )
 #' @rdname checkEmptyBins-methods
-#' @aliases checkEmptyBins,distributionH-method
-#' @description The method checking for empty bins in a distribution, i.e. if two cdf consecutive
-#' values are equal. In that case a probability value of \code{1e-7} is
-#' assigned to the empty bin and the cdf is recomputed. This methods is useful
-#' for numerical reasons.
-#'
-#'
-#' @param object a \code{distributionH} object
-#' @return A \code{distributionH} object without empty bins
-#' @author Antonio Irpino
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- A mydist distribution with an empty bin i.e. two consecutive values of p are equal----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.5, 0.5, 1))
-#' ## ---- Checks for empty byns and returns the newdist object without empty bins ----
-#' newdist <- checkEmptyBins(mydist)
+#' @usage NULL
 setMethod(
   f = "checkEmptyBins", signature = "distributionH",
   function(object) {
-    w <- diff(object@p)
-    TOL <- 1e-14
-    if (length(which(w <= TOL))) {
-      w[which(w < TOL)] <- 10 * TOL
-      object@p <- c(0, cumsum(w)) / sum(w)
+    fx <- .fix_empty_bins_p(object@p)
+    if (fx$fixed) {
+      object@p <- fx$p
+      object@m <- meanH(object)
+      object@s <- stdH(object)
     }
     return(object)
   }
 )
+#' @rdname checkEmptyBins-methods
+#' @usage NULL
+setMethod(
+  f = "checkEmptyBins", signature = "MatH",
+  function(object) {
+    object@M[] <- lapply(object@M, function(d) {
+      if (length(d@x) > 0) checkEmptyBins(d) else d
+    })
+    return(object)
+  }
+)
 #' @rdname compQ-methods
-#' @aliases compQ,distributionH-method
-#' @description Compute the quantile value of a histogram for a given probability.
-#'
-#'
-#' @param object an object of \env{distributionH} class
-#' @param p a number between 0 and 1
-#' @return \deqn{y= F^{-1}(p)=Q(p)} A number that is the quantile of the passed
-#' histogram \env{object} at level \env{p}.
-#' @author Antonio Irpino
-#' @examples
-#'
-#' ## ---- A mydist distribution ----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' ## ---- Compute the quantile of mydist for different values of p ----
-#' y <- compQ(mydist, 0.5) # the median
-#' y <- compQ(mydist, 0) # the minimum
-#' y <- compQ(mydist, 1) # the maximum
-#' y <- compQ(mydist, 0.25) # the first quartile
-#' y <- compQ(mydist, 0.9) # the ninth decile
+#' @usage NULL
 setMethod(
   f = "compQ", signature = c(object = "distributionH", p = "numeric"),
   function(object, p) {
@@ -659,8 +658,9 @@ setMethod(
       return(q = object@x[length(object@x)])
     }
 
-    #            ini=max(object@x[object@p<=p])
-    pos1 <- which.max(object@x[object@p <= p])
+    # last position with cdf <= p (up to 1.0.8 which.max(x[p<=p]) was used, that
+    # returned a wrong position when x has repeated values)
+    pos1 <- max(which(object@p <= p))
     ini <- object@x[pos1]
     fin <- object@x[pos1 + 1]
     if (ini == fin) {
@@ -673,19 +673,7 @@ setMethod(
   }
 )
 #' @rdname compP-methods
-#' @aliases compP,distributionH-method
-#' @description Compute the cdf probability at a given value for a histogram
-#'
-#' @param object is an object of \env{distributionH} class
-#' @param q is a numeric value
-#' @return Returns a value between 0 and 1.
-#' @keywords distribution
-#' @examples
-#'
-#' ## ---- A mydist distribution ----
-#' mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' ## ---- Compute the cfd value for q=5 (not observed) ----
-#' p <- compP(mydist, 5)
+#' @usage NULL
 setMethod(
   f = "compP", signature = c(object = "distributionH", q = "numeric"),
   function(object, q) {
@@ -698,8 +686,10 @@ setMethod(
       return(p = 1)
     }
 
-    ini <- max(cumul[domain <= q])
-    pos1 <- which.max(cumul[domain <= q])
+    # last position with domain <= q (up to 1.0.8 which.max(cumul[domain<=q])
+    # was used, that returned a wrong position in presence of empty bins)
+    pos1 <- max(which(domain <= q))
+    ini <- cumul[pos1]
     pos2 <- pos1 + 1
     fin <- cumul[pos2]
 
@@ -713,43 +703,60 @@ setMethod(
   }
 )
 # L2 Wasserstein distance between two distributions and related results ----
-#' Method \code{WassSqDistH}
+#' Squared L2 Wasserstein distance between two histograms
+#'
+#' Computes the squared L2 Wasserstein distance between two \code{distributionH}
+#' objects, i.e. the integral of the squared difference of their quantile
+#' functions. Optionally it returns its decomposition into a position, a size and
+#' a shape component.
+#'
+#' @param object1,object2 Two \code{distributionH} objects.
+#' @param details A logical value (default \code{FALSE}). If \code{TRUE}, the
+#' decomposition of the distance is returned.
+#' @return If \code{details = FALSE}, a number, the squared distance. If
+#' \code{details = TRUE}, a named vector with the squared distance
+#' (\code{SQ_W_dist}), its position (\code{POSITION}), size (\code{SIZE}) and
+#' shape (\code{SHAPE}) components, and the correlation between the quantile
+#' functions (\code{rQQ}).
+#' @references
+#' Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets:
+#' Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.
+#'
+#' Irpino, A., Verde, R. (2015) \emph{Basic statistics for distributional
+#' symbolic variables: a new metric-based approach}, Advances in Data Analysis
+#' and Classification, 9(2), 143-175. \doi{10.1007/s11634-014-0176-4}
+#' @seealso \code{\link{WH_MAT_DIST}} for the distance matrix of a \code{MatH}.
+#' @examples
+#' mydist1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
+#' mydist2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
+#' WassSqDistH(mydist1, mydist2)
+#' WassSqDistH(mydist1, mydist2, details = TRUE)
 #' @name WassSqDistH
 #' @rdname WassSqDistH-methods
+#' @usage NULL
 #' @exportMethod WassSqDistH
 setGeneric("WassSqDistH", function(object1, object2, ...) standardGeneric("WassSqDistH")) # Wasserstein distance between two distributions
-#' Method \code{rQQ}
+#' Correlation between the quantile functions of two histograms
+#'
+#' Computes the correlation between the quantile functions of two
+#' \code{distributionH} objects.
+#'
+#' @param e1,e2 Two \code{distributionH} objects.
+#' @return A number, the correlation between the quantile functions.
+#' @references Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+#' distributional symbolic variables: a new metric-based approach}, Advances in
+#' Data Analysis and Classification, 9(2), 143-175.
+#' \doi{10.1007/s11634-014-0176-4}
+#' @examples
+#' mydist1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
+#' mydist2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
+#' rQQ(mydist1, mydist2) # 0.916894
 #' @name rQQ
 #' @rdname rQQ-methods
 #' @exportMethod rQQ
 setGeneric("rQQ", function(e1, e2) standardGeneric("rQQ")) # Quantile-Quantile correlation between twi distributions
 
 #' @rdname WassSqDistH-methods
-#' @aliases WassSqDistH,distributionH-method
-#' @description Computes the squared L2 Wasserstein distance between two \code{distributionH} objects.
-#' @param object1 is an object of \env{distributionH} class
-#' @param object2 is an object of \env{distributionH} class
-#' @param ... optional parameters
-#' @param details (optional, default=FALSE) is a logical value, if TRUE returns the decomposition of the distance
-#' @return
-#' If \code{details=FALSE}, the function returns the squared L2 Wasserstein distance.\cr
-#' If \code{details=TRUE}, the function returns list containing the squared distance, its
-#' decomposition in three parts (position, size and shape) and the correlation coefficient between the quantile functions.
-#' @references
-#' Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets:
-#' Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.\cr
-#' Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
-#' @keywords distribution
-#' @examples
-#' ## ---- create two distributionH objects ----
-#' mydist1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
-#' mydist2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
-#' # -- compute the squared L2 Waaserstein distance
-#' WassSqDistH(mydist1, mydist2)
-#' # -- compute the squared L2 Waaserstein distance with details
-#' WassSqDistH(mydist1, mydist2, details = TRUE)
 setMethod(
   f = "WassSqDistH", signature = c(object1 = "distributionH", object2 = "distributionH"),
   # Computes the L2 Wasserstein squared distance between two distributions
@@ -779,38 +786,32 @@ setMethod(
   }
 )
 
-#' Method \code{dotpW}
+#' Dot product of two histograms
+#'
+#' Computes the dot product, inducing the L2 Wasserstein metric, between two
+#' \code{distributionH} objects, or between a \code{distributionH} and a number
+#' (considered as an impulse distribution).
+#'
+#' @param e1,e2 Two \code{distributionH} objects, or a \code{distributionH} and a
+#' number.
+#' @return A number.
+#' @references Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+#' distributional symbolic variables: a new metric-based approach}, Advances in
+#' Data Analysis and Classification, 9(2), 143-175.
+#' \doi{10.1007/s11634-014-0176-4}
+#' @examples
+#' mydist1 <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
+#' mydist2 <- distributionH(x = c(5, 7, 15), p = c(0, 0.7, 1))
+#' dotpW(mydist1, mydist2) # 39.51429
+#' dotpW(mydist1, 3) # 13.2
+#' dotpW(3, mydist1) # 13.2
 #' @name dotpW
 #' @rdname dotpW-methods
 #' @exportMethod dotpW
 setGeneric("dotpW", function(e1, e2) standardGeneric("dotpW")) # dotproduct from L2 Wasserstein
 #' @rdname dotpW-methods
-#' @aliases dotpW,distributionH-method
-#' @description The dot product of two distributions inducing the L2 Wasserstein metric
-#'
-#' @param e1 a \code{distributionH} object or a number
-#' @param e2 a \code{distributionH} object or a number
-#' @return A numeric value
-#' @author Antonio Irpino
-#' @references  Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
-#' @keywords distribution
-#' @examples
-#'
-#' ## let's define two distributionH objects
-#' mydist1 <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-#' mydist2 <- distributionH(x = c(5, 7, 15), p = c(0, 0.7, 1))
-#'
-#' ## the dot product between the distributions
-#' dotpW(mydist1, mydist2) #---> 39.51429
-#'
-#' ## the dot product between a distribution and a numeric
-#' dotpW(mydist1, 3) #---> 13.2
-#' dotpW(3, mydist1) #---> 13.2
-#'
-#'
-#' # DOTPW method -----
+#' @aliases dotpW,distributionH,distributionH-method
+#' @usage NULL
 setMethod("dotpW",
   signature(e1 = "distributionH", e2 = "distributionH"),
   definition = function(e1, e2) {
@@ -818,8 +819,8 @@ setMethod("dotpW",
   }
 )
 #' @rdname dotpW-methods
-#' @aliases dotpW,distributionH-method
-#' @description The dot product of a number (considered as an impulse distribution function) and a distribution
+#' @aliases dotpW,numeric,distributionH-method
+#' @usage NULL
 setMethod(
   "dotpW",
   signature(e1 = "numeric", e2 = "distributionH"),
@@ -829,8 +830,8 @@ setMethod(
   }
 )
 #' @rdname dotpW-methods
-#' @aliases dotpW,distributionH-method
-#' @description The dot product of a distribution and a number (considered as an impulse distribution function).
+#' @aliases dotpW,distributionH,numeric-method
+#' @usage NULL
 setMethod(
   "dotpW",
   signature(e1 = "distributionH", e2 = "numeric"),
@@ -840,24 +841,7 @@ setMethod(
   }
 )
 #' @rdname rQQ-methods
-#' @aliases rQQ,distributionH-method
-#' @description Quantile-Quantile correlation between two distributions
-#' @param e1  A \code{distributionH} object
-#' @param e2  A \code{distributionH} object
-#' @return Pearson correlation index between quantiles
-#' @author Antonio Irpino
-#' @references  Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
-#' @examples
-#'
-#' ## ---- initialize two distributionH object mydist1 and mydist2
-#' mydist1 <- distributionH(x = c(1, 2, 3), p = c(0, 0.4, 1))
-#' mydist2 <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
-#' ## computes the rQQ
-#' rQQ(mydist1, mydist2)
-#' ## OUTPUT 0.916894
-#' @export rQQ
+#' @usage NULL
 setMethod("rQQ",
   signature(e1 = "distributionH", e2 = "distributionH"),
   definition = function(e1, e2) {
@@ -866,19 +850,19 @@ setMethod("rQQ",
   }
 )
 ## ---- Show overridding for distributionH and MatH ----
-#' Method show for distributionH
-#' @name show
-#' @rdname show-distributionH-methods
-#' @docType methods
-#' @aliases show,distributionH-method
-#' @description An overriding show function for a \code{distributionH} object. The function returns a representation
-#' of the histogram, if the number of bins is high the central part of the histogram is truncated.
-#' @param object a \code{distributionH} object
+#' Print a histogram
+#'
+#' Prints a \code{distributionH} object as a table of bins and probabilities.
+#' If the histogram has many bins, only the first and the last five are shown.
+#'
+#' @param object A \code{distributionH} object.
+#' @return Invisibly \code{NULL}; called for its side effect.
 #' @examples
-#' ## ---- initialize a distributionH
 #' mydist <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
-#' # show the histogram
 #' mydist
+#' @name show-distributionH
+#' @rdname show-distributionH-methods
+#' @aliases show,distributionH-method
 setMethod("show",
   signature(object = "distributionH"),
   definition = function(object) {
@@ -943,35 +927,38 @@ setMethod("show",
 
 
 ## --- Plot  for distributionH  ----
-#' plot for a distributionH object
-#' @name plot-distributionH
-#' @docType methods
-#' @aliases plot,distributionH-method
-#' @description A plot function for a \code{distributionH} object. The function returns a representation
-#' of the histogram.
-#' @param x  a \code{distributionH} object
-#' @param type (optional) a string describing the type of plot, default="HISTO".\cr Other allowed types are
-#' \cr"CDF"=Cumulative distribution function, \cr"QF"= quantile function, \cr"DENS"=a density approximation,
-#' \cr"HBOXPLOT"=horizontal boxplot, \cr"VBOXPLOT"= vertical boxplot,
-#' @param col (optional) a string the color of the plot, default="green".
-#' @param border (optional) a string the color of the border of the plot, default="black".
+#' Plot a histogram
+#'
+#' Plots a \code{distributionH} object as a histogram, a cumulative distribution
+#' function, a quantile function, a density or a boxplot.
+#'
+#' @param x A \code{distributionH} object.
+#' @param type The type of plot: \code{"HISTO"} (default, histogram), \code{"CDF"}
+#' (cumulative distribution function), \code{"QF"} (quantile function),
+#' \code{"DENS"} (kernel density approximation), \code{"HBOXPLOT"} (horizontal
+#' boxplot) or \code{"VBOXPLOT"} (vertical boxplot).
+#' @param col The fill colour (default \code{"green"}).
+#' @param border The colour of the borders (default \code{"black"}).
+#' @return The plot is drawn on the current device and the \code{ggplot} object is
+#' returned invisibly, so that it can be further modified, e.g.
+#' \code{p <- plot(mydist); p + ggplot2::theme_bw()}.
 #' @examples
-#' ## ---- initialize a distributionH
 #' mydist <- distributionH(x = c(7, 8, 10, 15), p = c(0, 0.2, 0.7, 1))
-#' # show the histogram
-#' plot(mydist) # plots mydist
-#' plot(mydist, type = "HISTO", col = "red", border = "blue") # plots mydist
-#' plot(mydist, type = "DENS", col = "red", border = "blue") # plots a density approximation for mydist
-#' plot(mydist, type = "HBOXPLOT") # plots a horizontal boxplot for mydist
-#' plot(mydist, type = "VBOXPLOT") # plots a vertical boxplot for mydist
-#' plot(mydist, type = "CDF") # plots the cumulative distribution function of mydist
-#' plot(mydist, type = "QF") # plots the quantile function of mydist
+#' plot(mydist)
+#' plot(mydist, type = "HISTO", col = "red", border = "blue")
+#' plot(mydist, type = "DENS", col = "red", border = "blue")
+#' plot(mydist, type = "HBOXPLOT")
+#' plot(mydist, type = "VBOXPLOT")
+#' plot(mydist, type = "CDF")
+#' plot(mydist, type = "QF")
+#' @name plot-distributionH
+#' @aliases plot,distributionH-method
 #' @importFrom utils write.table
 #' @export
 setMethod(
   "plot",
   signature(x = "distributionH"),
   function(x, type = "HISTO", col = "green", border = "black") {
-    plot.gg(x, type = type, col = col, border = border)
+    .draw(.plot_distributionH(x, type = type, col = col, border = border))
   }
 )

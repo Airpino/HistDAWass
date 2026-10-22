@@ -2,38 +2,38 @@
 % Please edit documentation in R/Plotting_with_ggplot.R
 \name{plot_errors}
 \alias{plot_errors}
-\title{A function for plotting functions of errors}
+\title{Plot the errors of predicted histograms}
 \usage{
 plot_errors(PRED, OBS, type = "HISTO_QUA", np = 200)
 }
 \arguments{
-\item{PRED}{a \code{MatH} object with one column, the predicted data}
+\item{PRED}{A \code{MatH} object with one column, the predicted histograms.}
 
-\item{OBS}{a \code{MatH} object with one column, the observed data}
+\item{OBS}{A \code{MatH} object with one column, the observed histograms.}
 
-\item{type}{a string. "HISTO_QUA" (default), if ones want to compare histograms quantile differences\cr
-"HISTO_DEN", if ones want to show the histogram densities differences;\cr
-"DENS_KDE" if ones want to show the differences between approximated densities (using KDE);\cr}
+\item{type}{The type of plot: \code{"HISTO_QUA"} (default, differences of the
+quantile functions), \code{"HISTO_DEN"} (differences of the densities) or
+\code{"DENS_KDE"} (differences of kernel density approximations).}
 
-\item{np}{number of points considered for density  or quantile computation (default=200).}
+\item{np}{The number of points used to compute the differences (default 200).}
 }
 \value{
-A plot with functions of differences between observed and predicted histograms, and a
-Root Mean Squared value computing by using the L2 Wasserstein distance.
+The root mean squared error, invisibly. The plot is drawn on the
+current device.
 }
 \description{
-This function allows the representation of the difference between observed histograms and
-the respective predicted ones. It can
-be used as a tool for interpreting preditive methods (for exampe, the regression of histogrma data)
+Plots the differences between observed and predicted histograms (e.g. from
+\code{\link{WH.regression.two.components.predict}}) and prints the root mean
+squared error based on the L2 Wasserstein distance.
 }
 \examples{
-## do a regression
 pars <- WH.regression.two.components(BLOOD, Yvar = 1, Xvars = c(2:3))
-## predict data
 PRED <- WH.regression.two.components.predict(data = BLOOD[, 2:3], parameters = pars)
-## define observed data
 OBS <- BLOOD[, 1]
 plot_errors(PRED, OBS, "HISTO_QUA")
 plot_errors(PRED, OBS, "HISTO_DEN")
 plot_errors(PRED, OBS, "DENS_KDE")
+}
+\seealso{
+\code{\link{plotPredVsObs}}, \code{\link{WH.regression.GOF}}
 }

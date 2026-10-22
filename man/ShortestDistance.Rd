@@ -2,21 +2,25 @@
 % Please edit documentation in R/Utility.R
 \name{ShortestDistance}
 \alias{ShortestDistance}
-\title{Shortes distance from a point o a 2d segment}
+\title{Distance between a point and a line}
 \usage{
 ShortestDistance(p, line)
 }
 \arguments{
-\item{p}{coordinates of a point}
+\item{p}{A vector with the coordinates of the point.}
 
-\item{line}{a 2x2 matrix with the coordinates of two points defining a line}
+\item{line}{A 2 x 2 matrix with the coordinates of two points of the line.}
 }
 \value{
-A numeric value, the Euclidean distance of point \code{p} to the \code{line}.
+A number, the distance of \code{p} from \code{line}.
 }
 \description{
-Shortes distance from a point o a 2d segment
+Computes the Euclidean distance between a point and the line through two
+points (used by \code{\link{DouglasPeucker}}).
+}
+\examples{
+ShortestDistance(c(0, 1), rbind(c(0, 0), c(1, 0)))
 }
 \seealso{
-\code{\link[HistDAWass]{data2hist}} function and \code{\link[HistDAWass]{DouglasPeucker}} function
+\code{\link{DouglasPeucker}}
 }

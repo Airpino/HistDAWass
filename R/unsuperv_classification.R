@@ -1,32 +1,42 @@
 # K-means of histogram data based on Wasserstein ----
-#' K-means of a dataset of histogram-valued data
-#' @description The function implements the k-means for a set of histogram-valued data.
-#' @param x A MatH object (a matrix of distributionH).
-#' @param k An integer, the number of groups.
-#' @param rep An integer, maximum number of repetitions of the algorithm (default \code{rep}=5).
-#' @param simplify A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.
-#' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-#' using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @param verbose A logic value (default is FALSE). If TRUE, details on computations are shown.
-#' @return a list with the results of the k-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
-#' @slot solution A list.Returns the best solution among the \code{rep}etitions, i.e.
-#' the one having the minimum sum of squares criterion.
-#' @slot solution$IDX A vector. The clusters at which the objects are assigned.
-#' @slot solution$cardinality A vector. The cardinality of each final cluster.
-#' @slot solution$centers A \code{MatH} object with the description of centers.
-#' @slot solution$Crit A number. The criterion (Sum od square deviation
-#' from the centers) value at the end of the run.
-#' @slot quality A number. The percentage of Sum of square deviation explained by the model.
-#' (The higher the better)
-#' @references Irpino A., Verde R., Lechevallier Y. (2006). Dynamic clustering of histograms using Wasserstein
-#' metric. In: Rizzi A., Vichi M.. COMPSTAT 2006 - Advances in computational statistics. p. 869-876,
-#' Heidelberg:Physica-Verlag
+#' K-means clustering of histogram data
+#'
+#' K-means (dynamic clustering) of the individuals of a \code{MatH} object, based
+#' on the L2 Wasserstein distance between histograms.
+#'
+#' @param x A \code{MatH} object.
+#' @param k An integer, the number of clusters.
+#' @param rep An integer, the number of repetitions of the algorithm (with
+#' random starting partitions); the best solution is returned. Default 5.
+#' @param simplify A logical value (default \code{FALSE}). If \code{TRUE}, each
+#' histogram is approximated by \code{qua} equally spaced quantiles: the
+#' computations are much faster for large datasets, with a small approximation
+#' error.
+#' @param qua An integer, the number of quantiles used when \code{simplify = TRUE}
+#' (default 10).
+#' @param standardize A logical value (default \code{FALSE}). If \code{TRUE}, the
+#' variables are standardised by their Wasserstein-based standard deviation.
+#' @param verbose A logical value (default \code{FALSE}). If \code{TRUE}, details
+#' of the computations are printed.
+#' @return A list with:
+#' \item{solution}{The best solution among the repetitions (minimum criterion): a
+#' list with \code{IDX} (the cluster of each individual), \code{cardinality}
+#' (the size of each cluster), \code{centers} (a \code{MatH} object with the
+#' prototypes) and \code{Crit} (the within-cluster sum of squares).}
+#' \item{quality}{The proportion of the total sum of squares explained by the
+#' partition (the higher the better).}
+#' @references Irpino A., Verde R., Lechevallier Y. (2006). Dynamic clustering of
+#' histograms using Wasserstein metric. In: Rizzi A., Vichi M. (eds.) COMPSTAT
+#' 2006 - Advances in computational statistics, Physica-Verlag, 869-876.
+#' @seealso \code{\link{WH_adaptive.kmeans}}, \code{\link{WH_fcmeans}},
+#' \code{\link{WH_hclust}}
 #' @examples
 #' results <- WH_kmeans(
 #'   x = BLOOD, k = 2, rep = 10, simplify = TRUE,
-#'   qua = 10, standardize = TRUE, verbose = TRUE
+#'   qua = 10, standardize = TRUE
 #' )
+#' results$solution$IDX
+#' results$quality
 #' @export
 WH_kmeans <- function(x, k, rep = 5,
                       simplify = FALSE,
@@ -177,29 +187,26 @@ WH_kmeans <- function(x, k, rep = 5,
 
 # Hierarchical clustering of histogram data based on Wasserstein ----
 #' Hierarchical clustering of histogram data
-#' @description The function implements a Hierarchical clustering
-#'  for a set of histogram-valued data, based on the L2 Wassertein distance.
-#'  Extends the \code{hclust} function of the \pkg{stat} package.
-#' @param x A MatH object (a matrix of distributionH).
-#' @param simplify A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.
-#' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-#' using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @param distance A string default "WDIST" the L2 Wasserstein distance (other distances will be implemented)
-#' @param method A string, default="complete", is the the agglomeration method to be used.
-#'  This should be (an unambiguous abbreviation of) one of "\code{ward.D}", "\code{ward.D2}",
-#'   "\code{single}", "\code{complete}", "\code{average}" (= UPGMA), "\code{mcquitty}"
-#'   (= WPGMA), "\code{median}" (= WPGMC) or "\code{centroid}" (= UPGMC).
-#' @seealso \code{\link{hclust}} of \pkg{stat} package for further details.
-#' @return An object of class hclust which describes the tree produced by
-#'  the clustering process.
-#' @references Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering
-#' of histogram symbolic data. In: Batanjeli et al. Data Science and Classification, IFCS 2006. p. 185-192,
-#'  BERLIN:Springer, ISBN: 3-540-34415-2
+#'
+#' Hierarchical clustering of the individuals of a \code{MatH} object, based on
+#' the L2 Wasserstein distance. It is a wrapper of \code{\link[stats]{hclust}}.
+#'
+#' @inheritParams WH_kmeans
+#' @param distance The distance: only \code{"WDIST"}, the L2 Wasserstein
+#' distance, is available.
+#' @param method The agglomeration method, as in \code{\link[stats]{hclust}}:
+#' one of \code{"ward.D"}, \code{"ward.D2"}, \code{"single"}, \code{"complete"}
+#' (default), \code{"average"}, \code{"mcquitty"}, \code{"median"} or
+#' \code{"centroid"}.
+#' @return An object of class \code{hclust}.
+#' @references Irpino A., Verde R. (2006). A new Wasserstein based distance for
+#' the hierarchical clustering of histogram symbolic data. In: Batanjeli et al.
+#' (eds.) Data Science and Classification, IFCS 2006, Springer, 185-192.
+#' @seealso \code{\link{WH_MAT_DIST}}
 #' @examples
 #' results <- WH_hclust(x = BLOOD, simplify = TRUE, method = "complete")
-#' plot(results) # it plots the dendrogram
-#' cutree(results, k = 5) # it returns the labels for 5 clusters
+#' plot(results)
+#' cutree(results, k = 5)
 #' @importFrom stats hclust quantile as.dist
 #' @export
 WH_hclust <- function(x,
@@ -229,43 +236,38 @@ WH_hclust <- function(x,
 
 
 # Adaptive-distance based k-means ----
-#' K-means of a dataset of histogram-valued data using adaptive  Wasserstein distances
-#' @description The function implements the k-means using adaptive distance for a set of histogram-valued data.
-#' @param x A MatH object (a matrix of distributionH).
-#' @param k An integer, the number of groups.
-#' @param schema a number from 1 to 4 \cr
-#' 1=A weight for each variable (default) \cr
-#' 2=A weight for the average and the dispersion component of each variable\cr
-#' 3=Same as 1 but a different set of weights for each cluster\cr
-#' 4=Same as 2 but a different set of weights for each cluster
-#' @param init (optional, do not use) initialization for partitioning the data default is 'RPART', other strategies shoul be implemented.
-#' @param rep An integer, maximum number of repetitions of the algorithm (default \code{rep}=5).
-#' @param simplify A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.
-#' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-#' using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @param weight.sys a string. Weights may add to one ('SUM') or their product is equal to 1 ('PROD', default).
-#' @param theta a number. A parameter if \code{weight.sys='SUM'}, default is 2.
-#' @param init.weights a string how to initialize weights: 'EQUAL' (default), all weights are the same,
-#' 'RANDOM', weights are initalised at random.
-#' @param verbose A logic value (default is FALSE). If TRUE, details on computations are shown.
+#' K-means clustering of histogram data with adaptive distances
 #'
-#' @return a list with the results of the k-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
-#' @slot solution A list.Returns the best solution among the \code{rep}etitions, i.e.
-#' the one having the minimum sum of squares criterion.
-#' @slot solution$IDX A vector. The clusters at which the objects are assigned.
-#' @slot solution$cardinality A vector. The cardinality of each final cluster.
-#' @slot solution$centers A \code{MatH} object with the description of centers.
-#' @slot solution$Crit A number. The criterion (Sum od square deviation
-#' from the centers) value at the end of the run.
-#' @slot quality A number. The percentage of Sum of square deviation explained by the model.
-#' (The higher the better)
-#' @references Irpino A., Rosanna V., De Carvalho F.A.T. (2014). Dynamic clustering of histogram data
-#' based on adaptive squared Wasserstein distances. EXPERT SYSTEMS WITH APPLICATIONS, vol. 41, p. 3351-3366,
-#' ISSN: 0957-4174, doi: http://dx.doi.org/10.1016/j.eswa.2013.12.001
+#' K-means of the individuals of a \code{MatH} object based on adaptive L2
+#' Wasserstein distances: the algorithm also estimates a weight for each variable
+#' (or for each component of the variables, and/or for each cluster).
+#'
+#' @inheritParams WH_kmeans
+#' @param schema An integer, the system of weights: 1 = a weight for each
+#' variable (default); 2 = a weight for the position and one for the variability
+#' component of each variable; 3 = as 1, with a different set of weights for
+#' each cluster; 4 = as 2, with a different set of weights for each cluster.
+#' @param init Not used.
+#' @param weight.sys The constraint on the weights: \code{"PROD"} (default), the
+#' product of the weights is one; \code{"SUM"}, the weights sum to one.
+#' @param theta A number, the exponent of the weights when
+#' \code{weight.sys = "SUM"} (default 2).
+#' @param init.weights The initial weights: \code{"EQUAL"} (default) or
+#' \code{"RANDOM"}.
+#' @return A list with \code{IDX} (the cluster of each individual),
+#' \code{cardinality} (the size of each cluster), \code{proto} (a \code{MatH}
+#' object with the prototypes), \code{weights} (the weights of the variables or
+#' components), \code{Crit} (the criterion), \code{TOTSSQ}, \code{BSQ},
+#' \code{WSQ} (total, between and within sums of squares) and \code{quality} (the
+#' proportion of the total sum of squares explained by the partition).
+#' @references Irpino A., Verde R., De Carvalho F.A.T. (2014). Dynamic clustering
+#' of histogram data based on adaptive squared Wasserstein distances. Expert
+#' Systems with Applications, 41, 3351-3366. \doi{10.1016/j.eswa.2013.12.001}
+#' @seealso \code{\link{WH_kmeans}}, \code{\link{WH_adaptive_fcmeans}}
 #' @examples
-#' results <- WH_adaptive.kmeans(x = BLOOD, k = 2, rep = 10, 
+#' results <- WH_adaptive.kmeans(x = BLOOD, k = 2, rep = 10,
 #'             simplify = TRUE, qua = 10, standardize = TRUE)
+#' results$weights
 #' @importFrom stats runif
 #' @export
 
@@ -505,17 +507,18 @@ WH_adaptive.kmeans <- function(x, k,
 }
 
 # L2  Wasserstein distance matrix----
-#' L2  Wasserstein distance matrix
-#' @description The function extracts the L2 Wasserstein distance matrix from a MatH object.
-#' @param x A MatH object (a matrix of distributionH).
-#' @param simplify A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.
-#' @param qua An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-#' using the Wasserstein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @return A matrix of squared L2 distances.
-#' @references Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering
-#' of histogram symbolic data. In: Batanjeli et al. Data Science and Classification, IFCS 2006. p. 185-192,
-#'  BERLIN:Springer, ISBN: 3-540-34415-2
+#' L2 Wasserstein distance matrix
+#'
+#' Computes the matrix of the L2 Wasserstein distances between the individuals
+#' (rows) of a \code{MatH} object, summing the squared distances over the
+#' variables.
+#'
+#' @inheritParams WH_kmeans
+#' @return A symmetric matrix of L2 Wasserstein distances.
+#' @references Irpino A., Verde R. (2006). A new Wasserstein based distance for
+#' the hierarchical clustering of histogram symbolic data. In: Batanjeli et al.
+#' (eds.) Data Science and Classification, IFCS 2006, Springer, 185-192.
+#' @seealso \code{\link{WassSqDistH}}, \code{\link{WH_hclust}}
 #' @examples
 #' DMAT <- WH_MAT_DIST(x = BLOOD, simplify = TRUE)
 #' @importFrom stats quantile

@@ -2,31 +2,40 @@
 % Please edit documentation in R/unsuperv_classification.R
 \name{WH_MAT_DIST}
 \alias{WH_MAT_DIST}
-\title{L2  Wasserstein distance matrix}
+\title{L2 Wasserstein distance matrix}
 \usage{
 WH_MAT_DIST(x, simplify = FALSE, qua = 10, standardize = FALSE)
 }
 \arguments{
-\item{x}{A MatH object (a matrix of distributionH).}
+\item{x}{A \code{MatH} object.}
 
-\item{simplify}{A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.}
+\item{simplify}{A logical value (default \code{FALSE}). If \code{TRUE}, each
+histogram is approximated by \code{qua} equally spaced quantiles: the
+computations are much faster for large datasets, with a small approximation
+error.}
 
-\item{qua}{An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.}
+\item{qua}{An integer, the number of quantiles used when \code{simplify = TRUE}
+(default 10).}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-using the Wasserstein based standard deviation. Use if one wants to have variables with std equal to one.}
+\item{standardize}{A logical value (default \code{FALSE}). If \code{TRUE}, the
+variables are standardised by their Wasserstein-based standard deviation.}
 }
 \value{
-A matrix of squared L2 distances.
+A symmetric matrix of L2 Wasserstein distances.
 }
 \description{
-The function extracts the L2 Wasserstein distance matrix from a MatH object.
+Computes the matrix of the L2 Wasserstein distances between the individuals
+(rows) of a \code{MatH} object, summing the squared distances over the
+variables.
 }
 \examples{
 DMAT <- WH_MAT_DIST(x = BLOOD, simplify = TRUE)
 }
 \references{
-Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering
-of histogram symbolic data. In: Batanjeli et al. Data Science and Classification, IFCS 2006. p. 185-192,
- BERLIN:Springer, ISBN: 3-540-34415-2
+Irpino A., Verde R. (2006). A new Wasserstein based distance for
+the hierarchical clustering of histogram symbolic data. In: Batanjeli et al.
+(eds.) Data Science and Classification, IFCS 2006, Springer, 185-192.
+}
+\seealso{
+\code{\link{WassSqDistH}}, \code{\link{WH_hclust}}
 }

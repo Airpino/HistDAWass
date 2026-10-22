@@ -3,39 +3,30 @@
 \name{crwtransform}
 \alias{crwtransform}
 \alias{crwtransform,distributionH-method}
-\title{Method \code{crwtransform}: returns the centers and the radii of bins of a distribution}
+\title{Centres, radii and weights of the bins of a histogram}
 \usage{
 crwtransform(object)
-
-\S4method{crwtransform}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A list containing \item{$Centers }{The midpoints of the bins of the
-histogram} \item{$Radii }{The half-lenghts of the bins of the histogram}
-\item{$Weights }{The relative frequencies or the probailities associated with
-each bin (the sum is equal to 1)}
+A list with three numeric vectors: \code{Centers}, the midpoints of
+the bins; \code{Radii}, the half-widths of the bins; \code{Weights}, the
+probabilities of the bins (summing to one).
 }
 \description{
-Centers and ranges calculation for bins of a histogram. It is useful for a
-very fast computation of statistics and methods based on the L2 Wassertein
-distance between histograms.
+Computes the centre (midpoint), the radius (half-width) and the weight
+(probability) of each bin of a \code{distributionH} object. This
+representation allows a fast computation of the statistics based on the L2
+Wasserstein distance.
 }
 \examples{
-
-## ---- A mydist distribution ----
 mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-## ---- Compute the cfd value for q=5 (not observed) ----
 crwtransform(mydist)
 }
 \references{
 Irpino, A., Verde, R., Lechevallier, Y. (2006) \emph{Dynamic
 clustering of histograms using Wasserstein metric}, In: Proceedings of
-COMPSTAT 2006, Physica-Verlag, 869-876
+COMPSTAT 2006, Physica-Verlag, 869-876.
 }
-\author{
-Antonio Irpino
-}
-\keyword{distribution}

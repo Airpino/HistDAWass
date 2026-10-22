@@ -1,20 +1,21 @@
 ## functions for analysis and plotting
 ## smoothing techniques ----
 ## moving averages -----
-#' Smoothing with moving averages of a histogram time series
-#' @description (Beta verson of) Extends the moving average smoothing of a time
-#' series to a histogram time series, using L2 Wasserstein distance.
-#' @param HTS A \code{HTS} object (a histogram time series).
-#' @param k an integer value, the number of elements for moving averages
-#' @param weights a vector of positive weights for a weighted moving average
-#' @return a list with the results of the smoothing procedure.
-#' @slot k the number of elements for the average
-#' @slot weights the vector of weights for smoothing
-#' @slot AveragedHTS The smoothed HTS
+#' Moving averages of a histogram time series
+#'
+#' (Beta version) Smoothing of a histogram time series by (weighted) moving
+#' averages, based on the L2 Wasserstein distance.
+#'
+#' @param HTS A \code{HTS} object.
+#' @param k An odd integer, the number of elements of each average (default 3).
+#' @param weights A vector of \code{k} non-negative weights (default: equal
+#' weights).
+#' @return A list with \code{k}, the (normalised) \code{weights} and
+#' \code{AveragedHTS}, the smoothed \code{HTS} object.
+#' @seealso \code{\link{HTS.exponential.smoothing}}
 #' @examples
 #' mov.av.smoothed <- HTS.moving.averages(HTS = RetHTS, k = 5)
-#' # a show method for HTS must be implemented you can see it using
-#' # str(mov.av.smoothed$AveragedHTS)
+#' mov.av.smoothed$AveragedHTS
 #' @export
 HTS.moving.averages <- function(HTS, k = 3, weights = rep(1, k)) {
   # check and standardize weights
@@ -47,18 +48,19 @@ HTS.moving.averages <- function(HTS, k = 3, weights = rep(1, k)) {
   return(list(k = k, weights = weights, AveragedHTS = AveragedHTS))
 }
 ## exponential smoothing ----
-#' Smoothing with exponential smoothing of a histogram time series
-#' @description (Beta verson of) Extends theexponential smoothing of a time
-#' series to a histogram time series,using L2 Wasserstein distance.
-#' @param HTS A \code{HTS} object (a histogram time series).
-#' @param alpha a number between 0 and 1 for exponential smoothing
-#' @return a list with the results of the smoothing procedure.
-#' @slot smoothing.alpha  the alpha parameter
-#' @slot AveragedHTS The smoothed HTS
+#' Exponential smoothing of a histogram time series
+#'
+#' (Beta version) Exponential smoothing of a histogram time series, based on the
+#' L2 Wasserstein distance.
+#'
+#' @param HTS A \code{HTS} object.
+#' @param alpha A number between 0 and 1, the smoothing parameter (default 0.9).
+#' @return A list with \code{smoothing.alpha}, the smoothing parameter, and
+#' \code{SmoothedHTS}, the smoothed \code{HTS} object.
+#' @seealso \code{\link{HTS.moving.averages}}
 #' @examples
 #' mov.expo.smooth <- HTS.exponential.smoothing(HTS = RetHTS, alpha = 0.8)
-#' # a show method for HTS must be implemented you can see it using
-#' # str(mov.expo.smooth$AveragedHTS)
+#' mov.expo.smooth$SmoothedHTS
 #' @export
 HTS.exponential.smoothing <- function(HTS, alpha = 0.9) {
   if ((alpha < 0) || (alpha > 1)) {
@@ -86,25 +88,21 @@ HTS.exponential.smoothing <- function(HTS, alpha = 0.9) {
 }
 ## prediction techniques ----
 ## predicting via k-nn ----
-#' K-NN predictions of a histogram time series
-#' @description (Beta verson of) Extends the K-NN algorithm for predicting a time
-#' series to a histogram time series, using L2 Wasserstein distance.
-#' @param HTS A \code{HTS} object (a histogram time series).
-#' @param position an integer, the data histogram to predict
-#' @param k the number of neighbours (default=3)
-#' @return a \code{distributionH} object predicted from data.
-#' @references Javier Arroyo, Carlos Mate, Forecasting histogram time series with k-nearest neighbours methods,
-#' International Journal of Forecasting, Volume 25, Issue 1, January-March 2009, Pages 192-207,
-#'  ISSN 0169-2070, http://dx.doi.org/10.1016/j.ijforecast.2008.07.003.\cr
-#' @details Histogram time series (HTS) describe situations where a distribution of values is available
-#' for each instant of time. These situations usually arise when contemporaneous or temporal aggregation
-#' is required. In these cases, histograms provide a summary of the data that is more informative than those
-#' provided by other aggregates such as the mean.
-#' Some fields where HTS are useful include economy, official statistics and environmental science.
-#' The function adapts the k-Nearest Neighbours (k-NN) algorithm to forecast HTS and, more generally,
-#'  to deal with histogram data. The proposed k-NN relies on the L2 Wasserstein distance that is used
-#'  to measure dissimilarities between sequences of histograms and to compute the forecasts.
+#' K-NN forecast of a histogram time series
 #'
+#' (Beta version) Forecasts a histogram of a time series with the k-nearest
+#' neighbours method, based on the L2 Wasserstein distance: the forecast is the
+#' mean of the histograms following the \code{k} histograms most similar to the
+#' one at \code{position}.
+#'
+#' @param HTS A \code{HTS} object.
+#' @param position An integer, the position of the last observed histogram
+#' (default: the last one).
+#' @param k The number of neighbours (default 3).
+#' @return A \code{distributionH} object, the forecast.
+#' @references Arroyo, J., Mate, C. (2009). Forecasting histogram time series
+#' with k-nearest neighbours methods. International Journal of Forecasting,
+#' 25(1), 192-207. \doi{10.1016/j.ijforecast.2008.07.003}
 #' @examples
 #' prediction <- HTS.predict.knn(HTS = RetHTS, position = 108, k = 3)
 #' @export

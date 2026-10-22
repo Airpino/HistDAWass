@@ -2,7 +2,7 @@
 % Please edit documentation in R/Kohonen_maps.R
 \name{WH_2d_Kohonen_maps}
 \alias{WH_2d_Kohonen_maps}
-\title{Batch Kohonen self-organizing 2d maps for  histogram-valued data}
+\title{Batch Kohonen self-organising maps of histogram data}
 \usage{
 WH_2d_Kohonen_maps(
   x,
@@ -19,74 +19,62 @@ WH_2d_Kohonen_maps(
 )
 }
 \arguments{
-\item{x}{A MatH object (a matrix of distributionH).}
+\item{x}{A \code{MatH} object.}
 
-\item{net}{a list describing the topology of the net \code{list(xdim=number of rows,
-ydim=numbers of columns,topo=c('rectangular' or 'hexagonal'))}, see \code{somgrid} sintax in package\pkg{class}
-default \code{net=list(xdim=4,ydim=3,topo=c('rectangular'))}}
+\item{net}{A list describing the topology of the map:
+\code{list(xdim = <rows>, ydim = <columns>, topo = "rectangular" or "hexagonal")},
+see \code{\link[class]{somgrid}}. Default: a 4 x 3 rectangular map.}
 
-\item{kern.param}{(default =2) the kernel parameter for the RBF kernel used in the algorithm}
+\item{kern.param}{The parameter of the RBF kernel (default 2).}
 
-\item{TMAX}{a parameter useful for the iterations (default=2)}
+\item{TMAX, Tmin}{The initial and final values of the neighbourhood radius
+(defaults 2 and 0.2).}
 
-\item{Tmin}{a parameter useful for the iterations (default=0.2)}
+\item{niter}{The maximum number of iterations (default 30).}
 
-\item{niter}{maximum number of iterations (default=30)}
+\item{repetitions}{The number of repetitions of the algorithm (default 5);
+the best solution is returned.}
 
-\item{repetitions}{number of repetion of the algorithm (default=5), beacuase each launch may generate a local optimum}
+\item{simplify}{A logical value (default \code{FALSE}). If \code{TRUE}, each
+histogram is approximated by \code{qua} equally spaced quantiles: the
+computations are much faster for large datasets, with a small approximation
+error.}
 
-\item{simplify}{a logical parameter for speeding up computations (default=FALSE). If true data are recoded in order to have fast computations}
+\item{qua}{An integer, the number of quantiles used when \code{simplify = TRUE}
+(default 10).}
 
-\item{qua}{if \code{simplify=TRUE} number of equally spaced quantiles for recodify the histograms (default=10)}
+\item{standardize}{A logical value (default \code{FALSE}). If \code{TRUE}, the
+variables are standardised by their Wasserstein-based standard deviation.}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
-
-\item{verbose}{a logical parameter (default=FALSE). If TRUE details of
-computation are shown during the execution.}
+\item{verbose}{A logical value (default \code{FALSE}). If \code{TRUE}, details
+of the computations are printed.}
 }
 \value{
-a list with the results of the Batch Kohonen map
+A list with:
+\item{solution}{The best solution among the repetitions: a list with
+\code{MAP} (the grid of the map), \code{IDX} (the neuron of each individual),
+\code{cardinality} (the number of individuals for each neuron), \code{proto}
+(a \code{MatH} object with the prototypes of the neurons), \code{Crit} (the
+criterion), \code{weights.comp} (the weights of the components of the
+variables) and \code{Weight.sys} (the system of weights).}
+\item{quality}{The proportion of the total sum of squares explained by the
+map (the higher the better).}
+and further details on the parameters of the algorithm.
+The final map is plotted on the current graphic device.
 }
 \description{
-The function implements a Batch Kohonen self-organizing 2d maps algorithm for  histogram-valued data.
+Batch Kohonen self-organising 2d map of the individuals of a \code{MatH}
+object, based on the L2 Wasserstein distance.
 }
 \details{
-An extension of Batch Self Organised Map (BSOM) is here proposed for  histogram data.
- These kind of data have been defined in the context of symbolic data analysis.
-  The BSOM cost function is then based on a distance
-  function: the L2 Wasserstein distance. This distance has been widely proposed in several
-   techniques of analysis (clustering, regression) when input data are expressed by distributions
-   (empirical by histograms or theoretical by probability distributions).
-   The peculiarity of such distance is to be an Euclidean distance between quantile functions so
-   that all the properties proved for L2 distances are verified again. An adaptative versions of
-   BSOM is also introduced considering an automatic system of weights in the cost function in
-   order to take into account the different effect of the several variables in the Self-Organised Map
-   grid.
+Batch Self-Organising Maps (BSOM) for histogram data, with a cost
+function based on the L2 Wasserstein distance, i.e. the Euclidean distance
+between quantile functions. The adaptive version introduces an automatic
+system of weights in the cost function, to take into account the different
+effect of the variables on the map.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{repetitions}etitions, i.e.
-the one having the minimum sum of squares criterion.}
-
-\item{\code{solution$MAP}}{The map topology.}
-
-\item{\code{solution$IDX}}{A vector. The clusters at which the objects are assigned.}
-
-\item{\code{solution$cardinality}}{A vector. The cardinality of each final cluster.}
-
-\item{\code{solution$proto}}{A \code{MatH} object with the description of centers.}
-
-\item{\code{solution$Crit}}{A number. The criterion (Sum od square deviation
-from the centers) value at the end of the run.}
-
-\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model.
-(The higher the better)}
-}}
-
 \examples{
-\dontrun{
+\donttest{
 results <- WH_2d_Kohonen_maps(
   x = BLOOD,
   net = list(xdim = 2, ydim = 3, topo = c("rectangular")),
@@ -96,6 +84,10 @@ results <- WH_2d_Kohonen_maps(
 }
 }
 \references{
-Irpino A, Verde R, De Carvalho FAT (2012). Batch self organizing maps for interval and histogram data.
-In: Proceedings of COMPSTAT 2012. p. 143-154, ISI/IASC, ISBN: 978-90-73592-32-2
+Irpino A., Verde R., De Carvalho F.A.T. (2012). Batch self
+organizing maps for interval and histogram data. In: Proceedings of COMPSTAT
+2012, ISI/IASC, 143-154.
+}
+\seealso{
+\code{\link{WH_2d_Adaptive_Kohonen_maps}}
 }

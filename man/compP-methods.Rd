@@ -3,29 +3,26 @@
 \name{compP}
 \alias{compP}
 \alias{compP,distributionH,numeric-method}
-\alias{compP,distributionH-method}
-\title{Method \code{compP}}
+\title{Cumulative distribution function of a histogram at a value}
 \usage{
 compP(object, q)
-
-\S4method{compP}{distributionH,numeric}(object, q)
 }
 \arguments{
-\item{object}{is an object of \env{distributionH} class}
+\item{object}{A \code{distributionH} object.}
 
-\item{q}{is a numeric value}
+\item{q}{A number.}
 }
 \value{
-Returns a value between 0 and 1.
+A number between 0 and 1.
 }
 \description{
-Compute the cdf probability at a given value for a histogram
+Computes the value \eqn{F(q)} of the cumulative distribution function of a
+\code{distributionH} object.
 }
 \examples{
-
-## ---- A mydist distribution ----
 mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-## ---- Compute the cfd value for q=5 (not observed) ----
-p <- compP(mydist, 5)
+compP(mydist, 5)
 }
-\keyword{distribution}
+\seealso{
+\code{\link{compQ}}
+}

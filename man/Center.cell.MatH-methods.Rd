@@ -3,23 +3,20 @@
 \name{Center.cell.MatH}
 \alias{Center.cell.MatH}
 \alias{Center.cell.MatH,MatH-method}
-\title{Method Center.cell.MatH Centers all the cells of a matrix of distributions}
+\title{Centre the histograms of a matrix}
 \usage{
 Center.cell.MatH(object)
-
-\S4method{Center.cell.MatH}{MatH}(object)
 }
 \arguments{
-\item{object}{a MatH object, a matrix of distributions.}
+\item{object}{A \code{MatH} object.}
 }
 \value{
-A \code{MatH} object, having each distribution with a zero mean.
+A \code{MatH} object whose histograms have zero mean.
 }
 \description{
-The function transform a MatH object (i.e. a matrix of distributions),
-such that each distribution is shifted and has a mean equal to zero
+Shifts each histogram of a \code{MatH} object so that its mean is zero.
 }
 \examples{
 CEN_BLOOD <- Center.cell.MatH(BLOOD)
-get.MatH.stats(BLOOD, stat = "mean")
+get.MatH.stats(CEN_BLOOD, stat = "mean")
 }

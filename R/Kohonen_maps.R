@@ -1,66 +1,62 @@
 # Batch SOM Kohonen Maps of HD using adaptive distances -----
-#' Batch Kohonen self-organizing 2d maps using adaptive distances for  histogram-valued data
-#' @description The function implements a Batch Kohonen self-organizing 2d maps algorithm for  histogram-valued data.
-#' @param x A MatH object (a matrix of distributionH).
-#' @param net a list describing the topology of the net \code{list(xdim=number of rows,
-#' ydim=numbers of columns,topo=c('rectangular' or 'hexagonal'))}, see \code{somgrid} sintax in package\pkg{class}
-#' default \code{net=list(xdim=4,ydim=3,topo=c('rectangular'))}
-#' @param kern.param (default =2) the kernel parameter for the RBF kernel used in the algorithm
-#' @param TMAX a parameter useful for the iterations (default=2)
-#' @param Tmin a parameter useful for the iterations (default=0.2)
-#' @param niter maximum number of iterations (default=30)
-#' @param repetitions number of repetion of the algorithm (default=5), beacuase each launch may generate a local optimum
-#' @param simplify a logical parameter for speeding up computations (default=FALSE). If true data are recoded in order to have fast computations
-#' @param qua if \code{simplify=TRUE} number of equally spaced quantiles for recodify the histograms (default=10)
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-#' using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @param schema a number from 1 to 4 \cr
-#' 1=A weight for each variable (default) \cr
-#' 2=A weight for the average and the dispersion component of each variable\cr
-#' 3=Same as 1 but a different set of weights for each cluster\cr
-#' 4=Same as 2 but a different set of weights for each cluster
-#' @param init.weights a string how to initialize weights: 'EQUAL' (default), all weights are the same,
-#' @param weight.sys a string. Weights may add to one ('SUM') or their product is equal to 1 ('PROD', default).
-#' @param theta a number. A parameter if \code{weight.sys='SUM'}, default is 2.
-#' @param Wfix a logical parameter (default=FALSE). If TRUE the algorithm does not use adaptive distances.
-#' @param atleast integer. Check for degeneration of the map into a very low number of
-#' voronoi sets. (default 2) 2 means that the map will have at least 2 neurons
-#' attracting data instances in their voronoi sets.
-#' @param verbose a logical parameter (default=FALSE). If TRUE details of
-#' computation are shown during the execution.
-#' #'
-#' @return a list with the results of the Batch Kohonen map
-#' @slot solution A list.Returns the best solution among the \code{repetitions}etitions, i.e.
-#' the one having the minimum sum of squares criterion.
-#' @slot solution$MAP The map topology.
-#' @slot solution$IDX A vector. The clusters at which the objects are assigned.
-#' @slot solution$cardinality A vector. The cardinality of each final cluster.
-#' @slot solution$proto A \code{MatH} object with the description of centers.
-#' @slot solution$Crit A number. The criterion (Sum od square deviation
-#' from the centers) value at the end of the run.
-#' @slot solution$Weights.comp the final weights assigned to each component of the histogram variables
-#' @slot solution$Weight.sys a string the type of weighting system ('SUM' or 'PRODUCT')
-#' @slot quality A number. The percentage of Sum of square deviation explained by the model.
-#' (The higher the better)
-#' @references
-#' Irpino A, Verde R, De Carvalho FAT (2012). Batch self organizing maps for interval and histogram data.
-#' In: Proceedings of COMPSTAT 2012. p. 143-154, ISI/IASC, ISBN: 978-90-73592-32-2
-#' @details An extension of Batch Self Organised Map (BSOM) is here proposed for  histogram data.
-#'  These kind of data have been defined in the context of symbolic data analysis.
-#'   The BSOM cost function is then based on a distance
-#'   function: the L2 Wasserstein distance. This distance has been widely proposed in several
-#'    techniques of analysis (clustering, regression) when input data are expressed by distributions
-#'    (empirical by histograms or theoretical by probability distributions).
-#'    The peculiarity of such distance is to be an Euclidean distance between quantile functions so
-#'    that all the properties proved for L2 distances are verified again. An adaptative versions of
-#'    BSOM is also introduced considering an automatic system of weights in the cost function in
-#'    order to take into account the different effect of the several variables in the Self-Organised Map
-#'    grid.
+#' Batch Kohonen self-organising maps of histogram data with adaptive distances
 #'
+#' Batch Kohonen self-organising 2d map of the individuals of a \code{MatH}
+#' object, based on adaptive L2 Wasserstein distances.
+#'
+#' @param x A \code{MatH} object.
+#' @param net A list describing the topology of the map:
+#' \code{list(xdim = <rows>, ydim = <columns>, topo = "rectangular" or "hexagonal")},
+#' see \code{\link[class]{somgrid}}. Default: a 4 x 3 rectangular map.
+#' @param kern.param The parameter of the RBF kernel (default 2).
+#' @param TMAX,Tmin The initial and final values of the neighbourhood radius.
+#' When negative (default), they are computed from the size of the map.
+#' @param niter The maximum number of iterations (default 30).
+#' @param repetitions The number of repetitions of the algorithm (default 5);
+#' the best solution is returned.
+#' @inheritParams WH_kmeans
+#' @param schema An integer, the system of weights: 1 = a weight for each
+#' variable; 2 = a weight for the position and one for the variability component
+#' of each variable; 3 and 4 = as 1 and 2, with a different set of weights for
+#' each neuron (product of the weights of each variable equal to one); 5 and 6 =
+#' as 1 and 2, with a different set of weights for each neuron (product of all
+#' the weights equal to one, default 6).
+#' @param init.weights The initial weights: \code{"EQUAL"} (default),
+#' \code{"PROP"} or \code{"RANDOM"}.
+#' @param weight.sys The constraint on the weights: \code{"PROD"} (default) or
+#' \code{"SUM"}.
+#' @param theta A number, the exponent of the weights when
+#' \code{weight.sys = "SUM"} (default 2).
+#' @param Wfix A logical value (default \code{FALSE}). If \code{TRUE} the weights
+#' are not updated (non adaptive distances).
+#' @param atleast An integer (default 2): solutions where fewer than
+#' \code{atleast} neurons attract individuals are discarded.
+#'
+#' @return A list with:
+#' \item{solution}{The best solution among the repetitions: a list with
+#' \code{MAP} (the grid of the map), \code{IDX} (the neuron of each individual),
+#' \code{cardinality} (the number of individuals for each neuron), \code{proto}
+#' (a \code{MatH} object with the prototypes of the neurons), \code{Crit} (the
+#' criterion), \code{weights.comp} (the weights of the components of the
+#' variables) and \code{Weight.sys} (the system of weights).}
+#' \item{quality}{The proportion of the total sum of squares explained by the
+#' map (the higher the better).}
+#' and further details on the parameters of the algorithm.
+#' The final map is plotted on the current graphic device.
+#' @references Irpino A., Verde R., De Carvalho F.A.T. (2012). Batch self
+#' organizing maps for interval and histogram data. In: Proceedings of COMPSTAT
+#' 2012, ISI/IASC, 143-154.
+#' @details Batch Self-Organising Maps (BSOM) for histogram data, with a cost
+#' function based on the L2 Wasserstein distance, i.e. the Euclidean distance
+#' between quantile functions. The adaptive version introduces an automatic
+#' system of weights in the cost function, to take into account the different
+#' effect of the variables on the map.
+#'
+#' @seealso \code{\link{WH_2d_Kohonen_maps}}
 #' @importFrom class somgrid
 #' @importFrom stats lm dist runif
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' results <- WH_2d_Adaptive_Kohonen_maps(
 #'   x = BLOOD,
 #'   net = list(xdim = 2, ydim = 3, topo = c("rectangular")),
@@ -399,14 +395,6 @@ WH_2d_Adaptive_Kohonen_maps <- function(x, net = list(xdim = 4, ydim = 3, topo =
       IDX <- max.col(-Dind2Neu, ties.method = "first")
       old_NUM <- tmpIDX
       tmpIDX <- Table2(IDX, k, FALSE)
-      if (t > 5) {
-        if (length(tmpIDX) < (length(old_NUM) - 10)) {
-          print(t)
-          print(old_NUM)
-          print(tmpIDX)
-          browser()
-        }
-      }
       OldCrit <- GenCrit
       GenCrit <- 0
       for (individual in 1:ind) {
@@ -462,52 +450,39 @@ WH_2d_Adaptive_Kohonen_maps <- function(x, net = list(xdim = 4, ydim = 3, topo =
 }
 
 # Batch SOM of HD -----
-#' Batch Kohonen self-organizing 2d maps for  histogram-valued data
-#' @description The function implements a Batch Kohonen self-organizing 2d maps algorithm for  histogram-valued data.
-#' @param x A MatH object (a matrix of distributionH).
-#' @param net a list describing the topology of the net \code{list(xdim=number of rows,
-#' ydim=numbers of columns,topo=c('rectangular' or 'hexagonal'))}, see \code{somgrid} sintax in package\pkg{class}
-#' default \code{net=list(xdim=4,ydim=3,topo=c('rectangular'))}
-#' @param kern.param (default =2) the kernel parameter for the RBF kernel used in the algorithm
-#' @param TMAX a parameter useful for the iterations (default=2)
-#' @param Tmin a parameter useful for the iterations (default=0.2)
-#' @param niter maximum number of iterations (default=30)
-#' @param repetitions number of repetion of the algorithm (default=5), beacuase each launch may generate a local optimum
-#' @param simplify a logical parameter for speeding up computations (default=FALSE). If true data are recoded in order to have fast computations
-#' @param qua if \code{simplify=TRUE} number of equally spaced quantiles for recodify the histograms (default=10)
-#' @param standardize A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable,
-#' using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.
-#' @param verbose a logical parameter (default=FALSE). If TRUE details of
-#' computation are shown during the execution.
-#' @return a list with the results of the Batch Kohonen map
-#' @slot solution A list.Returns the best solution among the \code{repetitions}etitions, i.e.
-#' the one having the minimum sum of squares criterion.
-#' @slot solution$MAP The map topology.
-#' @slot solution$IDX A vector. The clusters at which the objects are assigned.
-#' @slot solution$cardinality A vector. The cardinality of each final cluster.
-#' @slot solution$proto A \code{MatH} object with the description of centers.
-#' @slot solution$Crit A number. The criterion (Sum od square deviation
-#' from the centers) value at the end of the run.
-#' @slot quality A number. The percentage of Sum of square deviation explained by the model.
-#' (The higher the better)
-#' @references
-#' Irpino A, Verde R, De Carvalho FAT (2012). Batch self organizing maps for interval and histogram data.
-#' In: Proceedings of COMPSTAT 2012. p. 143-154, ISI/IASC, ISBN: 978-90-73592-32-2
-#' @details An extension of Batch Self Organised Map (BSOM) is here proposed for  histogram data.
-#'  These kind of data have been defined in the context of symbolic data analysis.
-#'   The BSOM cost function is then based on a distance
-#'   function: the L2 Wasserstein distance. This distance has been widely proposed in several
-#'    techniques of analysis (clustering, regression) when input data are expressed by distributions
-#'    (empirical by histograms or theoretical by probability distributions).
-#'    The peculiarity of such distance is to be an Euclidean distance between quantile functions so
-#'    that all the properties proved for L2 distances are verified again. An adaptative versions of
-#'    BSOM is also introduced considering an automatic system of weights in the cost function in
-#'    order to take into account the different effect of the several variables in the Self-Organised Map
-#'    grid.
+#' Batch Kohonen self-organising maps of histogram data
 #'
+#' Batch Kohonen self-organising 2d map of the individuals of a \code{MatH}
+#' object, based on the L2 Wasserstein distance.
+#'
+#' @inheritParams WH_2d_Adaptive_Kohonen_maps
+#' @param TMAX,Tmin The initial and final values of the neighbourhood radius
+#' (defaults 2 and 0.2).
+#'
+#' @return A list with:
+#' \item{solution}{The best solution among the repetitions: a list with
+#' \code{MAP} (the grid of the map), \code{IDX} (the neuron of each individual),
+#' \code{cardinality} (the number of individuals for each neuron), \code{proto}
+#' (a \code{MatH} object with the prototypes of the neurons), \code{Crit} (the
+#' criterion), \code{weights.comp} (the weights of the components of the
+#' variables) and \code{Weight.sys} (the system of weights).}
+#' \item{quality}{The proportion of the total sum of squares explained by the
+#' map (the higher the better).}
+#' and further details on the parameters of the algorithm.
+#' The final map is plotted on the current graphic device.
+#' @references Irpino A., Verde R., De Carvalho F.A.T. (2012). Batch self
+#' organizing maps for interval and histogram data. In: Proceedings of COMPSTAT
+#' 2012, ISI/IASC, 143-154.
+#' @details Batch Self-Organising Maps (BSOM) for histogram data, with a cost
+#' function based on the L2 Wasserstein distance, i.e. the Euclidean distance
+#' between quantile functions. The adaptive version introduces an automatic
+#' system of weights in the cost function, to take into account the different
+#' effect of the variables on the map.
+#'
+#' @seealso \code{\link{WH_2d_Adaptive_Kohonen_maps}}
 #' @importFrom class somgrid
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' results <- WH_2d_Kohonen_maps(
 #'   x = BLOOD,
 #'   net = list(xdim = 2, ydim = 3, topo = c("rectangular")),

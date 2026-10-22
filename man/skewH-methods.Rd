@@ -3,29 +3,24 @@
 \name{skewH}
 \alias{skewH}
 \alias{skewH,distributionH-method}
-\title{Method \code{skewH}: computes the skewness of a distribution}
+\title{Skewness of a histogram}
 \usage{
 skewH(object)
-
-\S4method{skewH}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A value for the skewness index
+A number, the skewness index.
 }
 \description{
-Skewness of a histogram (using the third standardized moment)
+Computes the skewness (third standardised moment) of a \code{distributionH}
+object.
 }
 \examples{
-
-## ---- A mydist distribution ----
 mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-## ---- Compute the skewness of mydist ----
-skewH(mydist) #---> -1.186017
+skewH(mydist) # 0.7148855
 }
-\author{
-Antonio Irpino
+\seealso{
+\code{\link{meanH}}, \code{\link{stdH}}, \code{\link{kurtH}}
 }
-\keyword{distribution}

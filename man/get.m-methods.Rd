@@ -3,22 +3,24 @@
 \name{get.m}
 \alias{get.m}
 \alias{get.m,distributionH-method}
-\title{Method \code{get.m}: the mean of a distribution}
+\title{Mean of a histogram (stored value)}
 \usage{
 get.m(object)
-
-\S4method{get.m}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A numeric value
+A number, the mean of the distribution.
 }
 \description{
-This functon return the mean of a \code{distributionH} object.
+Returns the mean stored in the \code{m} slot of a \code{distributionH} object.
+To compute it from the distribution use \code{\link{meanH}}.
 }
 \examples{
 D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-get.m(D) # returns the mean of D
+get.m(D)
+}
+\seealso{
+\code{\link{meanH}}, \code{\link{get.s}}
 }

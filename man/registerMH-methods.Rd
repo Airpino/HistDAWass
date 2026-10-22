@@ -2,72 +2,41 @@
 % Please edit documentation in R/Met_MatH.R
 \name{registerMH}
 \alias{registerMH}
+\alias{is.registeredMH}
+\alias{is.registeredMH,MatH-method}
 \alias{registerMH,MatH-method}
-\title{Method registerMH}
+\title{Register the histograms of a matrix on a common cdf}
 \usage{
-registerMH(object)
+is.registeredMH(object)
 
-\S4method{registerMH}{MatH}(object)
+registerMH(object)
 }
 \arguments{
-\item{object}{A \code{MatH} object (a matrix of distributions)}
+\item{object}{A \code{MatH} object.}
 }
 \value{
-A \code{MatH} object, a matrix of distributions sharing the same
-\code{p} slot (i.e. the same cdf).
+\code{registerMH} returns a \code{MatH} object whose histograms share
+the same cdf; \code{is.registeredMH} returns \code{TRUE} or \code{FALSE}.
 }
 \description{
-\code{registerMH} method registers a set of distributions of a \code{MatH} object
-All the
-distribution are recomputed to obtain distributions sharing the same
-\code{p} slot. This methods is useful for using fast computation of all
-methods based on L2 Wasserstein metric. The distributions will have the same
-number of element in the \code{x} slot without modifing their density
-function.
+\code{registerMH} recomputes all the histograms of a \code{MatH} object so that
+they share the same cdf values (the same \code{p} slot), without changing the
+distributions. This allows a fast computation of all the methods based on the
+L2 Wasserstein metric. \code{is.registeredMH} checks whether the histograms
+already share the same cdf.
 }
 \examples{
-# initialize three distributionH objects mydist1 and mydist2
-mydist1 <- new("distributionH", c(1, 2, 3), c(0, 0.4, 1))
-mydist2 <- new("distributionH", c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
-mydist3 <- new("distributionH", c(9, 11, 20), c(0, 0.8, 1))
-# create a MatH object
-
-MyMAT <- new("MatH", nrows = 1, ncols = 3, ListOfDist = c(mydist1, mydist2, mydist3), 1, 3)
-# register the two distributions
+mydist1 <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
+mydist2 <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
+mydist3 <- distributionH(c(9, 11, 20), c(0, 0.8, 1))
+MyMAT <- MatH(x = list(mydist1, mydist2, mydist3), nrows = 1, ncols = 3)
+is.registeredMH(MyMAT) # FALSE
 MATregistered <- registerMH(MyMAT)
-#
-# OUTPUT the structure of MATregstered
-str(MATregistered)
-#   Formal class 'MatH' [package "HistDAWass"] with 1 slots
-#   .. @ M:List of 3
-#   .. ..$ :Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#   .. .. .. ..@ x: num [1:6] 1 1.5 2 2.5 2.67 ...
-#   .. .. .. ..@ p: num [1:6] 0 0.2 0.4 0.7 0.8 1
-#   ...
-#   .. ..$ :Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#   .. .. .. ..@ x: num [1:6] 7 8 8.8 10 11.7 ...
-#   .. .. .. ..@ p: num [1:6] 0 0.2 0.4 0.7 0.8 1
-#   ...
-#   .. ..$ :Formal class 'distributionH' [package "HistDAWass"] with 4 slots
-#   .. .. .. ..@ x: num [1:6] 9 9.5 10 10.8 11 ...
-#   .. .. .. ..@ p: num [1:6] 0 0.2 0.4 0.7 0.8 1
-#   ...
-#   .. ..- attr(*, "dim")= int [1:2] 1 3
-#   .. ..- attr(*, "dimnames")=List of 2
-#   .. .. ..$ : chr "I1"
-#   .. .. ..$ : chr [1:3] "X1" "X2" "X3"
-#
+is.registeredMH(MATregistered) # TRUE
+MATregistered@M[[1, 1]]@p
 }
 \references{
 Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
 clustering of histograms using Wasserstein metric} In: Rizzi, A., Vichi, M.
-(eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.\cr Irpino, A.,Verde,
-R. (2006): \emph{A new Wasserstein based distance for the hierarchical
-clustering of histogram symbolic data} In: Batanjeli, V., Bock, H.H.,
-Ferligoj, A., Ziberna, A. (eds.) Data Science and Classification, IFCS 2006.
-Springer, Berlin, 185-192.
+(eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.
 }
-\author{
-Antonio Irpino
-}
-\keyword{distribution}

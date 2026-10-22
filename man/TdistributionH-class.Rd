@@ -3,37 +3,41 @@
 \docType{class}
 \name{TdistributionH-class}
 \alias{TdistributionH-class}
-\alias{TdistributionH}
 \alias{initialize,TdistributionH-method}
-\title{Class TdistributionH}
-\usage{
-\S4method{initialize}{TdistributionH}(
-  .Object,
-  tstamp = numeric(0),
-  period = list(start = -Inf, end = -Inf),
-  x = numeric(0),
-  p = numeric(0),
-  m = numeric(0),
-  s = numeric(0)
-)
-}
-\arguments{
-\item{.Object}{the type of object ("TdistributionH") a \code{"distributionH"} object with a time reference}
-
-\item{tstamp}{a numeric value related to  a timestamp}
-
-\item{period}{a list of two values, the starting time and the ending time (alternative to tstamp if the
-distribution is observed along a period and not on a timestamp)}
-
-\item{x}{a vector of increasing values, the domain of the distribution (the same of \code{distributionH} object)}
-
-\item{p}{a vector of increasing values from 0 to 1,
-the CDF of the distribution (the same of \code{distributionH} object)}
-
-\item{m}{a number, the mean of the distribution (the same of \code{distributionH} object)}
-
-\item{s}{a positive number, the standard deviation of the distribution (the same of \code{distributionH} object)}
-}
+\title{Histograms with a time reference: the TdistributionH class}
 \description{
-Class \code{TdistributionH} defines a histogram with a time (point or period)
+The \code{TdistributionH} class extends \code{distributionH} with a time
+reference: a timestamp or a time period. It is the element of a histogram time
+series (\code{\link{HTS-class}}).
+}
+\section{Slots}{
+
+\describe{
+\item{\code{tstamp}}{A number, the timestamp.}
+
+\item{\code{period}}{A list with two elements, \code{start} and \code{end}, the bounds
+of the time period (alternative to \code{tstamp}).}
+
+\item{\code{x}}{The bounds of the bins (see \code{\link{distributionH-class}}).}
+
+\item{\code{p}}{The cdf at \code{x}.}
+
+\item{\code{m}}{The mean.}
+
+\item{\code{s}}{The standard deviation.}
+}}
+
+\section{Creating objects}{
+
+Objects are created with
+\code{new("TdistributionH", tstamp, period, x, p, m, s)}, where \code{x},
+\code{p}, \code{m} and \code{s} are as in \code{\link{distributionH}}.
+}
+
+\examples{
+td <- new("TdistributionH", tstamp = 1, x = c(1, 2, 3), p = c(0, 0.4, 1))
+td@tstamp
+}
+\seealso{
+\code{\link{HTS-class}}, \code{\link{plot,TdistributionH-method}}
 }

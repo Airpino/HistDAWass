@@ -2,36 +2,30 @@
 % Please edit documentation in R/H_time_series.R
 \name{HTS.moving.averages}
 \alias{HTS.moving.averages}
-\title{Smoothing with moving averages of a histogram time series}
+\title{Moving averages of a histogram time series}
 \usage{
 HTS.moving.averages(HTS, k = 3, weights = rep(1, k))
 }
 \arguments{
-\item{HTS}{A \code{HTS} object (a histogram time series).}
+\item{HTS}{A \code{HTS} object.}
 
-\item{k}{an integer value, the number of elements for moving averages}
+\item{k}{An odd integer, the number of elements of each average (default 3).}
 
-\item{weights}{a vector of positive weights for a weighted moving average}
+\item{weights}{A vector of \code{k} non-negative weights (default: equal
+weights).}
 }
 \value{
-a list with the results of the smoothing procedure.
+A list with \code{k}, the (normalised) \code{weights} and
+\code{AveragedHTS}, the smoothed \code{HTS} object.
 }
 \description{
-(Beta verson of) Extends the moving average smoothing of a time
-series to a histogram time series, using L2 Wasserstein distance.
+(Beta version) Smoothing of a histogram time series by (weighted) moving
+averages, based on the L2 Wasserstein distance.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{k}}{the number of elements for the average}
-
-\item{\code{weights}}{the vector of weights for smoothing}
-
-\item{\code{AveragedHTS}}{The smoothed HTS}
-}}
-
 \examples{
 mov.av.smoothed <- HTS.moving.averages(HTS = RetHTS, k = 5)
-# a show method for HTS must be implemented you can see it using
-# str(mov.av.smoothed$AveragedHTS)
+mov.av.smoothed$AveragedHTS
+}
+\seealso{
+\code{\link{HTS.exponential.smoothing}}
 }

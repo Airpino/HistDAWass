@@ -2,32 +2,27 @@
 % Please edit documentation in R/H_time_series.R
 \name{HTS.exponential.smoothing}
 \alias{HTS.exponential.smoothing}
-\title{Smoothing with exponential smoothing of a histogram time series}
+\title{Exponential smoothing of a histogram time series}
 \usage{
 HTS.exponential.smoothing(HTS, alpha = 0.9)
 }
 \arguments{
-\item{HTS}{A \code{HTS} object (a histogram time series).}
+\item{HTS}{A \code{HTS} object.}
 
-\item{alpha}{a number between 0 and 1 for exponential smoothing}
+\item{alpha}{A number between 0 and 1, the smoothing parameter (default 0.9).}
 }
 \value{
-a list with the results of the smoothing procedure.
+A list with \code{smoothing.alpha}, the smoothing parameter, and
+\code{SmoothedHTS}, the smoothed \code{HTS} object.
 }
 \description{
-(Beta verson of) Extends theexponential smoothing of a time
-series to a histogram time series,using L2 Wasserstein distance.
+(Beta version) Exponential smoothing of a histogram time series, based on the
+L2 Wasserstein distance.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{smoothing.alpha}}{the alpha parameter}
-
-\item{\code{AveragedHTS}}{The smoothed HTS}
-}}
-
 \examples{
 mov.expo.smooth <- HTS.exponential.smoothing(HTS = RetHTS, alpha = 0.8)
-# a show method for HTS must be implemented you can see it using
-# str(mov.expo.smooth$AveragedHTS)
+mov.expo.smooth$SmoothedHTS
+}
+\seealso{
+\code{\link{HTS.moving.averages}}
 }

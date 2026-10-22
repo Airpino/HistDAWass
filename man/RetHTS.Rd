@@ -3,13 +3,15 @@
 \docType{data}
 \name{RetHTS}
 \alias{RetHTS}
-\title{A histogram-valued dataset of returns}
+\title{Histogram time series of returns}
 \format{
-a \code{MatH} object, a matrix of distributions.
+A \code{\link{HTS-class}} object with 108 histograms.
 }
 \description{
-A histogram-valued dataset of returns of dollar vs yen change rates
+Daily histograms of the returns of the US dollar / Japanese yen exchange rate.
 }
-\author{
-Antonio Irpino, 2014-10-05
+\examples{
+summaryHTS(subsetHTS(RetHTS, from = 1, to = 5))
+plot(subsetHTS(RetHTS, from = 1, to = 20))
 }
+\keyword{datasets}

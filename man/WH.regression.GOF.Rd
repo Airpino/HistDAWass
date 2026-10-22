@@ -2,32 +2,37 @@
 % Please edit documentation in R/regression.R
 \name{WH.regression.GOF}
 \alias{WH.regression.GOF}
-\title{Goodness of Fit indices for Multiple regression of histogram variables based on a two component model and L2 Wasserstein distance}
+\title{Goodness of fit of a two-component regression of histogram variables}
 \usage{
 WH.regression.GOF(observed, predicted)
 }
 \arguments{
-\item{observed}{A one column MatH object, the observed histogram variable}
+\item{observed}{A \code{MatH} object with one column, the observed histograms.}
 
-\item{predicted}{A one column MatH object, the predicted histogram variable.}
+\item{predicted}{A \code{MatH} object with one column, the predicted
+histograms.}
 }
 \value{
-a list with the GOF indices
+A list with the root mean squared error based on the L2 Wasserstein
+distance (\code{RMSE_W}), the \code{OMEGA} index and the pseudo-R2 index
+(\code{PSEUDOR2}, with the details of the decomposition of the sum of
+squares).
 }
 \description{
-It computes three goodness of fit indices using the results and the predictions of a regression done with \code{WH.regression.two.components} function.
+Computes goodness of fit indices of the predictions of a
+\code{\link{WH.regression.two.components}} model.
 }
 \examples{
-# do regression
 model.parameters <- WH.regression.two.components(data = BLOOD, Yvar = 1, Xvars = c(2:3))
-#' # do prediction
-Predicted.BLOOD <- WH.regression.two.components.predict(data = BLOOD[, 2:3], 
-                                              parameters = model.parameters)
-# compute GOF indices
-GOF.indices <- WH.regression.GOF(observed = BLOOD[, 1], predicted = Predicted.BLOOD)
+Predicted.BLOOD <- WH.regression.two.components.predict(
+  data = BLOOD[, 2:3],
+  parameters = model.parameters
+)
+WH.regression.GOF(observed = BLOOD[, 1], predicted = Predicted.BLOOD)
 }
 \references{
-Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach
-based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
-An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{https://arxiv.org/abs/1202.1436v2}
+Irpino, A., Verde, R. (2015). Linear regression for numeric
+symbolic variables: a least squares approach based on Wasserstein Distance.
+Advances in Data Analysis and Classification, 9, 81-106.
+\doi{10.1007/s11634-015-0197-7}
 }

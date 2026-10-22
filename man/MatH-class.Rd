@@ -3,20 +3,10 @@
 \docType{class}
 \name{MatH-class}
 \alias{MatH-class}
-\alias{MatH}
 \alias{initialize,MatH-method}
-\title{Class MatH.}
+\alias{MatH}
+\title{Matrices of histograms: the MatH class}
 \usage{
-\S4method{initialize}{MatH}(
-  .Object,
-  nrows = 1,
-  ncols = 1,
-  ListOfDist = NULL,
-  names.rows = NULL,
-  names.cols = NULL,
-  by.row = FALSE
-)
-
 MatH(
   x = NULL,
   nrows = 1,
@@ -27,43 +17,43 @@ MatH(
 )
 }
 \arguments{
-\item{.Object}{the object type "MatH"}
+\item{nrows, ncols}{Integers, the number of rows (individuals) and of columns
+(variables). Default 1.}
 
-\item{nrows}{(optional, default=1)an integer, the number of rows.}
+\item{by.row}{A logical value (default \code{FALSE}): if \code{TRUE} the matrix
+is filled by rows, otherwise by columns.}
 
-\item{ncols}{(optional, default=1) an integer, the number of columns (aka
-variables).}
+\item{x}{A list of \code{distributionH} objects (default \code{NULL}, an empty
+matrix).}
 
-\item{ListOfDist}{a vector or a list of \code{distributionH} objects}
-
-\item{names.rows}{a vector or list of strings with thenames of the rows}
-
-\item{names.cols}{a vector or list of strings with thenames of the columns (variables)}
-
-\item{by.row}{(optional, default=FALSE) a logical value, TRUE the matrix is
-row wise filled, FALSE the matrix is filled column wise.}
-
-\item{x}{(optional, default= an empty \code{distributionH} object) a list of
-\code{distributionH} objects}
-
-\item{rownames}{(optional, default=NULL) a list of strings containing the
-names of the rows.}
-
-\item{varnames}{(optional, default=NULL) a list of strings containing the
-names of the columns (aka variables).}
+\item{rownames, varnames}{Character vectors (or lists of strings), the names
+of the rows and of the columns (variables). Default \code{NULL}.}
 }
 \value{
-A \code{matH} object
+\code{MatH()} returns a \code{MatH} object.
 }
 \description{
-Class \code{MatH} defines a matrix of \code{distributionH} objects
-
-This function create a matrix of histogram data, i.e. a \code{MatH}
-object
+The \code{MatH} class describes a matrix of histograms: each cell contains a
+\code{distributionH} object, rows are the individuals and columns the
+(histogram-valued) variables.
 }
-\examples{
+\section{Slots}{
 
-## ---- create a list of six distributionH objects
+\describe{
+\item{\code{M}}{A matrix of mode list, each cell containing a \code{distributionH}
+object.}
+}}
+
+\section{Creating objects}{
+
+Objects are created with \code{MatH()} or with
+\code{new("MatH", nrows, ncols, ListOfDist, names.rows, names.cols, by.row)},
+where \code{ListOfDist} is a list of \code{distributionH} objects and
+\code{names.rows}, \code{names.cols} are the names of rows and columns.
+}
+
+\examples{
+## a list of six distributionH objects
 ListOfDist <- vector("list", 6)
 ListOfDist[[1]] <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
 ListOfDist[[2]] <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
@@ -71,25 +61,22 @@ ListOfDist[[3]] <- distributionH(c(9, 11, 20), c(0, 0.5, 1))
 ListOfDist[[4]] <- distributionH(c(2, 5, 8), c(0, 0.3, 1))
 ListOfDist[[5]] <- distributionH(c(8, 10, 15), c(0, 0.75, 1))
 ListOfDist[[6]] <- distributionH(c(20, 22, 24), c(0, 0.12, 1))
-
-## create a MatH object filling it by columns
-MyMAT <- new("MatH",
-  nrows = 3, ncols = 2, ListOfDist = ListOfDist,
-  names.rows = c("I1", "I2", "I3"), names.cols = c("Var1", "Var2"), by.row = FALSE
+## a 3 x 2 MatH filled by columns
+MyMAT <- MatH(
+  x = ListOfDist, nrows = 3, ncols = 2,
+  rownames = c("I1", "I2", "I3"), varnames = c("Var1", "Var2")
 )
-
-showClass("MatH")
-
-# bulding an empty 10 by 4 matrix of histograms
+MyMAT
+## an empty 10 x 4 matrix of histograms
 MAT <- MatH(nrows = 10, ncols = 4)
 }
 \references{
-Irpino, A., Verde, R. (2015) \emph{Basic
-statistics for distributional symbolic variables: a new metric-based
-approach} Advances in Data Analysis and Classification, DOI
-10.1007/s11634-014-0176-4
+Irpino, A., Verde, R. (2015) \emph{Basic statistics for
+distributional symbolic variables: a new metric-based approach}, Advances in
+Data Analysis and Classification, 9(2), 143-175.
+\doi{10.1007/s11634-014-0176-4}
 }
-\author{
-Antonio Irpino
+\seealso{
+\code{\link{get.MatH.main.info}}, \code{\link{plot,MatH-method}},
+\code{\link{WH.vec.mean}}, \code{\link{WH.var.covar}}.
 }
-\keyword{classes}

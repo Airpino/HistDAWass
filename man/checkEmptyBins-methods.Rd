@@ -3,32 +3,31 @@
 \name{checkEmptyBins}
 \alias{checkEmptyBins}
 \alias{checkEmptyBins,distributionH-method}
-\title{Method \code{checkEmptyBins}}
+\alias{checkEmptyBins,MatH-method}
+\title{Fix the empty bins of histograms}
 \usage{
 checkEmptyBins(object)
-
-\S4method{checkEmptyBins}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object}
+\item{object}{A \code{distributionH} or a \code{MatH} object.}
 }
 \value{
-A \code{distributionH} object without empty bins
+An object of the same class of \code{object}, without empty bins.
 }
 \description{
-The method checking for empty bins in a distribution, i.e. if two cdf consecutive
-values are equal. In that case a probability value of \code{1e-7} is
-assigned to the empty bin and the cdf is recomputed. This methods is useful
-for numerical reasons.
+Checks for empty bins, i.e. bins with zero weight (two consecutive equal values
+of the cdf). Each empty bin gets a weight of \code{1e-8} and the cdf is
+renormalised. Since version 1.0.9 empty bins are fixed when a
+\code{distributionH} object is created (see \code{\link{distributionH}}), so
+this method is useful for objects created with previous versions of the
+package or modified by assigning their slots directly. The \code{MatH} method
+applies the check to all the cells of the matrix.
 }
 \examples{
-
-## ---- A mydist distribution with an empty bin i.e. two consecutive values of p are equal----
-mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.5, 0.5, 1))
-## ---- Checks for empty byns and returns the newdist object without empty bins ----
-newdist <- checkEmptyBins(mydist)
+## an empty bin in an object modified by slot assignment
+mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.5, 0.6, 1))
+mydist@p <- c(0, 0.5, 0.5, 1)
+diff(checkEmptyBins(mydist)@p)
+## all the distributions of a MatH
+newMat <- checkEmptyBins(China_Seas[1:5, 1:3])
 }
-\author{
-Antonio Irpino
-}
-\keyword{distribution}

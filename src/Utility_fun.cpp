@@ -5,13 +5,92 @@ using namespace Rcpp;
 using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
+
+// weight assigned to empty (zero-weight) bins, the same used in R
+// (see .EMPTY_BIN_W in R/Utility.R)
+static const double EMPTY_BIN_W = 1e-8;
+// detection threshold: lower than EMPTY_BIN_W so that an already fixed bin
+// (whose weight after the renormalisation is slightly lower than
+// EMPTY_BIN_W) is not fixed again
+static const double EMPTY_BIN_TOL = 0.5e-8;
+
+// ------------------------------------------------------------------------
+// Allocation-free kernels for the squared L2 Wasserstein distance between
+// two quantile functions a and b sharing the same cdf p (n points).
+// They reproduce exactly (same operations, same order) the computations of
+// the sugar expressions used up to 1.0.8, so that results are unchanged,
+// but avoid the allocation of temporary vectors and S4 slot accesses
+// inside the inner loops (since 1.0.9).
+// ------------------------------------------------------------------------
+// form used in c_MM_L2_SQ_WASS_D
+static inline double wass_sq_A(const double* a, const double* b,
+                               const double* p, int n){
+  double dist=0;
+  for (int i=0;i<(n-1);i++){
+    double c1=(a[i]+a[i+1])/2.0;
+    double c2=(b[i]+b[i+1])/2.0;
+    double r1=(a[i+1]-a[i])/2.0;
+    double r2=(b[i+1]-b[i])/2.0;
+    double w=p[i+1]-p[i];
+    dist+=(std::pow((c1-c2),2)+1/3.0*std::pow((r1-r2),2))*w;
+  }
+  return dist;
+}
+// form used in c_ComputeFast_L2_SQ_WASS_DMAT(_simple)
+// cm and rm are centers and radii of the prototype, w the weights
+static inline double wass_sq_B(const double* domi, const double* cm,
+                               const double* rm, const double* w, int n,
+                               double* mi){
+  double tmpd=0;
+  double m=0;
+  for (int i=0;i<(n-1);i++){
+    double ci=(domi[i]+domi[i+1])*0.5;
+    double ri=(domi[i+1]-domi[i])*0.5;
+    m+=ci*w[i];
+    tmpd+=w[i]*((cm[i]-ci)*(cm[i]-ci)+(rm[i]-ri)*(rm[i]-ri)*1/3.0);
+  }
+  if (mi) *mi=m;
+  return tmpd;
+}
+
+// Fix the empty bins of a cdf (the same rule of .fix_empty_bins_p in R):
+// bins with weight lower than EMPTY_BIN_TOL get a weight EMPTY_BIN_W and the
+// cdf is renormalised. Returns p itself if nothing has to be changed,
+// otherwise a new vector.
+static NumericVector fix_empty_bins(NumericVector p){
+  int n=p.size();
+  if (n<2) return p;
+  bool doit=false;
+  for (int i=0;i<(n-1);i++){
+    if ((p[i+1]-p[i])<EMPTY_BIN_TOL){ doit=true; break; }
+  }
+  if (!doit) return p;
+  NumericVector w(n-1);
+  double tot=0;
+  for (int i=0;i<(n-1);i++){
+    w[i]=p[i+1]-p[i];
+    if (w[i]<EMPTY_BIN_TOL) w[i]=EMPTY_BIN_W;
+    tot+=w[i];
+  }
+  NumericVector res(n);
+  res[0]=0;
+  double cum=0;
+  for (int i=0;i<(n-1);i++){
+    cum+=w[i];
+    res[i+1]=cum/tot;
+  }
+  res[n-1]=1;
+  return res;
+}
+
 // [[Rcpp::export]]
 int whichLowerEQThanX(NumericVector x, double y) {
   // Rcpp supports STL-style iterators
   int elem=0;
   int i=0;
   int stop=0;
-  while ((i<=x.size())&&(stop==0)){
+  // i < x.size(): up to 1.0.8 the loop could read one element past the end
+  while ((i<x.size())&&(stop==0)){
     if (x[i]>y){
       stop=1; 
       elem=i;
@@ -82,8 +161,6 @@ List REGISTER2(S4 a, S4 b) {
   S4 y;
   x=clone(a);
   y=clone(b);
-  int DIG=14;
-  int i;
   NumericVector p1=x.slot("p");
   NumericVector p2=y.slot("p");
   
@@ -101,40 +178,9 @@ List REGISTER2(S4 a, S4 b) {
   // Rcout<<"doit "<<doit<<"\n";
       // Rcout<<"doit "<<doit<<"\n";
   if (doit>0){
-  ///////////////////////////////////////////////////////////
-  // check if there are empty bins in x
-  tmp_p=x.slot("p");
-  tmp_p=diff(tmp_p);
-  
-  if (min(tmp_p)<powf(0.1,DIG)){
-    // Rcout<<"\n  zero weighted bin!! \n";
-    tmp_p[tmp_p<powf(0.1,DIG)]=powf(0.1,DIG);
-    tmp_p=tmp_p/(sum(as<NumericVector>(tmp_p)));
-    NumericVector tt=cumsum(tmp_p);
-    NumericVector tmp_p2(tt.size()+1);
-    tmp_p2[0]=0;
-    for (i=1;i<(tmp_p2.size()-1);i++)
-      tmp_p2[i]=tt[i-1];
-    tmp_p2[tmp_p2.size()-1]=1;
-    x.slot("p")=tmp_p2;
-  }
-  //////////////////////////////////////////////////////////
-  // check if there are empty bins in y
-  tmp_p=y.slot("p");
-  tmp_p=diff(tmp_p);
-  
-  if (min(tmp_p)<powf(0.1,DIG)){
-    //Rcout<<"\n  zero weighted bin!! \n";
-    tmp_p[tmp_p<powf(0.1,DIG)]=powf(0.1,DIG);
-    tmp_p=tmp_p/(sum(as<NumericVector>(tmp_p)));
-    NumericVector tt=cumsum(tmp_p);
-    NumericVector tmp_p2(tt.size()+1);
-    tmp_p2[0]=0;
-    for (i=1;i<(tmp_p2.size()-1);i++)
-      tmp_p2[i]=tt[i-1];
-    tmp_p2[tmp_p2.size()-1]=1;
-    y.slot("p")=tmp_p2;
-  }
+  // check if there are empty bins in x and y
+  x.slot("p")=fix_empty_bins(x.slot("p"));
+  y.slot("p")=fix_empty_bins(y.slot("p"));
   
   ///////////////////////////////////////////////////////
   //create the commoncdf
@@ -189,9 +235,13 @@ List PREPARE_A_VEC_MAT(S4 MAT){
   std::vector<double> tmp1;
   
   
+  // the cdfs, without empty bins (repeated values of p would misalign the
+  // quantiles in the common grid, as happened up to 1.0.8)
+  std::vector<NumericVector> cdfs(b.size());
   for (i=0;i<b.size();i++){
     S4 o=b[i];
-    NumericVector t=o.slot("p");
+    NumericVector t=fix_empty_bins(o.slot("p"));
+    cdfs[i]=t;
     std::vector<double> tmp2=as<std::vector<double> >(t);
     tmp1.insert(tmp1.end(),tmp2.begin(),tmp2.end());
   }
@@ -204,7 +254,7 @@ List PREPARE_A_VEC_MAT(S4 MAT){
   for (i=0;i<b.size();i++){
     S4 o=b[i];
     NumericVector x=o.slot("x");
-    NumericVector t2=o.slot("p");
+    NumericVector t2=cdfs[i];
     NumericVector xf(clone(x));
     NumericVector t2f(clone(t2));  
     //std::vector<double> tmp2=as<std::vector<double> >(t);
@@ -384,22 +434,10 @@ NumericVector M_STD_H(S4 o){ //compute mean and std of a distrbution
 }
 // [[Rcpp::export]]
 double c_MM_L2_SQ_WASS_D(NumericMatrix MM){
-  //int rows=MM.rows();
-  double dist=0;
-  NumericVector c1,r1,c2,r2,p;
-  r1=diff(MM(_,0))/2.0;
-  r2=diff(MM(_,1))/2.0;
-  p=diff(MM(_,2));
-  NumericVector tmp1=MM(_,0);
-  c1=(tmp1[Range(0,(tmp1.size()-2))]+tmp1[Range(1,(tmp1.size()-1))])/2.0;
-  NumericVector tmp2=MM(_,1);
-  c2=(tmp2[Range(0,(tmp2.size()-2))]+tmp2[Range(1,(tmp2.size()-1))])/2.0;
-  // NumericVector tmp3;
-  // tmp3=(pow((c1-c2),2)+1/3.0*pow((r1-r2),2))*p;
-  
-  dist=sum((pow((c1-c2),2)+1/3.0*pow((r1-r2),2))*p);
-  
-  return dist;
+  // MM: col 0 and 1 quantiles of the two distributions, col 2 the cdf
+  int n=MM.nrow();
+  const double* base=MM.begin();
+  return wass_sq_A(base, base+n, base+2*n, n);
 }
 // [[Rcpp::export]]
 List c_DISTA_M(List MM, S4 Protos){// computes distances wrt prototypes
@@ -413,19 +451,21 @@ List c_DISTA_M(List MM, S4 Protos){// computes distances wrt prototypes
   NumericMatrix resu((GG.ncol()-1),npro);
   for(v=0;v<vars;v++){
     NumericMatrix M=MM[v];
-    NumericMatrix TMP(M.nrow(),3);
+    int nr=M.nrow();
+    const double* pM=M.begin();
+    const double* cdf=pM+(M.ncol()-1)*nr;
+    // the quantiles of the prototypes are extracted once
+    std::vector<NumericVector> protx(npro);
+    for(pr=0;pr<npro;pr++){
+      S4 prok=prot_dis(pr,v);
+      protx[pr]=as<NumericVector>(prok.slot("x"));
+    }
     for(ind=0;ind<(M.ncol()-1);ind++){
       for(pr=0;pr<npro;pr++){
-        S4 prok=prot_dis(pr,v);
-        TMP(_,0)=M(_,ind);
-        TMP(_,1)=as<NumericVector>(prok.slot("x"));
-        TMP(_,2)=M(_,(M.ncol()-1));
-        dist=c_MM_L2_SQ_WASS_D(TMP);
+        dist=wass_sq_A(pM+ind*nr, protx[pr].begin(), cdf, nr);
         resu(ind,pr)=resu(ind,pr)+dist;
-               
       }
     }
-    
   }
   //
   NumericVector wm(GG.ncol()-1);
@@ -444,24 +484,25 @@ NumericMatrix c_DISTA_M2(List MM, S4 Protos){// computes distances wrt prototype
   int v,pr,ind;
   double dist;
   
-  NumericMatrix GG=MM[1];
+  NumericMatrix GG=MM[0]; // was MM[1] up to 1.0.8: out of bounds with one variable
   NumericMatrix resu((GG.ncol()-1),npro);
   for(v=0;v<vars;v++){
     NumericMatrix M=MM[v];
-    NumericMatrix TMP(M.nrow(),3);
+    int nr=M.nrow();
+    const double* pM=M.begin();
+    const double* cdf=pM+(M.ncol()-1)*nr;
+    // the quantiles of the prototypes are extracted once
+    std::vector<NumericVector> protx(npro);
+    for(pr=0;pr<npro;pr++){
+      S4 prok=prot_dis(pr,v);
+      protx[pr]=as<NumericVector>(prok.slot("x"));
+    }
     for(ind=0;ind<(M.ncol()-1);ind++){
       for(pr=0;pr<npro;pr++){
-        S4 prok=prot_dis(pr,v);
-        TMP(_,0)=M(_,ind);
-        TMP(_,1)=as<NumericVector>(prok.slot("x"));
-        TMP(_,2)=M(_,(M.ncol()-1));
-        
-        dist=c_MM_L2_SQ_WASS_D(TMP);
+        dist=wass_sq_A(pM+ind*nr, protx[pr].begin(), cdf, nr);
         resu(ind,pr)=resu(ind,pr)+dist;
-        //       
       }
     }
-    
   }
   //
   return resu;
@@ -526,14 +567,13 @@ NumericMatrix c_Fast_D_Mat(List MM){
   NumericMatrix D(Nind,Nind);
   for(v=0;v<vars;v++){
     NumericMatrix M=MM[v];
-    NumericMatrix TMP(M.nrow(),3);
+    int nr=M.nrow();
+    const double* pM=M.begin();
+    const double* cdf=pM+(M.ncol()-1)*nr;
     for(ind=0;ind<(M.ncol()-2);ind++){
       for(ind2=(ind+1);ind2<(M.ncol()-1);ind2++){
-        TMP(_,0)=M(_,ind);
-        TMP(_,1)=M(_,ind2);
-        TMP(_,2)=M(_,(M.ncol()-1));
-        D(ind,ind2)=D(ind,ind2)+c_MM_L2_SQ_WASS_D(TMP);
-        D(ind2,ind)=D(ind,ind2);       
+        D(ind,ind2)=D(ind,ind2)+wass_sq_A(pM+ind*nr, pM+ind2*nr, cdf, nr);
+        D(ind2,ind)=D(ind,ind2);
       }
     }
   }
@@ -878,26 +918,26 @@ List c_STEP_2_ADA_KMEANS(List MM,S4 proto, int schema, NumericMatrix memb){
     for(var=0;var<vars;var++){
       NumericMatrix M=MM[var];
       S4 prokv=proto_dis(clu,var);
+      // prototype quantiles and mean are extracted once
+      NumericVector protx=as<NumericVector>(prokv.slot("x"));
+      double protm=as<double>(prokv.slot("m"));
+      int nr=M.nrow();
+      const double* pM=M.begin();
+      const double* cdf=pM+(M.ncol()-1)*nr;
       for(ind=0;ind<inds;ind++){
-        NumericMatrix TMP(M.nrow(),3);
-        TMP(_,0)=M(_,ind);
-        TMP(_,1)=as<NumericVector>(prokv.slot("x"));
-        TMP(_,2)=M(_,(M.ncol()-1));
+        const double* qi=pM+ind*nr;
         double tmpD;
-        tmpD=c_MM_L2_SQ_WASS_D(TMP);
+        tmpD=wass_sq_A(qi, protx.begin(), cdf, nr);
         if ((schema==1)||(schema==3)){
           D1(var,clu)=D1(var,clu)+(tmpD*memb(ind,clu));
           D_Im(ind,var)=tmpD;
         }
         if ((schema==2)||(schema==4)||(schema==5)||(schema==6)){
-          NumericVector c;
-          NumericVector tmp=TMP(_,0);
-          NumericVector p;
-          double m1,dv,dm;
-          p=diff(TMP(_,2));
-          c=(tmp[Range(0,(tmp.size()-2))]+tmp[Range(1,(tmp.size()-1))])/2.0;
-          m1=sum(p*c);
-          dm=pow((m1-as<double>(prokv.slot("m"))),2);
+          double m1=0,dv,dm;
+          for (int q=0;q<(nr-1);q++){
+            m1+=(cdf[q+1]-cdf[q])*((qi[q]+qi[q+1])/2.0);
+          }
+          dm=pow((m1-protm),2);
           dv=tmpD-dm;
           D1(var,clu)=D1(var,clu)+(dm*memb(ind,clu));
           D2(var,clu)=D2(var,clu)+(dv*memb(ind,clu));
@@ -1286,9 +1326,14 @@ List c_WH_ADPT_KMEANS_TOTALSSQ(S4 x, NumericMatrix memb, double m,
   }
   mu=colSums(MEMBM);
   NumericMatrix mus(k,vars);
+  // each row of mus (one per cluster) has `vars` columns: the weight of
+  // cluster clu is replicated for every variable. (Up to 1.0.8 tmp was
+  // allocated with k elements: when k < vars the remaining variables read
+  // uninitialised memory. Reported by the Rcpp team, Rcpp PR #1513.)
   for(clu=0;clu<k;clu++){
-    NumericVector tmp(k, (mu[clu]));
-    mus(clu,_)=tmp;  
+    for(j=0;j<vars;j++){
+      mus(clu,j)=mu[clu];
+    }
   }
   
   S4 protoGEN("MatH");
@@ -1337,18 +1382,18 @@ List c_WH_ADPT_KMEANS_TOTALSSQ(S4 x, NumericMatrix memb, double m,
   // #Compute the total fuzzy sum of SQUARES
   NumericMatrix TSQ_clu_m(vars,k);
   NumericMatrix TSQ_clu_d(vars,k);
+  // the distance between o1 and the general prototype does not depend on
+  // the cluster: it is computed once (up to 1.0.8 it was computed k times)
   for (i=0;i<ind;i++){
-    for (clu=0;clu<k;clu++){
-      for (j=0;j<vars;j++){
-        S4 o1=x_cont(i,j);
-        S4 prog=protoGEN_cont(0,j);
-        List tmpd= c_Wass_Q_dist_DET(o1, prog);
-        double dM=tmpd["Dm"];
-        double dV=tmpd["Dv"];
+    for (j=0;j<vars;j++){
+      S4 o1=x_cont(i,j);
+      S4 prog=protoGEN_cont(0,j);
+      List tmpd= c_Wass_Q_dist_DET(o1, prog);
+      double dM=tmpd["Dm"];
+      double dV=tmpd["Dv"];
+      for (clu=0;clu<k;clu++){
         TSQ_clu_m(j,clu)=TSQ_clu_m(j,clu)+(pow(memb(i,clu),m)*lambdas((j*2),clu)*dM);
         TSQ_clu_d(j,clu)=TSQ_clu_d(j,clu)+(pow(memb(i,clu),m)*lambdas((j*2+1),clu)*dV);
-        
-        
       } 
     }  
   }
@@ -1356,17 +1401,15 @@ List c_WH_ADPT_KMEANS_TOTALSSQ(S4 x, NumericMatrix memb, double m,
   NumericMatrix TSQ2_clu_m(vars,k);
   NumericMatrix TSQ2_clu_d(vars,k);
   for (i=0;i<ind;i++){
-    for (clu=0;clu<k;clu++){
-      for (j=0;j<vars;j++){
-        S4 o1=x_cont(i,j);
-        S4 prog2=MEANS_cont(0,j);
-        List tmpd= c_Wass_Q_dist_DET(o1, prog2);
-        double dM=pow((MATMEA(i,j)-centersM(0,j)),2);
-        double dV=tmpd["Dv"];
+    for (j=0;j<vars;j++){
+      S4 o1=x_cont(i,j);
+      S4 prog2=MEANS_cont(0,j);
+      List tmpd= c_Wass_Q_dist_DET(o1, prog2);
+      double dM=pow((MATMEA(i,j)-centersM(0,j)),2);
+      double dV=tmpd["Dv"];
+      for (clu=0;clu<k;clu++){
         TSQ2_clu_m(j,clu)=TSQ2_clu_m(j,clu)+(pow(memb(i,clu),m)*lambdas((j*2),clu)*dM);
         TSQ2_clu_d(j,clu)=TSQ2_clu_d(j,clu)+(pow(memb(i,clu),m)*lambdas((j*2+1),clu)*dV);
-        
-        
       } 
     }  
   }
@@ -1823,6 +1866,7 @@ List c_ComputeFast_L2_SQ_WASS_DMAT(List MM,S4 prot){
     int rr=M.nrow();
     
     
+    const double* pM=M.begin();
     for (clu=0;clu<k;clu++){
       S4 pro=prot_con(clu,j);
       NumericVector domP=pro.slot("x");
@@ -1831,11 +1875,8 @@ List c_ComputeFast_L2_SQ_WASS_DMAT(List MM,S4 prot){
       double mm=pro.slot("m");
       
       for (i=0;i<ind;i++){
-        NumericVector domi=M(_,i);
-        NumericVector ci=(domi[Range(0,rr-2)]+domi[Range(1,rr-1)])*0.5;
-        NumericVector ri=diff(domi)*0.5;
-        double mi=sum(ci*w);
-        double tmpd=sum(w*((cm-ci)*(cm-ci)+(rm-ri)*(rm-ri)*1/3.0));
+        double mi;
+        double tmpd=wass_sq_B(pM+i*rr, cm.begin(), rm.begin(), w.begin(), rr, &mi);
         Dista(i,clu)=tmpd;
         DistM(i,clu)=(mm-mi)*(mm-mi);
         DistV(i,clu)=tmpd-DistM(i,clu);
@@ -1932,6 +1973,7 @@ NumericMatrix c_ComputeFast_L2_SQ_WASS_DMAT_simple(List MM,S4 prot){
     NumericVector cum=M(_,ind);
     NumericVector w=diff(cum);
     int rr=M.nrow();
+    const double* pM=M.begin();
     for (clu=0;clu<k;clu++){
       S4 pro=prot_con(clu,j);
       NumericVector domP=pro.slot("x");
@@ -1939,10 +1981,7 @@ NumericMatrix c_ComputeFast_L2_SQ_WASS_DMAT_simple(List MM,S4 prot){
       NumericVector rm=diff(domP)*0.5;
       
       for (i=0;i<ind;i++){
-        NumericVector domi=M(_,i);
-        NumericVector ci=(domi[Range(0,rr-2)]+domi[Range(1,rr-1)])*0.5;
-        NumericVector ri=diff(domi)*0.5;
-        double tmpd=sum(w*((cm-ci)*(cm-ci)+(rm-ri)*(rm-ri)*1/3.0));
+        double tmpd=wass_sq_B(pM+i*rr, cm.begin(), rm.begin(), w.begin(), rr, NULL);
         CompDista(i,clu)=CompDista(i,clu)+tmpd;
       }
       

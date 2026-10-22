@@ -2,7 +2,7 @@
 % Please edit documentation in R/principal_components.R
 \name{WH.plot_multiple_indivs}
 \alias{WH.plot_multiple_indivs}
-\title{Plot histograms of individuals after a  Multiple factor analysis of Histogram Variables}
+\title{Plot the histograms of the individuals on a factorial plane}
 \usage{
 WH.plot_multiple_indivs(
   data,
@@ -18,53 +18,44 @@ WH.plot_multiple_indivs(
 )
 }
 \arguments{
-\item{data}{a MatH object}
+\item{data}{A \code{MatH} object, the data of the analysis.}
 
-\item{res}{Results from WH.MultiplePCA.}
+\item{res}{The results of \code{\link{WH.MultiplePCA}}.}
 
-\item{axes}{A list of  integers, the new factorial axes c(1,2) are the default.}
+\item{axes}{A vector of two integers, the factorial axes (default
+\code{c(1, 2)}).}
 
-\item{indiv}{A list of objects (rows) of data to plot. Default=0 all the objects of data.}
+\item{indiv}{A vector of integers, the individuals (rows) to plot. Default 0:
+all the individuals.}
 
-\item{var}{An integer indicating an original histogrma variable to plot.}
+\item{var}{An integer, the variable to plot.}
 
-\item{strx}{a resizing factor for the domain of histograms (default=0.1 means
-that each distribution has a support that is one tenth of the spread of the x axis)}
+\item{strx, stry}{Resizing factors for the domain and for the density of the
+histograms (default 0.1: one tenth of the range of the axes).}
 
-\item{stry}{a resizing factor for the density of histograms (default=0.1 means
-that each distribution has a density that is one tenth of the spread of the y axis)}
+\item{HISTO}{A logical value: if \code{TRUE} (default) histograms are drawn,
+otherwise smoothed densities.}
 
-\item{HISTO}{a logical value. Default=TRUE plots histograms, FALSE plot smooth densities.}
+\item{coor}{A matrix of coordinates of the individuals. Default 0: the
+coordinates in \code{res}.}
 
-\item{coor}{(optional) if 0 (Default) takes the coordinates in res, if a a matrix is passed the coordinates are those passed}
-
-\item{stat}{(optional) if 'mean'(Default) a plot of individuals labeled by the means is produced.
-Otherwise if 'std', 'skewness' or 'kurtosis', data are labeled with this statistic.}
+\item{stat}{The statistic used to label and colour the histograms in the
+second plot: \code{"mean"} (default), \code{"std"}, \code{"skewness"} or
+\code{"kurtosis"}.}
 }
 \value{
-a plot of class ggplot
+The two plots are drawn on the current device and a list with the two
+\code{ggplot} objects is returned invisibly.
 }
 \description{
-(Beta version) The function plots histogram data of the individuals for a particular
-variable on a factorial palne after a Multiple factor analysis.
+(Beta version) Plots the histograms (or densities) of one variable for each
+individual, placed at the coordinates of the individuals on a factorial plane
+of \code{\link{WH.MultiplePCA}}.
 }
 \examples{
-# Do a MultiplePCA on the BLOOD dataset
-\dontrun{
-#' results=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3))
-# Plot histograms of variable 1 of BLOOD dataset on the first
-# factorial plane showing histograms
-WH.plot_multiple_indivs(BLOOD, results,
-  axes = c(1, 2), var = 1, strx = 0.1,
-  stry = 0.1, HISTO = TRUE
-)
-# Plot histograms of variable 1 of BLOOD dataset on the first
-# factorial plane showing densities
-
-WH.plot_multiple_indivs(BLOOD, results,
-  axes = c(1, 2), var = 1, strx = 0.1,
-  stry = 0.1, HISTO = FALSE
-)
+\donttest{
+results <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3), graph = FALSE)
+WH.plot_multiple_indivs(BLOOD, results, axes = c(1, 2), var = 1, HISTO = TRUE)
+WH.plot_multiple_indivs(BLOOD, results, axes = c(1, 2), var = 1, HISTO = FALSE)
 }
-
 }

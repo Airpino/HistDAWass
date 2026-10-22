@@ -4,34 +4,24 @@
 \alias{WH.mat.prod}
 \alias{WH.mat.prod,MatH,MatH-method}
 \alias{WH.mat.prod,MatH-method}
-\title{Method WH.mat.prod}
+\title{Product of two matrices of histograms}
 \usage{
-WH.mat.prod(object1, object2, ...)
-
 \S4method{WH.mat.prod}{MatH,MatH}(object1, object2, traspose1 = FALSE, traspose2 = FALSE)
 }
 \arguments{
-\item{object1}{a \code{MatH} object}
+\item{object1, object2}{Two \code{MatH} objects with conformable dimensions.}
 
-\item{object2}{a \code{MatH} object}
-
-\item{...}{other optional parameters}
-
-\item{traspose1}{a logical value, default=FALSE. If TRUE trasposes object1}
-
-\item{traspose2}{a logical value, default=FALSE. If TRUE trasposes object2}
+\item{traspose1, traspose2}{Logical values (default \code{FALSE}): if
+\code{TRUE} the corresponding matrix is transposed.}
 }
 \value{
-a matrix of numbers
+A numeric matrix.
 }
 \description{
-It is the matrix product of two \code{MatH} objects, i.e. two matrices of distributions,
-by using the dot product of two histograms that is consistent with
- a set of distributions equipped with a L2 wasserstein metric.
+Matrix product of two \code{MatH} objects, where the product of two cells is
+the dot product of the histograms inducing the L2 Wasserstein metric (see
+\code{\link{dotpW}}).
 }
 \examples{
-
-M1 <- BLOOD[1:5, ]
-M2 <- BLOOD[6:10, ]
-MAT <- WH.mat.prod(M1, M2, traspose1 = TRUE, traspose2 = FALSE)
+MAT <- WH.mat.prod(BLOOD[1:5, ], BLOOD[6:10, ], traspose1 = TRUE)
 }

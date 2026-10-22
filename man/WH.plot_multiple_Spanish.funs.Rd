@@ -2,7 +2,7 @@
 % Please edit documentation in R/principal_components.R
 \name{WH.plot_multiple_Spanish.funs}
 \alias{WH.plot_multiple_Spanish.funs}
-\title{Plotting Spanish fun plots for Multiple factor analysis of Histogram Variables}
+\title{Plot the variables of a PCA of histogram variables (Spanish-fan plot)}
 \usage{
 WH.plot_multiple_Spanish.funs(
   res,
@@ -14,34 +14,33 @@ WH.plot_multiple_Spanish.funs(
 )
 }
 \arguments{
-\item{res}{Results from WH.MultiplePCA, or WH.1D.PCA.}
+\item{res}{The results of \code{\link{WH.MultiplePCA}} or of
+\code{\link{WH.1d.PCA}}.}
 
-\item{axes}{A list of  integers, the new factorial axes c(1,2) are the default.}
+\item{axes}{A vector of two integers, the factorial axes (default
+\code{c(1, 2)}).}
 
-\item{var}{A list of integers are the variables to plot.}
+\item{var}{A vector of integers, the variables to plot.}
 
-\item{LABS}{Logical, if TRUE graph is labeled, otherwise it does not.}
+\item{LABS}{A logical value (default \code{TRUE}): if \code{TRUE} the quantiles
+are labelled.}
 
-\item{multi}{Logical, if TRUE (default) results come from a WH.MultiplePCA,
-if FALSE results come from WH.1D.PCA.}
+\item{multi}{A logical value: \code{TRUE} (default) if \code{res} comes from
+\code{WH.MultiplePCA}, \code{FALSE} if it comes from \code{WH.1d.PCA}.}
 
-\item{corplot}{Logical, if TRUE (default) the plot reports correlations, if FALSE
-the coordinates of quantiles on the factorial plane}
+\item{corplot}{A logical value: if \code{TRUE} (default) the correlations are
+plotted (circle of correlations), otherwise the coordinates.}
 }
 \value{
-a plot of class ggplot
+The plot is drawn on the current device and the \code{ggplot} object
+is returned invisibly.
 }
 \description{
-The function plots the circle of correlation of the quantiles
-of the histogrma variables after a Multiple factor analysis.
+Plots the quantiles of the histogram variables on a factorial plane after
+\code{\link{WH.MultiplePCA}} (or \code{\link{WH.1d.PCA}}): the quantiles of
+each variable form a fan.
 }
 \examples{
-# Do a MultiplePCA on the BLOOD dataset
-\dontrun{
-res <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3))
-}
-# Plot results
-\dontrun{
+res <- WH.MultiplePCA(BLOOD, list.of.vars = c(1:3), graph = FALSE)
 WH.plot_multiple_Spanish.funs(res, axes = c(1, 2), var = c(1:3))
-}
 }

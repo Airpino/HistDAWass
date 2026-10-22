@@ -2,18 +2,19 @@
 % Please edit documentation in R/Plotting_with_ggplot.R
 \name{summaryHTS}
 \alias{summaryHTS}
-\title{A function for summarize HTS}
+\title{Summary statistics of a histogram time series}
 \usage{
 summaryHTS(x)
 }
 \arguments{
-\item{x}{a HTS}
+\item{x}{A \code{HTS} object.}
 }
 \value{
-A matrix with basic statistics.
+A data frame with one row for each histogram: timestamp and period,
+mean, standard deviation, skewness, kurtosis, minimum, quartiles and maximum.
 }
 \description{
-A summarizer for HTS
+Computes basic statistics for each histogram of a \code{HTS} object.
 }
 \examples{
 summaryHTS(subsetHTS(RetHTS, from = 1, to = 10))

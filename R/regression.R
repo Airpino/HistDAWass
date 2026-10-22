@@ -1,33 +1,33 @@
 ## Regression analysis ----
 # Multiple regression analysis of histogram variable based on Wasserstein distance----
-#' Multiple regression analysis for  histogram variables based on a two component model and L2 Wasserstein distance
-#' @description The function implements Multiple regression analysis for  histogram variables based on
-#' a two component model and L2 Wasserstein distance. Taking as imput dependent histogram variable and
-#'  a set of explanatory histogram variables the methods return a least squares estimation of a two component
-#'  regression model based on the decomposition of L2 Wasserstein metric for distributional data.
+#' Two-component regression of histogram variables
 #'
-#' @param data A MatH object (a matrix of distributionH).
-#' @param Yvar An integer, the dependent variable number in data.
-#' @param Xvars A set of integers the explanantory variables in data.
-#' @param simplify a logical argument (default=FALSE). If TRUE only few equally spaced quantiles
-#' are considered (for speeding up the  algorithm)
-#' @param qua If \code{simplify=TRUE} is the number of quantiles to consider.
-
-#' @return a named vector with the model estimated parameters
-#' @references
-#' Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach
-#' based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
-#' An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{https://arxiv.org/abs/1202.1436v2}
-#' @details  A two component regression model is implemented. The observed variables are histogram variables
-#'  according to the definition given in the framework
-#' of Symbolic Data Analysis and the parameters of the model are estimated
-#' using the classic Least Squares method. An appropriate metric is introduced
-#' in order to measure the error between the observed and the predicted distributions.
-#' In particular, the Wasserstein distance is proposed.
-#' Such a metric permits to predict the response variable as direct linear combination of other independent
-#'  histogram variables.
+#' Linear regression of a histogram variable on a set of histogram variables,
+#' based on the decomposition of the L2 Wasserstein distance into a component
+#' for the means and a component for the centred distributions. The parameters
+#' are estimated by least squares (non-negative least squares for the
+#' centred component).
+#'
+#' @param data A \code{MatH} object.
+#' @param Yvar An integer, the column of the dependent variable.
+#' @param Xvars A vector of integers, the columns of the explanatory variables.
+#' @param simplify A logical value (default \code{FALSE}). If \code{TRUE}, the
+#' histograms are approximated by \code{qua} equally spaced quantiles, for faster
+#' computations.
+#' @param qua An integer, the number of quantiles when \code{simplify = TRUE}
+#' (default 20).
+#' @return A named vector with the estimated parameters: the intercept and the
+#' coefficients of the means (prefix \code{AV_}) and the coefficients of the
+#' centred distributions (prefix \code{CEN_}).
+#' @references Irpino, A., Verde, R. (2015). Linear regression for numeric
+#' symbolic variables: a least squares approach based on Wasserstein Distance.
+#' Advances in Data Analysis and Classification, 9, 81-106.
+#' \doi{10.1007/s11634-015-0197-7}
+#' @seealso \code{\link{WH.regression.two.components.predict}},
+#' \code{\link{WH.regression.GOF}}
 #' @examples
 #' model.parameters <- WH.regression.two.components(data = BLOOD, Yvar = 1, Xvars = c(2:3))
+#' model.parameters
 #' @importFrom stats as.formula lm
 #' @export
 WH.regression.two.components <- function(data, Yvar, Xvars, simplify = FALSE, qua = 20) {
@@ -170,22 +170,23 @@ WH.NNLS <- function(X, Y) {
   return(gamma)
 }
 ## diagnostics measures to be implemented
-#' Multiple regression analysis for  histogram variables based on a two component model and L2 Wasserstein distance
-#' @description Predict distributions using the results of a regression done with \code{WH.regression.two.components} function.
+#' Predictions of a two-component regression of histogram variables
 #'
-#' @param data A MatH object (a matrix of distributionH) explantory part.
-#' @param parameters A named vector with the parameter from a \code{WH.regression.two.components} model
-#' @return a \code{MatH}  object, the predicted histograms
-#' @references
-#' Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach
-#' based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
-#' An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{https://arxiv.org/abs/1202.1436v2}
+#' Predicts the histograms of the dependent variable using the parameters
+#' estimated by \code{\link{WH.regression.two.components}}.
+#'
+#' @param data A \code{MatH} object with the explanatory variables (in the same
+#' order used for the estimation).
+#' @param parameters The named vector of parameters returned by
+#' \code{\link{WH.regression.two.components}}.
+#' @return A \code{MatH} object with one column, the predicted histograms.
+#' @seealso \code{\link{WH.regression.GOF}}
 #' @examples
-#' # do regression
 #' model.parameters <- WH.regression.two.components(data = BLOOD, Yvar = 1, Xvars = c(2:3))
-#' # do prediction
-#' Predicted.BLOOD <- WH.regression.two.components.predict(data = BLOOD[, 2:3], 
-#'                                                         parameters = model.parameters)
+#' Predicted.BLOOD <- WH.regression.two.components.predict(
+#'   data = BLOOD[, 2:3],
+#'   parameters = model.parameters
+#' )
 #' @export
 WH.regression.two.components.predict <- function(data, parameters) {
   if (is(data) != "MatH") {
@@ -211,23 +212,29 @@ WH.regression.two.components.predict <- function(data, parameters) {
   }
   return(predictions)
 }
-#' Goodness of Fit indices for Multiple regression of histogram variables based on a two component model and L2 Wasserstein distance
-#' @description It computes three goodness of fit indices using the results and the predictions of a regression done with \code{WH.regression.two.components} function.
-#' @param observed A one column MatH object, the observed histogram variable
-#' @param predicted A one column MatH object, the predicted histogram variable.
-#' @return a list with the GOF indices
-#' @references
-#' Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variables: a least squares approach
-#' based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
-#' An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{https://arxiv.org/abs/1202.1436v2}
+#' Goodness of fit of a two-component regression of histogram variables
+#'
+#' Computes goodness of fit indices of the predictions of a
+#' \code{\link{WH.regression.two.components}} model.
+#'
+#' @param observed A \code{MatH} object with one column, the observed histograms.
+#' @param predicted A \code{MatH} object with one column, the predicted
+#' histograms.
+#' @return A list with the root mean squared error based on the L2 Wasserstein
+#' distance (\code{RMSE_W}), the \code{OMEGA} index and the pseudo-R2 index
+#' (\code{PSEUDOR2}, with the details of the decomposition of the sum of
+#' squares).
+#' @references Irpino, A., Verde, R. (2015). Linear regression for numeric
+#' symbolic variables: a least squares approach based on Wasserstein Distance.
+#' Advances in Data Analysis and Classification, 9, 81-106.
+#' \doi{10.1007/s11634-015-0197-7}
 #' @examples
-#' # do regression
 #' model.parameters <- WH.regression.two.components(data = BLOOD, Yvar = 1, Xvars = c(2:3))
-#' #' # do prediction
-#' Predicted.BLOOD <- WH.regression.two.components.predict(data = BLOOD[, 2:3], 
-#'                                               parameters = model.parameters)
-#' # compute GOF indices
-#' GOF.indices <- WH.regression.GOF(observed = BLOOD[, 1], predicted = Predicted.BLOOD)
+#' Predicted.BLOOD <- WH.regression.two.components.predict(
+#'   data = BLOOD[, 2:3],
+#'   parameters = model.parameters
+#' )
+#' WH.regression.GOF(observed = BLOOD[, 1], predicted = Predicted.BLOOD)
 #' @export
 WH.regression.GOF <- function(observed, predicted) {
   indiv <- nrow(observed@M)

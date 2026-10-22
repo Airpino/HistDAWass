@@ -3,30 +3,24 @@
 \name{kurtH}
 \alias{kurtH}
 \alias{kurtH,distributionH-method}
-\title{Method \code{kurtH}: computes the kurthosis of a distribution}
+\title{Kurtosis of a histogram}
 \usage{
 kurtH(object)
-
-\S4method{kurtH}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A value for the kurtosis index, 3 is the kurtosis of a Gaussian
-distribution
+A number, the kurtosis index (3 for a Gaussian distribution).
 }
 \description{
-Kurtosis of a histogram (using the fourth standardized moment)
+Computes the kurtosis (fourth standardised moment) of a \code{distributionH}
+object.
 }
 \examples{
-
-## ---- A mydist distribution ----
 mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-## ---- Compute the kurtosis of mydist ----
-kurtH(mydist) #---> 1.473242
+kurtH(mydist) # 2.133533
 }
-\author{
-Antonio Irpino
+\seealso{
+\code{\link{meanH}}, \code{\link{stdH}}, \code{\link{skewH}}
 }
-\keyword{distribution}

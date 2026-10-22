@@ -2,32 +2,35 @@
 % Please edit documentation in R/Met_MatH.R
 \name{WH.vec.mean}
 \alias{WH.vec.mean}
+\alias{WH.vec.sum}
+\alias{WH.vec.sum,MatH-method}
 \alias{WH.vec.mean,MatH-method}
-\title{Method WH.vec.mean}
+\title{Weighted sum and mean of the histograms of a matrix}
 \usage{
-WH.vec.mean(object, ...)
+\S4method{WH.vec.sum}{MatH}(object, w = numeric(0))
 
 \S4method{WH.vec.mean}{MatH}(object, w = numeric(0))
 }
 \arguments{
-\item{object}{a \code{MatH} object}
+\item{object}{A \code{MatH} object.}
 
-\item{...}{optional arguments}
-
-\item{w}{it is possible to add a vector of weights (positive numbers) having the same size of
-the \code{MatH object}, default = equal weights for all}
+\item{w}{A vector of non-negative weights, one for each cell of the matrix.
+Default: equal weights.}
 }
 \value{
-a \code{distributionH} object, i.e. a histogram
+A \code{distributionH} object.
 }
 \description{
-Compute a histogram that is the weighted mean of the set of histograms contained
-in a \code{MatH} object, i.e. a matrix of histograms, consistent with
-a set of distributions equipped with a L2 wasserstein metric.
+\code{WH.vec.sum} and \code{WH.vec.mean} compute the (weighted) sum and the
+(weighted) mean of all the histograms of a \code{MatH} object, consistently
+with the L2 Wasserstein metric: the result is the histogram whose quantile
+function is the (weighted) sum or mean of the quantile functions. The mean is
+the Wasserstein barycenter of the histograms.
 }
 \examples{
-hmean <- WH.vec.mean(BLOOD)
-# generate a set of random weights
+WH.vec.mean(BLOOD)
+WH.vec.sum(BLOOD)
+# weighted mean with random weights
 RN <- runif(get.MatH.nrows(BLOOD) * get.MatH.ncols(BLOOD))
-hmean <- WH.vec.mean(BLOOD, w = RN)
+WH.vec.mean(BLOOD, w = RN)
 }

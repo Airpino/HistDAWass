@@ -3,19 +3,19 @@
 \docType{data}
 \name{OzoneH}
 \alias{OzoneH}
-\title{Complete Ozone dataset for Histogram data analysis}
+\title{Ozone data (all the stations)}
 \format{
-a \code{MatH} istance, 1 row per station.
+A \code{MatH} object with 84 rows (stations) and 4 columns (variables).
 }
 \source{
-http://java.epa.gov/castnet/epa_jsp/prepackageddata.jsp
-ftp://ftp.epa.gov/castnet/data/metdata.zip
+US EPA, CASTNET (Clean Air Status and Trends Network), meteorological data.
 }
 \description{
-The dataset contains MatH (matrix of histogram-valued data) object This data
-set list 84 stations located in the USA recording four variables. Some
-stations contains missing data.
+Histograms of four variables recorded by 84 stations in the USA: ozone
+concentration (ppb), temperature (C), solar radiation (W/m2) and wind speed
+(m/s). Some stations have missing data.
 }
-\author{
-Antonio Irpino, 2014-10-05
+\examples{
+get.MatH.main.info(OzoneH)
 }
+\keyword{datasets}

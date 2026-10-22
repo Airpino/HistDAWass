@@ -3,22 +3,25 @@
 \name{get.histo}
 \alias{get.histo}
 \alias{get.histo,distributionH-method}
-\title{Method \code{get.histo}: show the distribution with bins}
+\title{Bins of a histogram}
 \usage{
 get.histo(object)
-
-\S4method{get.histo}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object.}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-A matrix: the two columns contains the bounds of the histogram the third contains the probablity (or the relative frequency) of the bin.
+A \code{data.frame} with one row for each bin and three columns:
+\code{min.x} and \code{max.x}, the bounds of the bin, and \code{p}, its
+probability (relative frequency).
 }
 \description{
-This functon return a data.frame describing the histogram of a \code{distributionH} object.
+Returns the bins of a \code{distributionH} object and their probabilities.
 }
 \examples{
 D <- distributionH(x = c(1, 2, 3, 4), p = c(0, 0.2, 0.6, 1))
-get.histo(D) # returns the histogram representation of D by a data.frame
+get.histo(D)
+}
+\seealso{
+\code{\link{get.distr}}
 }

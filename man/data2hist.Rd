@@ -2,7 +2,7 @@
 % Please edit documentation in R/Utility.R
 \name{data2hist}
 \alias{data2hist}
-\title{From real data to distributionH.}
+\title{Build a histogram from raw data}
 \usage{
 data2hist(
   data,
@@ -14,42 +14,41 @@ data2hist(
 )
 }
 \arguments{
-\item{data}{a set of numeric values.}
+\item{data}{A numeric vector.}
 
-\item{algo}{(optional) a string. Default is "histogram", i.e. the function "histogram"
-defined in the \code{\link[histogram]{histogram}}  package. \cr If "base"
-the \code{\link[graphics]{hist}} function is used. \cr
-"FixedQuantiles" computes the histogram using as breaks a fixed number of quantiles.\cr
-"ManualBreaks" computes a histogram where braks are provided as a vector of values.\cr
-"PolyLine" computes a histogram using a piecewise linear approximation of the empirical
-cumulative distribution function using the "Ramer-Douglas-Peucker algorithm",
- \url{https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm}.
- An \code{epsilon} parameter is required.
- The data are scaled in order to have a standard deviation equal to one.}
+\item{algo}{The algorithm: \code{"histogram"} (default), the penalised
+likelihood method of \code{\link[histogram]{histogram}} (accurate but slow
+for large datasets); \code{"base"}, the bins of \code{\link[graphics]{hist}};
+\code{"FixedQuantiles"}, \code{qua} bins with equal probability;
+\code{"ManualBreaks"}, the bins given in \code{breaks}; \code{"PolyLine"}, a
+piecewise linear approximation of the empirical cdf obtained with the
+Ramer-Douglas-Peucker algorithm (see \code{\link{DouglasPeucker}}).}
 
-\item{type}{(optional) a string. Default is "combined" and generates
-a histogram having regularly spaced breaks (i.e., equi-width bins) and
-irregularly spaced ones. The choice is done accordingly with the penalization method described in
-\code{\link[histogram]{histogram}}. "regular" returns equi-width binned histograms, "irregular" returns
-a histogram without equi-width histograms.}
+\item{type}{For \code{algo = "histogram"}: \code{"combined"} (default),
+\code{"regular"} (equal-width bins) or \code{"irregular"}, see
+\code{\link[histogram]{histogram}}.}
 
-\item{qua}{a positive integer to provide if \code{algo="FixedQuantiles"} is chosen. Default=10.}
+\item{qua}{For \code{algo = "FixedQuantiles"}, the number of bins (default 10).}
 
-\item{breaks}{a vector of values to provide if  \code{algo="ManualBreaks"} is chosen.}
+\item{breaks}{For \code{algo = "ManualBreaks"}, a vector of breaks.}
 
-\item{epsilon}{a number between 0 and 1 to provide if \code{algo="PolyLine"} is chosen. Default=0.01.}
+\item{epsilon}{For \code{algo = "PolyLine"}, the tolerance of the
+approximation (default 0.01; the data are scaled to unit standard deviation).}
 }
 \value{
-A \code{distributionH} object, i.e. a distribution.
+A \code{distributionH} object. Empty bins (without observations) get a
+weight of \code{1e-8}.
 }
 \description{
-From real data to distributionH.
+Builds a \code{distributionH} object from a vector of numeric values, using
+one of several algorithms for choosing the bins.
 }
 \examples{
 data <- rnorm(n = 1000, mean = 2, sd = 3)
 mydist <- data2hist(data)
 plot(mydist)
+data2hist(data, algo = "FixedQuantiles", qua = 20)
 }
 \seealso{
-\code{\link[histogram]{histogram}} function
+\code{\link{distributionH}}, \code{\link[histogram]{histogram}}
 }

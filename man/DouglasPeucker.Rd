@@ -2,21 +2,28 @@
 % Please edit documentation in R/Utility.R
 \name{DouglasPeucker}
 \alias{DouglasPeucker}
-\title{Ramer-Douglas-Peucker algorithm for curve fitting with a PolyLine}
+\title{Ramer-Douglas-Peucker algorithm}
 \usage{
 DouglasPeucker(points, epsilon)
 }
 \arguments{
-\item{points}{a 2D matrix with the coordinates of 2D points}
+\item{points}{A two-column matrix with the coordinates of the points.}
 
-\item{epsilon}{an number between 0 and 1. Recomended 0.01.}
+\item{epsilon}{A positive number, the tolerance of the approximation
+(recommended 0.01).}
 }
 \value{
-A matrix with the points of segments of a Poly Line.
+A two-column matrix with the vertices of the polyline.
 }
 \description{
-Ramer-Douglas-Peucker algorithm for curve fitting with a PolyLine
+Approximates a curve, given by a sequence of 2d points, with a polyline
+(Ramer-Douglas-Peucker algorithm). It is used by \code{\link{data2hist}} with
+\code{algo = "PolyLine"}.
+}
+\examples{
+x <- seq(0, 1, length.out = 50)
+DouglasPeucker(cbind(x, x^2), epsilon = 0.01)
 }
 \seealso{
-\code{\link[HistDAWass]{data2hist}} function
+\code{\link{data2hist}}, \code{\link{ShortestDistance}}
 }

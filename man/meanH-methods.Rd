@@ -3,29 +3,23 @@
 \name{meanH}
 \alias{meanH}
 \alias{meanH,distributionH-method}
-\title{Method \code{meanH}: computes the mean of a distribution}
+\title{Mean of a histogram}
 \usage{
 meanH(object)
-
-\S4method{meanH}{distributionH}(object)
 }
 \arguments{
-\item{object}{a \code{distributionH} object}
+\item{object}{A \code{distributionH} object.}
 }
 \value{
-the mean of the distribution
+A number, the mean of the distribution.
 }
 \description{
-Mean of a histogram (First moment of the distribution)
+Computes the mean (first moment) of a \code{distributionH} object.
 }
 \examples{
-
-## ---- A mydist distribution ----
 mydist <- distributionH(x = c(1, 2, 3, 10), p = c(0, 0.1, 0.5, 1))
-## ---- Compute the mean of mydist ----
-meanH(mydist) #---> 4.4
+meanH(mydist) # 4.4
 }
-\author{
-Antonio Irpino
+\seealso{
+\code{\link{stdH}}, \code{\link{skewH}}, \code{\link{kurtH}}
 }
-\keyword{distribution}

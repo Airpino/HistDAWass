@@ -3,57 +3,33 @@
 \name{register}
 \alias{register}
 \alias{register,distributionH,distributionH-method}
-\alias{register,distributionH-method}
-\title{Method \code{register}}
+\title{Register two histograms on a common cdf}
 \usage{
 register(object1, object2)
-
-\S4method{register}{distributionH,distributionH}(object1, object2)
 }
 \arguments{
-\item{object1}{A \code{distributionH} object}
-
-\item{object2}{A \code{distributionH} object}
+\item{object1, object2}{Two \code{distributionH} objects.}
 }
 \value{
-The two \code{distributionH} objects in input sharing the same cdf (the \code{p}
-slot)
+A list: the two \code{distributionH} objects, with the same \code{p}
+slot, and a matrix with their quantiles and the common cdf.
 }
 \description{
-Given two \code{distributionH} objects, it returns two equivalent distributions such that
-they share the same cdf values. This function is useful for computing basic statistics.
+Given two \code{distributionH} objects, returns two equivalent
+distributions sharing the same cdf values (the union of the two \code{p}
+vectors). This is the basis for computing the statistics based on the L2
+Wasserstein distance.
 }
 \examples{
-
-## ---- initialize two distributionH objects mydist1 and mydist2
 mydist1 <- distributionH(c(1, 2, 3), c(0, 0.4, 1))
 mydist2 <- distributionH(c(7, 8, 10, 15), c(0, 0.2, 0.7, 1))
-## register the two distributions
 regDist <- register(mydist1, mydist2)
-
-## OUTPUT:
-## regDist$[[1]]
-## An object of class "distributionH"
-## Slot "x": [1] 1.0 1.5 2.0 2.5 3.0
-## Slot "p": [1] 0.0 0.2 0.4 0.7 1.0
-## ...
-## regDist$[[2]]
-## An object of class "distributionH"
-## Slot "x": [1] 7.0 8.0 8.8 10.0 15.0
-## Slot "p": [1] 0.0 0.2 0.4  0.7  1.0
-## ...
-# The REGISTER function ----
+regDist[[1]]@p
+regDist[[1]]@x
+regDist[[2]]@x
 }
 \references{
 Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
 clustering of histograms using Wasserstein metric} In: Rizzi, A., Vichi, M.
-(eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.\cr Irpino, A.,Verde,
-R. (2006): \emph{A new Wasserstein based distance for the hierarchical
-clustering of histogram symbolic data} In: Batanjeli, V., Bock, H.H.,
-Ferligoj, A., Ziberna, A. (eds.) Data Science and Classification, IFCS 2006.
-Springer, Berlin, 185-192.
+(eds.) COMPSTAT 2006. Physica-Verlag, Berlin, 869-876.
 }
-\author{
-Antonio Irpino
-}
-\keyword{distribution}

@@ -2,51 +2,51 @@
 % Please edit documentation in R/Fuzzy_cmeans.R
 \name{WH_fcmeans}
 \alias{WH_fcmeans}
-\title{Fuzzy c-means of a dataset of histogram-valued data}
+\title{Fuzzy c-means clustering of histogram data}
 \usage{
 WH_fcmeans(x, k, m = 1.6, rep, simplify = FALSE, qua = 10, standardize = FALSE)
 }
 \arguments{
-\item{x}{A MatH object (a matrix of distributionH).}
+\item{x}{A \code{MatH} object.}
 
-\item{k}{An integer, the number of groups.}
+\item{k}{An integer, the number of clusters.}
 
-\item{m}{A number grater than 0, a fuzziness coefficient (default \code{m}=1.6).}
+\item{m}{A number greater than 1, the fuzziness coefficient (default 1.6).}
 
-\item{rep}{An integer, maximum number of repetitions of the algorithm (default \code{rep}=5).}
+\item{rep}{An integer, the number of repetitions of the algorithm (with
+random starting partitions); the best solution is returned. Default 5.}
 
-\item{simplify}{A logic value (default is FALSE), if TRUE histograms are recomputed in order to speed-up the algorithm.}
+\item{simplify}{A logical value (default \code{FALSE}). If \code{TRUE}, each
+histogram is approximated by \code{qua} equally spaced quantiles: the
+computations are much faster for large datasets, with a small approximation
+error.}
 
-\item{qua}{An integer, if \code{simplify}=TRUE is the number of quantiles used for recodify the histograms.}
+\item{qua}{An integer, the number of quantiles used when \code{simplify = TRUE}
+(default 10).}
 
-\item{standardize}{A logic value (default is FALSE). If TRUE, histogram-valued data are standardized,  variable by variable, using the Wassertein based standard deviation. Use if one wants to have variables with std equal to one.}
+\item{standardize}{A logical value (default \code{FALSE}). If \code{TRUE}, the
+variables are standardised by their Wasserstein-based standard deviation.}
 }
 \value{
-a list with the results of the fuzzy c-means of the set of Histogram-valued data \code{x} into  \code{k} cluster.
+A list with:
+\item{solution}{The best solution among the repetitions: a list with
+\code{membership} (the matrix of membership degrees), \code{IDX} (the crisp
+assignment of each individual), \code{cardinality} (the size of each crisp
+cluster), \code{proto} (a \code{MatH} object with the prototypes) and
+\code{Crit} (the criterion).}
+\item{quality}{The proportion of the total sum of squares explained by the
+partition (the higher the better).}
+and further details on the decomposition of the sum of squares.
 }
 \description{
-The function implements the fuzzy c-means for a set of histogram-valued data.
+Fuzzy c-means of the individuals of a \code{MatH} object, based on the L2
+Wasserstein distance between histograms.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e.
-the one having the minimum sum of squares deviation.}
-
-\item{\code{solution$membership}}{A matrix. The membership degree of each unit to each cluster.}
-
-\item{\code{solution$IDX}}{A vector. The crisp assignement to a cluster.}
-
-\item{\code{solution$cardinality}}{A vector. The cardinality of each final cluster (after the crisp assignement).}
-
-\item{\code{solution$Crit}}{A number. The criterion (Sum of square deviation
-from the prototypes) value at the end of the run.}
-
-\item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model.
-(The higher the better)}
-}}
-
 \examples{
-results <- WH_fcmeans(x = BLOOD, k = 2, m = 1.5, rep = 10, 
+results <- WH_fcmeans(x = BLOOD, k = 2, m = 1.5, rep = 10,
                       simplify = TRUE, qua = 10, standardize = TRUE)
+results$solution$membership
+}
+\seealso{
+\code{\link{WH_adaptive_fcmeans}}, \code{\link{WH_kmeans}}
 }

@@ -3,20 +3,20 @@
 \docType{data}
 \name{Age_Pyramids_2014}
 \alias{Age_Pyramids_2014}
-\title{Age pyramids of all the countries of the World in 2014}
+\title{Age pyramids of the countries of the World in 2014}
 \format{
-a \code{MatH} object, a matrix of distributions.
+A \code{MatH} object with 229 rows (the World and 228 countries) and 3 columns:
+\code{Both.Sexes.Population}, \code{Male.Population}, \code{Female.Population}.
 }
 \source{
-United States Census Bureau \url{https://www.census.gov/data.html}
+United States Census Bureau, \url{https://www.census.gov/data.html}
 }
 \description{
-The dataset contains a MatH (matrix of histogram-valued data) object, with three
-hisogram-valued variables, the 5-years age (relative frequencies) distribution of all the population,
-of the male and of the female population of 228 countries of the World. The  first row is the World data.
-Thus it contains 229 rows(228 countries plus the World) and 3 variables: "Both.Sexes.Population",
-"Male.Population", "Female.Population"
+Distributions of the population by 5-year age classes (relative frequencies)
+for 228 countries and the World (first row): whole population, male and female
+population.
 }
-\author{
-Antonio Irpino, 2014-10-05
+\examples{
+get.MatH.main.info(Age_Pyramids_2014)
 }
+\keyword{datasets}

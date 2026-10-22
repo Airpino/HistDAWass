@@ -2,39 +2,32 @@
 % Please edit documentation in R/H_time_series.R
 \name{HTS.predict.knn}
 \alias{HTS.predict.knn}
-\title{K-NN predictions of a histogram time series}
+\title{K-NN forecast of a histogram time series}
 \usage{
 HTS.predict.knn(HTS, position = length(HTS@data), k = 3)
 }
 \arguments{
-\item{HTS}{A \code{HTS} object (a histogram time series).}
+\item{HTS}{A \code{HTS} object.}
 
-\item{position}{an integer, the data histogram to predict}
+\item{position}{An integer, the position of the last observed histogram
+(default: the last one).}
 
-\item{k}{the number of neighbours (default=3)}
+\item{k}{The number of neighbours (default 3).}
 }
 \value{
-a \code{distributionH} object predicted from data.
+A \code{distributionH} object, the forecast.
 }
 \description{
-(Beta verson of) Extends the K-NN algorithm for predicting a time
-series to a histogram time series, using L2 Wasserstein distance.
-}
-\details{
-Histogram time series (HTS) describe situations where a distribution of values is available
-for each instant of time. These situations usually arise when contemporaneous or temporal aggregation
-is required. In these cases, histograms provide a summary of the data that is more informative than those
-provided by other aggregates such as the mean.
-Some fields where HTS are useful include economy, official statistics and environmental science.
-The function adapts the k-Nearest Neighbours (k-NN) algorithm to forecast HTS and, more generally,
- to deal with histogram data. The proposed k-NN relies on the L2 Wasserstein distance that is used
- to measure dissimilarities between sequences of histograms and to compute the forecasts.
+(Beta version) Forecasts a histogram of a time series with the k-nearest
+neighbours method, based on the L2 Wasserstein distance: the forecast is the
+mean of the histograms following the \code{k} histograms most similar to the
+one at \code{position}.
 }
 \examples{
 prediction <- HTS.predict.knn(HTS = RetHTS, position = 108, k = 3)
 }
 \references{
-Javier Arroyo, Carlos Mate, Forecasting histogram time series with k-nearest neighbours methods,
-International Journal of Forecasting, Volume 25, Issue 1, January-March 2009, Pages 192-207,
- ISSN 0169-2070, http://dx.doi.org/10.1016/j.ijforecast.2008.07.003.\cr
+Arroyo, J., Mate, C. (2009). Forecasting histogram time series
+with k-nearest neighbours methods. International Journal of Forecasting,
+25(1), 192-207. \doi{10.1016/j.ijforecast.2008.07.003}
 }

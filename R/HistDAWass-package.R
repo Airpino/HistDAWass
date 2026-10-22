@@ -1,215 +1,238 @@
-# https://github.com/variani/pckdev/wiki/Documenting-with-roxygen2
-# http://stackoverflow.com/questions/7356120/how-to-properly-document-s4-methods-using-roxygen2
 
-#' Histogram-Valued Data Analysis
+#' HistDAWass: Histogram-Valued Data Analysis
 #'
-#' We consider histogram-valued data, i.e., data described by univariate histograms. The
-#' methods and the basic statistics for histogram-valued data are mainly based
-#' on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric
-#' between quantile functions. The package contains unsupervised classification techniques,
-#' least square regression and tools for histrogram-valued data and for histogram time series.
+#' Methods for the analysis of histogram-valued data, i.e. data described by
+#' univariate histograms, in the framework of Symbolic Data Analysis. The basic
+#' statistics and the methods are based on the L2 Wasserstein metric between
+#' distributions, i.e. the Euclidean metric between quantile functions.
 #'
-#'
-#' \tabular{ll}{ Package: \tab HistDAWass\cr Type: \tab Package\cr Version:
-#' \tab 0.1.1\cr Date: \tab 2014-09-17\cr License: \tab GPL (>=2)\cr Depends:
-#' \tab methods\cr }  An overview of how to use the package, including the
-#' most important functions 
-#'
-#' @name HistDAWass-package
-#' @aliases HistDAWass-package HistDAWass
-#' _PACKAGE
-#' @author Antonio Irpino <antonio.irpino@@unicampania.it>
+#' @section Data structures:
+#' \itemize{
+#' \item \code{\link{distributionH}}: a histogram; \code{\link{data2hist}} builds
+#' one from raw data.
+#' \item \code{\link{MatH}}: a matrix of histograms (individuals by
+#' histogram-valued variables).
+#' \item \code{\link{HTS-class}}: a histogram time series.
+#' }
+#' @section Basic statistics:
+#' Moments of a histogram (\code{\link{meanH}}, \code{\link{stdH}},
+#' \code{\link{skewH}}, \code{\link{kurtH}}), quantiles and cdf
+#' (\code{\link{compQ}}, \code{\link{compP}}), the L2 Wasserstein distance
+#' (\code{\link{WassSqDistH}}, \code{\link{WH_MAT_DIST}}), the mean histogram
+#' (\code{\link{WH.vec.mean}}), variance-covariance and correlation matrices
+#' (\code{\link{WH.var.covar}}).
+#' @section Methods:
+#' \itemize{
+#' \item Clustering: \code{\link{WH_kmeans}}, \code{\link{WH_adaptive.kmeans}},
+#' \code{\link{WH_fcmeans}}, \code{\link{WH_adaptive_fcmeans}},
+#' \code{\link{WH_hclust}}, Kohonen maps (\code{\link{WH_2d_Kohonen_maps}},
+#' \code{\link{WH_2d_Adaptive_Kohonen_maps}}).
+#' \item Principal component analysis: \code{\link{WH.1d.PCA}},
+#' \code{\link{WH.MultiplePCA}}.
+#' \item Regression: \code{\link{WH.regression.two.components}}.
+#' \item Histogram time series: \code{\link{HTS.moving.averages}},
+#' \code{\link{HTS.exponential.smoothing}}, \code{\link{HTS.predict.knn}}.
+#' }
 #' @references
-#' Irpino, A., Verde, R. (2015) \emph{Basic
-#' statistics for distributional symbolic variables: a new metric-based
-#' approach}, Advances in Data Analysis and Classification, Volume 9, Issue 2, pp 143--175.
-#' DOI \doi{10.1007/s11634-014-0176-4}\cr
-#'
-#' @import ggplot2 grid
-#' @keywords package
+#' Irpino, A., Verde, R. (2015) \emph{Basic statistics for distributional
+#' symbolic variables: a new metric-based approach}, Advances in Data Analysis
+#' and Classification, 9(2), 143-175. \doi{10.1007/s11634-014-0176-4}
 #' @examples
-#'
-#' # Generating a list of distributions
-#' a <- vector("list", 4)
-#' a[[1]] <- distributionH(
-#'   x = c(80, 100, 120, 135, 150, 165, 180, 200, 240),
-#'   p = c(0, 0.025, 0.1, 0.275, 0.525, 0.725, 0.887, 0.975, 1)
+#' # a matrix of four histograms (2 individuals x 2 variables)
+#' a <- list(
+#'   distributionH(x = c(80, 100, 120, 135, 150, 165, 180, 200, 240),
+#'                 p = c(0, 0.025, 0.1, 0.275, 0.525, 0.725, 0.887, 0.975, 1)),
+#'   distributionH(x = c(80, 100, 120, 135, 150, 165, 180, 195, 210, 240),
+#'                 p = c(0, 0.013, 0.101, 0.255, 0.508, 0.718, 0.895, 0.961, 0.987, 1)),
+#'   distributionH(x = c(95, 110, 125, 140, 155, 170, 185, 200, 215, 230, 245),
+#'                 p = c(0, 0.012, 0.041, 0.154, 0.36, 0.595, 0.781, 0.929, 0.972, 0.992, 1)),
+#'   distributionH(x = c(105, 120, 135, 150, 165, 180, 195, 210, 225, 240, 260),
+#'                 p = c(0, 0.009, 0.035, 0.081, 0.186, 0.385, 0.633, 0.832, 0.932, 0.977, 1))
 #' )
-#' a[[2]] <- distributionH(
-#'   x = c(80, 100, 120, 135, 150, 165, 180, 195, 210, 240),
-#'   p = c(0, 0.013, 0.101, 0.255, 0.508, 0.718, 0.895, 0.961, 0.987, 1)
-#' )
-#' a[[3]] <- distributionH(
-#'   x = c(95, 110, 125, 140, 155, 170, 185, 200, 215, 230, 245),
-#'   p = c(0, 0.012, 0.041, 0.154, 0.36, 0.595, 0.781, 0.929, 0.972, 0.992, 1)
-#' )
-#' a[[4]] <- distributionH(
-#'   x = c(105, 120, 135, 150, 165, 180, 195, 210, 225, 240, 260),
-#'   p = c(0, 0.009, 0.035, 0.081, 0.186, 0.385, 0.633, 0.832, 0.932, 0.977, 1)
-#' )
-#' # Generating a list of names of observations
-#' namerows <- list("u1", "u2")
-#' # Generating a list of names of variables
-#' namevars <- list("Var_1", "Var_2")
-#' # creating the MatH
-#' Mat_of_distributions <- MatH(
-#'   x = a, nrows = 2, ncols = 2,
-#'   rownames = namerows, varnames = namevars, by.row = FALSE
-#' )
-NULL
+#' M <- MatH(x = a, nrows = 2, ncols = 2,
+#'           rownames = c("u1", "u2"), varnames = c("Var_1", "Var_2"))
+#' M
+#' WH.vec.mean(M)
+#' @import ggplot2 grid
+"_PACKAGE"
 
 
-#' Full Ozone dataset for Histogram data analysis
+#' Ozone data (stations without missing data)
 #'
-#' The dataset contains MatH (matrix of histogram-valued data) object This data
-#' set list 78 stations located in the USA recording four variables, without
-#' missing data.
+#' Histograms of four variables recorded by 78 stations in the USA, without
+#' missing data: ozone concentration (ppb), temperature (C), solar radiation
+#' (W/m2) and wind speed (m/s).
 #'
 #'
+#' @format A \code{MatH} object with 78 rows (stations) and 4 columns (variables).
+#' @source US EPA, CASTNET (Clean Air Status and Trends Network), meteorological data.
+#' @examples
+#' get.MatH.main.info(OzoneFull)
+#' @keywords datasets
+#' @docType data
 #' @name OzoneFull
-#' @docType data
-#' @format a \code{MatH} istance, 1 row per station.
-#' @author Antonio Irpino, 2014-10-05
-#' @source http://java.epa.gov/castnet/epa_jsp/prepackageddata.jsp
-#' ftp://ftp.epa.gov/castnet/data/metdata.zip
 NULL
 
 
 
-#' Complete Ozone dataset for Histogram data analysis
+#' Ozone data (all the stations)
 #'
-#' The dataset contains MatH (matrix of histogram-valued data) object This data
-#' set list 84 stations located in the USA recording four variables. Some
-#' stations contains missing data.
+#' Histograms of four variables recorded by 84 stations in the USA: ozone
+#' concentration (ppb), temperature (C), solar radiation (W/m2) and wind speed
+#' (m/s). Some stations have missing data.
 #'
 #'
+#' @format A \code{MatH} object with 84 rows (stations) and 4 columns (variables).
+#' @source US EPA, CASTNET (Clean Air Status and Trends Network), meteorological data.
+#' @examples
+#' get.MatH.main.info(OzoneH)
+#' @keywords datasets
+#' @docType data
 #' @name OzoneH
-#' @docType data
-#' @format a \code{MatH} istance, 1 row per station.
-#' @author Antonio Irpino, 2014-10-05
-#' @source http://java.epa.gov/castnet/epa_jsp/prepackageddata.jsp
-#' ftp://ftp.epa.gov/castnet/data/metdata.zip
 NULL
 
-#' Blood dataset for Histogram data analysis
+#' Blood data
 #'
-#' The dataset contains a MatH (matrix of histogram-valued data) object This
-#' data set list 14 groups of patients described by 3 variables.
+#' Histograms of cholesterol, hemoglobin and hematocrit for 14 groups of patients
+#' (by sex and age).
 #'
 #'
+#' @format A \code{MatH} object with 14 rows (groups of patients) and 3 columns (variables).
+#' @source Billard L. and Diday E. (2006). \emph{Symbolic Data Analysis: Conceptual
+#' Statistics and Data Mining}, Wiley.
+#' @examples
+#' BLOOD
+#' plot(BLOOD)
+#' @keywords datasets
+#' @docType data
 #' @name BLOOD
-#' @docType data
-#' @format a \code{MatH} istance, 1 row per group.
-#' @author Antonio Irpino, 2014-10-05
-#' @source Billard L. and Diday E. (2006). Symbolic Data Analysis: Conceptual
-#' Statistics and Data Mining, Wiley.
 NULL
 
-#' Blood dataset from Brito P. for Histogram data analysis
+#' Blood data from Brito
 #'
-#' The dataset contains a MatH (matrix of histogram-valued data) object This
-#' data set list 10 patients described by 2 variables.
+#' Histograms of hematocrit and hemoglobin for 10 patients.
 #'
 #'
+#' @format A \code{MatH} object with 10 rows (patients) and 2 columns (variables).
+#' @source Dias, S. and Brito P. (2013). \emph{Distribution and Symmetric Distribution
+#' Regression Model for Histogram-Valued Variables}, arXiv:1303.6199.
+#' @examples
+#' BloodBRITO
+#' @keywords datasets
+#' @docType data
 #' @name BloodBRITO
-#' @docType data
-#' @format a \code{MatH} istance, 1 row per patient.
-#' @author Antonio Irpino, 2014-10-05
-#' @source Dias, S. and Brito P. Distribution and Symmetric Distribution
-#' Regression Model for Histogram-Valued Variables, ArXiv, arXiv:1303.6199
-#' [stat.ME]
 NULL
 
-#' Age pyramids of all the countries of the World in 2014
+#' Age pyramids of the countries of the World in 2014
 #'
-#' The dataset contains a MatH (matrix of histogram-valued data) object, with three
-#' hisogram-valued variables, the 5-years age (relative frequencies) distribution of all the population,
-#' of the male and of the female population of 228 countries of the World. The  first row is the World data.
-#' Thus it contains 229 rows(228 countries plus the World) and 3 variables: "Both.Sexes.Population",
-#' "Male.Population", "Female.Population"
+#' Distributions of the population by 5-year age classes (relative frequencies)
+#' for 228 countries and the World (first row): whole population, male and female
+#' population.
 #'
 #'
-#' @name Age_Pyramids_2014
+#' @format A \code{MatH} object with 229 rows (the World and 228 countries) and 3 columns:
+#' \code{Both.Sexes.Population}, \code{Male.Population}, \code{Female.Population}.
+#' @source United States Census Bureau, \url{https://www.census.gov/data.html}
+#' @examples
+#' get.MatH.main.info(Age_Pyramids_2014)
+#' @keywords datasets
 #' @docType data
-#' @format a \code{MatH} object, a matrix of distributions.
-#' @author Antonio Irpino, 2014-10-05
-#' @source United States Census Bureau \url{https://www.census.gov/data.html}
+#' @name Age_Pyramids_2014
 NULL
 
 #' Agronomique data
 #'
-#' A dataset with the distributions of marginal costs of farms in 22 France regions. It contains four
-#' histogram variables: "Y_TSC" (Total costs of a farm),  "X_Wheat" (Costs for Wheat), "X_Pig" (Costs for Pigs)
-#' "X_Cmilk" (Costs for Cow Milk)
+#' Distributions of the marginal costs of farms in 22 French regions.
 #'
+#'
+#' @format A \code{MatH} object with 22 rows (regions) and 4 columns: \code{Y_TSC} (total costs of a
+#' farm), \code{X_Wheat} (costs for wheat), \code{X_Pig} (costs for pigs),
+#' \code{X_Cmilk} (costs for cow milk).
+#' @source Verde, R., Irpino, A., Desbois, D. (2014). \emph{How to cope with
+#' modelling and privacy concerns? A regression model and a visualization tool for
+#' aggregated data}, Conference of European Statistics Stakeholders, Rome.
+#' @examples
+#' Agronomique
+#' @keywords datasets
+#' @docType data
 #' @name Agronomique
-#' @docType data
-#' @format a \code{MatH} object, a matrix of distributions.
-#' @author Antonio Irpino, 2014-10-05
-#' @source Rosanna Verde, Antonio Irpino, Second University of Naples; Dominique Desbois, UMR Economie
-#' publique, INRA-AgroParisTech, How to cope with modelling and privacy concerns? A regression model and a visualization tool for
-#' aggregated data,  Conference of European Statistics Stakeholders,
-#' Rome, November, 24-25,2014
 NULL
 
-#' A monthly climatic dataset of China
+#' Monthly climatic data of China
 #'
-#' A dataset with the distributions of some climatic variables collected for each month in 60 stations of China.
-#' The collected variables are 168 i.e. 14 climatic variables observed for 12 months. The 14 variables are the following:
-#'  mean station pressure (mb), mean temperature, mean maximum temperature, mean minimum temperature,
-#'   total precipitation (mm), sunshine duration (h), mean cloud amount (percentage of sky cover),
-#'   mean relative humidity (%), snow days (days with snow cover), dominant wind direction (degrees),
-#'    mean wind speed (m/s), dominant wind frequency (%), extreme maximum temperature (C),
-#'    extreme minimum temperature.
-#' Use the command \code{ get.MatH.main.info(China_Month)} for rapid info.
+#' Distributions of 14 climatic variables observed in 60 stations of China in
+#' each month (168 histogram-valued variables).
 #'
+#' The 14 variables are: mean station pressure (mb), mean temperature, mean
+#' maximum temperature, mean minimum temperature, total precipitation (mm),
+#' sunshine duration (h), mean cloud amount (percentage of sky cover), mean
+#' relative humidity (\%), snow days (days with snow cover), dominant wind
+#' direction (degrees), mean wind speed (m/s), dominant wind frequency (\%),
+#' extreme maximum temperature (C), extreme minimum temperature (C). The
+#' coordinates of the stations are in \code{\link{stations_coordinates}}.
+#'
+#'
+#' @format A \code{MatH} object with 60 rows (stations) and 168 columns (14 variables x 12 months).
+#' @source Climate Data Bases of the People's Republic of China 1841-1988 (TR055),
+#' \doi{10.3334/CDIAC/cli.tr055}
+#' @examples
+#' get.MatH.main.info(China_Month)$ncols
+#' @keywords datasets
+#' @docType data
 #' @name China_Month
-#' @docType data
-#' @format a \code{MatH} object, a matrix of distributions.
-#' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}
 NULL
 
-#' A seasonal climatic dataset of China
+#' Seasonal climatic data of China
 #'
-#' A dataset with the distributions of some climatic variables collected for each season in 60 stations of China.
-#' The collected variables are 56 i.e. 14 climatic variables observed for 4 seasons. The 14 variables are the following:
-#'  mean station pressure (mb), mean temperature, mean maximum temperature, mean minimum temperature,
-#'   total precipitation (mm), sunshine duration (h), mean cloud amount (percentage of sky cover),
-#'   mean relative humidity (%), snow days (days with snow cover), dominant wind direction (degrees),
-#'    mean wind speed (m/s), dominant wind frequency (%), extreme maximum temperature (C),
-#'    extreme minimum temperature.
-#' Use the command \code{ get.MatH.main.info(China_Seas)} for rapid info.
+#' Distributions of 14 climatic variables observed in 60 stations of China in
+#' each season (56 histogram-valued variables).
 #'
+#' The 14 variables are: mean station pressure (mb), mean temperature, mean
+#' maximum temperature, mean minimum temperature, total precipitation (mm),
+#' sunshine duration (h), mean cloud amount (percentage of sky cover), mean
+#' relative humidity (\%), snow days (days with snow cover), dominant wind
+#' direction (degrees), mean wind speed (m/s), dominant wind frequency (\%),
+#' extreme maximum temperature (C), extreme minimum temperature (C). The
+#' coordinates of the stations are in \code{\link{stations_coordinates}}.
+#'
+#'
+#' @format A \code{MatH} object with 60 rows (stations) and 56 columns (14 variables x 4 seasons).
+#' @source Climate Data Bases of the People's Republic of China 1841-1988 (TR055),
+#' \doi{10.3334/CDIAC/cli.tr055}
+#' @examples
+#' get.MatH.main.info(China_Seas)$ncols
+#' @keywords datasets
+#' @docType data
 #' @name China_Seas
-#' @docType data
-#' @format a \code{MatH} object, a matrix of distributions.
-#' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}.
-#' Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
-#' DOI: 10.3334/CDIAC/cli.tr055
 NULL
 
-#' Stations coordinates of China_Month and China_Seas datasets
+#' Coordinates of the stations of the China datasets
 #'
-#' A dataset containing the geographical coordinates of stations described in China_Month and China_Seas datasets
+#' Geographical coordinates of the 60 stations of \code{\link{China_Month}} and
+#' \code{\link{China_Seas}}.
 #'
-#'
+#' @format A data frame with 60 rows and 9 columns: \code{ID}, \code{Name_ST}
+#' (name of the station), \code{Code_ST} (code of the station), \code{LAT.deg},
+#' \code{LAT.min}, \code{LON.deg}, \code{LON.min} (latitude and longitude, degrees
+#' and minutes), \code{Elevation}, \code{Beginning} (first year of observation).
+#' @source Climate Data Bases of the People's Republic of China 1841-1988 (TR055),
+#' \doi{10.3334/CDIAC/cli.tr055}
+#' @examples
+#' head(stations_coordinates)
+#' @keywords datasets
+#' @docType data
 #' @name stations_coordinates
-#' @docType data
-#' @format a data.frame
-#' @author Antonio Irpino, 2014-10-05
-#' @source raw data are available here: \url{https://data.ess-dive.lbl.gov/view/doi:10.3334/CDIAC/CLI.TR055}.
-#' Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
-#' DOI: 10.3334/CDIAC/cli.tr055
 NULL
 
-#' A histogram-valued dataset of returns
+#' Histogram time series of returns
 #'
-#' A histogram-valued dataset of returns of dollar vs yen change rates
+#' Daily histograms of the returns of the US dollar / Japanese yen exchange rate.
 #'
-#' @name RetHTS
+#' @format A \code{\link{HTS-class}} object with 108 histograms.
+#' @examples
+#' summaryHTS(subsetHTS(RetHTS, from = 1, to = 5))
+#' plot(subsetHTS(RetHTS, from = 1, to = 20))
+#' @keywords datasets
 #' @docType data
-#' @format a \code{MatH} object, a matrix of distributions.
-#' @author Antonio Irpino, 2014-10-05
+#' @name RetHTS
 NULL
