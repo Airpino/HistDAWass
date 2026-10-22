@@ -90,7 +90,7 @@ WH_kmeans <- function(x, k, rep = 5,
         cards <- length(sel)
         for (j in 1:vars) {
           # tmp=ComputeFastSSQ(MM[[j]][,c(sel,(ind+1))])
-          tmp <- c_ComputeFASTSSQ(MM[[j]][, c(sel, (ind + 1))])
+          tmp <- c_ComputeFASTSSQ_sel(MM[[j]], sel)
           proto@M[clu, j][[1]]@x <- tmp$mx
           proto@M[clu, j][[1]]@p <- tmp$mp
           tt <- M_STD_H(proto@M[clu, j][[1]])
@@ -146,7 +146,7 @@ WH_kmeans <- function(x, k, rep = 5,
         cards <- length(sel)
         for (j in 1:vars) {
           # tmp=ComputeFastSSQ(MM[[j]][,c(sel,(ind+1))])
-          tmp <- c_ComputeFASTSSQ(MM[[j]][, c(sel, (ind + 1))])
+          tmp <- c_ComputeFASTSSQ_sel(MM[[j]], sel)
           proto@M[clu, j][[1]]@x <- tmp$mx
           proto@M[clu, j][[1]]@p <- tmp$mp
           tt <- M_STD_H(proto@M[clu, j][[1]])
@@ -394,7 +394,7 @@ WH_adaptive.kmeans <- function(x, k,
 
         cards <- length(sel)
         for (variables in 1:vars) {
-          tmp <- c_ComputeFASTSSQ(MM[[variables]][, c(sel, (ind + 1))])
+          tmp <- c_ComputeFASTSSQ_sel(MM[[variables]], sel)
           proto@M[cluster, variables][[1]]@x <- tmp$mx
           proto@M[cluster, variables][[1]]@p <- tmp$mp
           tt <- M_STD_H(proto@M[cluster, variables][[1]])

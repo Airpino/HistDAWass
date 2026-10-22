@@ -57,6 +57,10 @@ c_ComputeFASTSSQ <- function(subMM) {
     .Call('_HistDAWass_c_ComputeFASTSSQ', PACKAGE = 'HistDAWass', subMM)
 }
 
+c_ComputeFASTSSQ_sel <- function(M, sel) {
+    .Call('_HistDAWass_c_ComputeFASTSSQ_sel', PACKAGE = 'HistDAWass', M, sel)
+}
+
 c_Compute_M_from_MM <- function(subMM) {
     .Call('_HistDAWass_c_Compute_M_from_MM', PACKAGE = 'HistDAWass', subMM)
 }

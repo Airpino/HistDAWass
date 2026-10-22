@@ -51,17 +51,9 @@ WH.regression.two.components <- function(data, Yvar, Xvars, simplify = FALSE, qu
   if (simplify) {
     pr <- c(0:qua) / qua
     for (i in 1:n) {
-      tmpx <- numeric(0)
-      for (q in 0:qua) {
-        tmpx <- c(tmpx, compQ(Y@M[i, 1][[1]], pr[q + 1]))
-      }
-      Y@M[i, 1][[1]] <- new("distributionH", x = tmpx, p = pr)
+      Y@M[i, 1][[1]] <- new("distributionH", x = .qfun(Y@M[i, 1][[1]], pr), p = pr)
       for (j in 1:d) {
-        tmpx <- numeric(0)
-        for (q in 0:qua) {
-          tmpx <- c(tmpx, compQ(X@M[i, j][[1]], pr[q + 1]))
-        }
-        X@M[i, j][[1]] <- new("distributionH", x = tmpx, p = pr)
+        X@M[i, j][[1]] <- new("distributionH", x = .qfun(X@M[i, j][[1]], pr), p = pr)
       }
     }
   }

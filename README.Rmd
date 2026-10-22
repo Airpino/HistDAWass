@@ -18,6 +18,20 @@ knitr::opts_chunk$set(
 #HistDAWass 
 ##(Histogram-valued Data analysis using Wasserstein metric)
 
+## What's new in version 1.0.10
+
+* **Much faster with histograms having different bins** (the default
+  `simplify = FALSE`), with the same results: on 300 histograms x 3 variables
+  the Kohonen maps and the adaptive fuzzy c-means go from more than 100 s to
+  about 4 s; `WH.var.covar()`, `WH.correlation()` and `WH.SSQ()` from about
+  5 s to 0.1 s; k-means and fuzzy c-means are 2-5 times faster.
+* **Bug fixes**: timestamps of `HTS.moving.averages()`, ties in
+  `HTS.predict.knn()`, proportional initial weights of the adaptive Kohonen
+  maps, `d1 - d2` for distributions sharing the same cdf, products by negative
+  numbers and `a - d`.
+
+See `NEWS.md` for the details.
+
 ## What's new in version 1.0.9
 
 Changes and improvements with respect to version 1.0.8.

@@ -19,6 +19,9 @@
 #' @export
 HTS.moving.averages <- function(HTS, k = 3, weights = rep(1, k)) {
   # check and standardize weights
+  if (length(weights) != k) {
+    stop("weights must be a vector of length k")
+  }
   if (min(weights) < 0) {
     stop("Weights must be positive")
   }
@@ -30,7 +33,9 @@ HTS.moving.averages <- function(HTS, k = 3, weights = rep(1, k)) {
     epocs <- length(HTS@data) - k + 1
     AveragedHTS <- new("HTS", epocs = epocs)
     counts <- 0
-    shift <- (k + 1) / 2
+    # the i-th average refers to the central element of the window
+    # i, ..., i + k - 1 (up to 1.0.9 the element after the central one)
+    shift <- (k - 1) / 2
     for (i in 1:epocs) {
       AveragedHTS@data[[i]]@tstamp <- HTS@data[[i + shift]]@tstamp
       AveragedHTS@data[[i]]@period <- HTS@data[[i + shift]]@period
@@ -115,11 +120,15 @@ HTS.predict.knn <- function(HTS, position = length(HTS@data), k = 3) {
   for (i in 1:(position - 1)) {
     dista[i] <- WassSqDistH(HTS@data[[position]], HTS@data[[i]])
   }
-  firstksorted <- sort(dista)[1:k]
-  positions <- vector(mode = "numeric", k)
+  if (k > (position - 1)) {
+    stop("k must be lower than position")
+  }
+  # the k nearest neighbours (up to 1.0.9 which(dista == ...) was used, that
+  # returned several positions in case of ties); the forecast is based on the
+  # histograms following the neighbours
+  positions <- order(dista)[1:k] + 1
   vectorofdistr <- new(Class = "MatH", nrows = k, ncols = 1)
   for (v in 1:k) {
-    positions[v] <- which(dista == (firstksorted[v])) + 1
     vectorofdistr@M[v, 1][[1]] <- new(
       "distributionH",
       HTS@data[[positions[v]]]@x,

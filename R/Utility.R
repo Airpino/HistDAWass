@@ -26,6 +26,27 @@
   list(p = p, fixed = FALSE)
 }
 
+# Fast internal constructor of distributionH objects (since 1.0.10), for x and
+# p computed by the package from valid distributions: it skips the validity
+# check of new(), but fixes the empty bins and computes mean and standard
+# deviation exactly as the constructor does (one call to M_STD_H instead of
+# two), so the result is identical to new("distributionH", x, p, m, s).
+.distH <- function(x, p, m = numeric(0), s = numeric(0)) {
+  o <- .EMPTY_DISTH
+  fx <- .fix_empty_bins_p(as.numeric(p))
+  o@x <- as.numeric(x)
+  o@p <- fx$p
+  if (fx$fixed || length(m) == 0 || length(s) == 0) {
+    ms <- M_STD_H(o)
+    o@m <- if (fx$fixed || length(m) == 0) ms[1] else m
+    o@s <- if (fx$fixed || length(s) == 0) ms[2] else s
+  } else {
+    o@m <- m
+    o@s <- s
+  }
+  o
+}
+
 # Validate x and p of a distribution, returns TRUE or an error message
 .check_xp <- function(x, p) {
   n <- length(x)
@@ -793,3 +814,6 @@ Table2 <- function(x, N, full = TRUE) {
     return(howm[which(howm > 0)])
   }
 }
+
+# an empty distributionH, the template of .distH (created at installation)
+.EMPTY_DISTH <- methods::new("distributionH")

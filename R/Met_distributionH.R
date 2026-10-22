@@ -321,7 +321,9 @@ setMethod(
 #' than \code{e2} (the result must be a non-decreasing quantile function);
 #' otherwise it may not be valid. \code{x - a} shifts \code{x} by \code{-a}.
 #' \item \code{a * x} or \code{x * a}: the product of a distribution and a number,
-#' i.e. a rescaling of \code{x}.
+#' i.e. the distribution of \code{a} times the random variable (for \code{a < 0}
+#' the distribution is reflected). Similarly, \code{a - x} is the distribution
+#' of \code{a} minus the random variable.
 #' }
 #'
 #' @param e1,e2 Two \code{distributionH} objects, or a \code{distributionH} and a
@@ -368,7 +370,7 @@ setMethod(
   signature(e1 = "numeric", e2 = "distributionH"),
   function(e1, e2) {
     x <- callGeneric(rep(e1, length(e2@x)), e2@x)
-    OBJ_NEW <- new("distributionH", x, e2@p, (e1 + e2@m), e2@s)
+    OBJ_NEW <- .distH(x, e2@p, (e1 + e2@m), e2@s)
   }
 )
 #' @rdname Arith-distributionH
@@ -380,7 +382,7 @@ setMethod(
   signature(e1 = "distributionH", e2 = "numeric"),
   function(e1, e2) {
     x <- callGeneric(rep(e2, length(e1@x)), e1@x)
-    OBJ_NEW <- new("distributionH", x, e1@p, (e2 + e1@m), e1@s)
+    OBJ_NEW <- .distH(x, e1@p, (e2 + e1@m), e1@s)
   }
 )
 # Overloading of the difference of two distributions according to the L2 wasserstein --------
@@ -398,7 +400,9 @@ setMethod(
     } else {
       x <- callGeneric(e1@x, e2@x)
     }
-    x <- callGeneric(tmp[[1]]@x, tmp[[2]]@x)
+    # (up to 1.0.9 x was recomputed here from tmp, that does not exist when the
+    # two distributions share the same cdf: d1 - d2 failed for registered
+    # distributions)
     OBJ_NEW <- new("distributionH", x, e1@p)
   }
 )
@@ -409,8 +413,10 @@ setMethod(
   "-",
   signature(e1 = "numeric", e2 = "distributionH"),
   function(e1, e2) {
-    x <- callGeneric(rep(e1, length(e2@x)), e2@x)
-    OBJ_NEW <- new("distributionH", x, e2@p)
+    # the distribution of e1 - X: the quantile function is e1 - Q(1 - p)
+    # (up to 1.0.9 it failed, x was not increasing)
+    x <- rev(e1 - e2@x)
+    OBJ_NEW <- .distH(x, rev(1 - e2@p), e1 - e2@m, e2@s)
   }
 )
 #' @rdname Arith-distributionH
@@ -421,7 +427,7 @@ setMethod(
   signature(e1 = "distributionH", e2 = "numeric"),
   function(e1, e2) {
     x <- callGeneric(e1@x, rep(e2, length(e1@x)))
-    OBJ_NEW <- new("distributionH", x, e1@p, (e1@m - e2), e1@s)
+    OBJ_NEW <- .distH(x, e1@p, (e1@m - e2), e1@s)
   }
 )
 
@@ -444,9 +450,13 @@ setMethod(
   signature(e1 = "numeric", e2 = "distributionH"),
   function(e1, e2) {
     x <- callGeneric(rep(e1, length(e2@x)), e2@x)
-
+    if (e1 < 0) {
+      # the distribution of e1 * X, with e1 < 0 (up to 1.0.9 the result had a
+      # decreasing x, i.e. it was not a valid distribution)
+      x <- rev(x)
+      e2@p <- rev(1 - e2@p)
+    }
     e2@x <- x
-    e2@p <- e2@p
     e2@m <- e1 * e2@m
     e2@s <- abs(e1) * e2@s
     return(e2)
@@ -460,8 +470,11 @@ setMethod(
   signature(e1 = "distributionH", e2 = "numeric"),
   function(e1, e2) {
     x <- callGeneric(rep(e2, length(e1@x)), e1@x)
+    if (e2 < 0) {
+      x <- rev(x)
+      e1@p <- rev(1 - e1@p)
+    }
     e1@x <- x
-    e1@p <- e1@p
     e1@m <- e2 * e1@m
     e1@s <- abs(e2) * e1@s
     return(e1)

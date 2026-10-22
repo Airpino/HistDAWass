@@ -176,6 +176,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_ComputeFASTSSQ_sel
+List c_ComputeFASTSSQ_sel(NumericMatrix M, IntegerVector sel);
+RcppExport SEXP _HistDAWass_c_ComputeFASTSSQ_sel(SEXP MSEXP, SEXP selSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type M(MSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type sel(selSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_ComputeFASTSSQ_sel(M, sel));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_Compute_M_from_MM
 List c_Compute_M_from_MM(NumericMatrix subMM);
 RcppExport SEXP _HistDAWass_c_Compute_M_from_MM(SEXP subMMSEXP) {

@@ -38,7 +38,9 @@ of two distributions is a distribution only if \code{e1} is more variable
 than \code{e2} (the result must be a non-decreasing quantile function);
 otherwise it may not be valid. \code{x - a} shifts \code{x} by \code{-a}.
 \item \code{a * x} or \code{x * a}: the product of a distribution and a number,
-i.e. a rescaling of \code{x}.
+i.e. the distribution of \code{a} times the random variable (for \code{a < 0}
+the distribution is reflected). Similarly, \code{a - x} is the distribution
+of \code{a} minus the random variable.
 }
 }
 \examples{

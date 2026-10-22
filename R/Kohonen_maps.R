@@ -101,7 +101,7 @@ WH_2d_Adaptive_Kohonen_maps <- function(x, net = list(xdim = 4, ydim = 3, topo =
 
   colm <- colMeans(tmpc)
   for (v in 1:vars) {
-    tmpSSQ <- WH.SSQ(x[, v])
+    tmpSSQ <- c_ComputeFASTSSQ(MM[[v]])$SSQ
     TOTSSQ <- TOTSSQ + tmpSSQ
     C_comp <- sum((tmpc[, v] - colm[v])^2)
     V_comp <- tmpSSQ - C_comp
@@ -175,10 +175,13 @@ WH_2d_Adaptive_Kohonen_maps <- function(x, net = list(xdim = 4, ydim = 3, topo =
             tmpvals <- SSQ_comp[c(1:v) * 2 - 1] + SSQ_comp[c(1:v) * 2]
             mg <- (prod(tmpvals))^(1 / v)
             tmpw <- mg / tmpvals
-            elew <- rep(tmpw, 2, each = 2)
+            # one weight for each variable, repeated for its two components
+            # (up to 1.0.9 rep(tmpw, 2, each = 2): twice the needed length,
+            # unnoticed because this branch was then overwritten)
+            elew <- rep(tmpw, each = 2)
             lambdas <- matrix(rep(elew, k), nrow = 2 * vars, ncol = k, byrow = FALSE)
           }
-          if (schema == 2 || 4) {
+          if (schema == 2 || schema == 4) { # (up to 1.0.9: schema == 2 || 4, always TRUE)
             tmpvalsc <- SSQ_comp[c(1:v) * 2 - 1]
             tmpvalsv <- SSQ_comp[c(1:v) * 2]
             mgc <- (prod(tmpvalsc))^(1 / v)

@@ -1,8 +1,8 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 1.0.9
-Date: 2026-10-16
+Version: 1.0.10
+Date: 2026-10-22
 Authors@R: c(person(given="Antonio",
                 family= "Irpino", 
                 role = c("aut", "cre"),

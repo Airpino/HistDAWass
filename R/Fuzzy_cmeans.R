@@ -95,8 +95,10 @@ WH_fcmeans <- function(x, k, m = 1.6, rep,
       # MIGLIORA QUI
       for (clust in 1:k) {
         for (variables in 1:vars) {
-          tmp <- MM[[variables]][, 1:ind]
-          tmpP <- rowSums(tmp * matrix(memb[, clust]^(m), nrow(tmp), ncol(tmp), byrow = TRUE)) / sum(memb[, clust]^(m))
+          # weighted mean of the quantiles: a matrix-vector product (the last
+          # column of MM is the cdf, it gets a weight 0)
+          wcl <- memb[, clust]^(m)
+          tmpP <- drop(MM[[variables]] %*% c(wcl, 0)) / sum(wcl)
           proto@M[clust, variables][[1]]@x <- as.vector(tmpP)
           proto@M[clust, variables][[1]]@p <- as.vector(MM[[variables]][, ind + 1])
           tmpvals <- M_STD_H(proto@M[clust, variables][[1]])
@@ -219,7 +221,7 @@ WH_adaptive_fcmeans <- function(x, k = 5,
 
   TOTSSQ <- 0
   for (v in 1:vars) {
-    TOTSSQ <- TOTSSQ + (WH.SSQ(x[, v]))
+    TOTSSQ <- TOTSSQ + c_ComputeFASTSSQ(MM[[v]])$SSQ
   }
   if (weight.sys == "PROD") {
     theta <- 1
@@ -346,8 +348,8 @@ WH_adaptive_fcmeans <- function(x, k = 5,
       ## S1)  representation step Stage 1) compute initial prototypes (fix membership and weights)
       for (cluster in 1:k) {
         for (variables in (1:vars)) {
-          tmp <- MM[[variables]][, 1:ind]
-          tmpP <- rowSums(tmp * matrix(memb[, cluster]^(m), nrow(tmp), ncol(tmp), byrow = TRUE)) / sum(memb[, cluster]^(m))
+          wcl <- memb[, cluster]^(m)
+          tmpP <- drop(MM[[variables]] %*% c(wcl, 0)) / sum(wcl)
 
           proto@M[cluster, variables][[1]]@x <- as.vector(tmpP)
           proto@M[cluster, variables][[1]]@p <- as.vector(MM[[variables]][, ind + 1])

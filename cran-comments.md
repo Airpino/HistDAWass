@@ -1,29 +1,29 @@
-## Submission of HistDAWass 1.0.9
+## Submission of HistDAWass 1.0.10
 
-This is a maintenance release, requested by the Rcpp team ahead of the next
-Rcpp release (Rcpp PR #1513 checks that a vector assigned into a matrix row
-has the row's length). The `WH_adaptive.kmeans()` example failed because
-`c_WH_ADPT_KMEANS_TOTALSSQ()` assigned a vector of length k into a row of
-length `vars`. The bug has been fixed (it also read uninitialised memory with
-the released Rcpp when k < vars).
+This is a bug-fix release following 1.0.9, submitted shortly after it because
+it fixes errors found after the 1.0.9 submission:
 
-The release also fixes the handling of zero-weight bins of histograms and a
-few other bugs, speeds up the C++ distance computations and updates the
-graphics for ggplot2 >= 3.4.0 (see NEWS.md).
+* `HTS.moving.averages()` assigned wrong timestamps to the averages;
+* `HTS.predict.knn()` could select wrong neighbours in case of ties;
+* the adaptive Kohonen maps failed with `init.weights = "PROP"`;
+* the difference of two histograms sharing the same cdf failed, and products
+  by negative numbers returned invalid objects.
+
+It also makes the computations with histograms having different bins much
+faster (up to 25 times), with identical results (see NEWS.md).
 
 ## Test environments
 
 * Ubuntu 24.04, R 4.3.3, released Rcpp and Rcpp development branch of
-  PR #1513 (1.1.2.4, with the sugar length checks enabled)
+  PR #1513 (1.1.2.4, with the sugar length checks enabled), ggplot2 3.4.4 and
+  4.0.3
 * (to add: win-builder R-devel, macOS via R-hub / mac-builder)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 NOTEs (environment-related)
-
-* installed package size (libs 5.4Mb, debug symbols of the compiled code)
-* compilation flags (`-mno-omit-leaf-frame-pointer`), set by the local R
-  installation, not by the package
+0 errors | 0 warnings | NOTEs related only to the local environment
+(installed size of the compiled code with debug symbols, compilation flags
+set by the local R installation).
 
 ## Reverse dependencies
 

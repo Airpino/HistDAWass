@@ -1,5 +1,69 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# HistDAWass 1.0.10
+
+## Performance
+
+Large speed-ups when the histograms have different bins (the default
+`simplify = FALSE`), with results identical to 1.0.9 (up to differences of
+the order of 1e-13 in covariances and fuzzy c-means, due to the order of the
+sums). Times on a matrix of 300 histograms x 3 variables with different bins:
+
+| Function | 1.0.9 | 1.0.10 |
+|---|---:|---:|
+| `WH_adaptive_fcmeans()` | 117 s | 4.1 s |
+| `WH_2d_Kohonen_maps()` | 106 s | 4.6 s |
+| `WH_2d_Adaptive_Kohonen_maps()` | 101 s | 4.4 s |
+| `WH.var.covar()`, `WH.correlation()`, `WH.SSQ()` | 4.8 s | 0.1 s |
+| `WH.vec.mean()` | 2.3 s | 0.08 s |
+| `WH_fcmeans()` | 7.8 s | 1.6 s |
+| `WH_kmeans()` | 6.8 s | 2.5 s |
+| `WH_adaptive.kmeans()` | 7.5 s | 3.1 s |
+| `WH_MAT_DIST()`, `WH_hclust()` | 3.0 s | 1.2 s |
+| `registerMH()` | 5.9 s | 2.1 s |
+
+* `SSQ_RCPP()` (C++, used by `WH.SSQ()`, `WH.var.covar()`,
+  `WH.correlation()`) no longer builds a dense diagonal matrix of the weights
+  (of size G x G, G being the number of points of the common grid of cdf
+  values) for each individual; the sum of the weights is now stored in a
+  double instead of a float.
+* The Kohonen maps and the adaptive fuzzy c-means computed the total sum of
+  squares with `WH.SSQ()` on the already prepared data: they now use the fast
+  `c_ComputeFASTSSQ()`.
+* Fuzzy c-means: the prototypes are computed with a matrix-vector product
+  instead of building a G x n matrix of weights at each step.
+* `WH_kmeans()` and `WH_adaptive.kmeans()`: the prototypes are computed without
+  copying the columns of the data of each cluster (new `c_ComputeFASTSSQ_sel()`).
+* `PREPARE_A_VEC_MAT()` (C++, puts a set of histograms on a common grid of
+  cdf values) computes the quantiles with a single ordered scan of the grid;
+  `COMP_Q_VECT()` scans the cdf only once for sorted levels; `c_Prepare()` no
+  longer copies and transposes the data.
+* `registerMH()`, the arithmetic of histograms with numbers and the regression
+  with `simplify = TRUE` avoid repeated validity checks and quantile
+  computations.
+
+## Bug fixes
+
+* `HTS.moving.averages()`: each average was assigned the timestamp of the
+  element following the central one of its window; `weights` of length
+  different from `k` are now an error.
+* `HTS.predict.knn()`: with ties in the distances, `which()` returned several
+  positions (with a warning) and could select wrong neighbours; `k` larger than
+  the available history is now an error.
+* `WH_2d_Adaptive_Kohonen_maps()` with `init.weights = "PROP"`: the condition
+  `schema == 2 || 4` was always true, so the initial weights of schemas 1, 3
+  and 5 were overwritten; for these schemas the vector of initial weights
+  also had twice the needed length.
+* `d1 - d2` failed (`object 'tmp' not found`) when the two distributions share
+  the same cdf, e.g. after `registerMH()`.
+* `a * d` and `d * a` with `a < 0`, and `a - d`, returned (or failed to
+  create) objects with a decreasing `x`; they now return the distribution of
+  `a * X` and `a - X`.
+
+## Tests
+
+* New tests for the fixes above and for the fast computations.
+
 # HistDAWass 1.0.9
 
 ## Bug fixes

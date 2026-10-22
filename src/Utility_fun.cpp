@@ -103,26 +103,32 @@ int whichLowerEQThanX(NumericVector x, double y) {
 
 // [[Rcpp::export]]
 NumericVector COMP_Q_VECT(NumericVector x,NumericVector p, NumericVector vp) {
-  
+  // quantiles of the distribution (x, p) at the (sorted) levels vp.
+  // Since 1.0.9 the position in p is searched with a forward scan that
+  // starts from the position of the previous level (vp is sorted), instead
+  // of starting each time from the beginning; same interpolation formula.
   std::sort(vp.begin(), vp.end());
-  int vals;
-  
-  double p_val;
+  int n=p.size();
   NumericVector qua(vp.size());
-  
-  for (vals=0;vals<vp.size();vals++){
-    p_val=vp[vals];
+  int pos=0; // first index with p[pos] > p_val
+  for (int vals=0;vals<vp.size();vals++){
+    double p_val=vp[vals];
     double value=0;
     if (p_val<=0) value=x[0];
     if (p_val>=1) value=x[x.size()-1];  
     if ((p_val>0) && (p_val<1)){
-      int pos1;
-      double ini,fin;
-      pos1=whichLowerEQThanX(p,p_val);
-      ini=x[pos1-1];
-      fin=x[pos1];
-      value=ini+(fin-ini)*(p_val-p[pos1-1])/(p[pos1]-p[pos1-1]);
-      
+      while ((pos<n) && (p[pos]<=p_val)) pos++;
+      int pos1=pos; // as whichLowerEQThanX(p, p_val)
+      if (pos1>=n){
+        // the cdf ends before p_val (it does not reach 1): up to 1.0.8
+        // this case read x[-1]
+        value=x[x.size()-1];
+      } else {
+        double ini,fin;
+        ini=x[pos1-1];
+        fin=x[pos1];
+        value=ini+(fin-ini)*(p_val-p[pos1-1])/(p[pos1]-p[pos1-1]);
+      }
     }
     qua[vals]=value;
   }
@@ -227,55 +233,57 @@ List REGISTER2(S4 a, S4 b) {
 
 // [[Rcpp::export]]
 List PREPARE_A_VEC_MAT(S4 MAT){
-  //int DIG=14;
+  // Puts all the distributions of MAT on the common grid of cdf values
+  // (the union of their p). Since 1.0.9 the quantiles on the grid are
+  // computed with a single ordered scan of the grid for each distribution
+  // (before: setdiff + COMP_Q_VECT + sort), with the same interpolation
+  // formula, so results are identical.
   List My(2);
-  NumericVector a;
   List b=MAT.slot("M");
   int i,j;
+  int nb=b.size();
   std::vector<double> tmp1;
-  
-  
   // the cdfs, without empty bins (repeated values of p would misalign the
   // quantiles in the common grid, as happened up to 1.0.8)
-  std::vector<NumericVector> cdfs(b.size());
-  for (i=0;i<b.size();i++){
+  std::vector<NumericVector> cdfs(nb);
+  std::vector<NumericVector> doms(nb);
+  for (i=0;i<nb;i++){
     S4 o=b[i];
     NumericVector t=fix_empty_bins(o.slot("p"));
     cdfs[i]=t;
-    std::vector<double> tmp2=as<std::vector<double> >(t);
-    tmp1.insert(tmp1.end(),tmp2.begin(),tmp2.end());
+    doms[i]=o.slot("x");
+    tmp1.insert(tmp1.end(),t.begin(),t.end());
   }
-  NumericVector tmp3;
-  tmp3=wrap(tmp1);
-  tmp3=sort_unique(tmp3);
+  std::sort(tmp1.begin(),tmp1.end());
+  tmp1.erase(std::unique(tmp1.begin(),tmp1.end()),tmp1.end());
+  int G=tmp1.size();
+  NumericVector tmp3(tmp1.begin(),tmp1.end());
   
-  NumericMatrix M(b.size(),tmp3.size());
+  NumericMatrix M(nb,G);
   //rows are individuals, columns are quantiles
-  for (i=0;i<b.size();i++){
-    S4 o=b[i];
-    NumericVector x=o.slot("x");
-    NumericVector t2=cdfs[i];
-    NumericVector xf(clone(x));
-    NumericVector t2f(clone(t2));  
-    //std::vector<double> tmp2=as<std::vector<double> >(t);
-    //tmp1.insert(tmp1.end(),tmp2.begin(),tmp2.end());
-    NumericVector ciccio=setdiff(tmp3,t2f);
-    
-    if (ciccio.size()>0){
-      NumericVector tres,fintrex;
-      tres=COMP_Q_VECT(xf,t2f,ciccio);
-      fintrex=concatenate_and_sort_not_unique(xf,tres);
-      xf=fintrex;
+  for (i=0;i<nb;i++){
+    const NumericVector& x=doms[i];
+    const NumericVector& p=cdfs[i];
+    int n=p.size();
+    int pos=0; // first index with p[pos] > u (as whichLowerEQThanX)
+    for (j=0;j<G;j++){
+      double u=tmp1[j];
+      double value;
+      while ((pos<n) && (p[pos]<=u)) pos++;
+      if ((pos>0) && (p[pos-1]==u)){
+        value=x[pos-1];             // u is a cdf value of the distribution
+      } else if (u<=0) {
+        value=x[0];
+      } else if (u>=1) {
+        value=x[n-1];
+      } else {
+        double ini=x[pos-1];
+        double fin=x[pos];
+        value=ini+(fin-ini)*(u-p[pos-1])/(p[pos]-p[pos-1]);
+      }
+      M(i,j)=value;
     }
-    //Rcout<<"\n STOASSEGNANDO \n";
-    for (j=0;j<tmp3.size();j++){
-      M(i,j)=xf(j);
-    }
-    
-    
   }
-  
-  //Rcout<<"\n"<<tmp3<<"\n";
   My(0)=M;
   My(1)=tmp3;
   return My;
@@ -337,7 +345,7 @@ S4 MEDIA_V(S4 MAT, NumericVector wei){ //compute the average distribution
 NumericMatrix SSQ_RCPP(S4 MAT,NumericVector wei){
   List resu;
   ListMatrix MM=MAT.slot("M");
-  float Sumwei=sum(wei);
+  double Sumwei=sum(wei);
   arma::mat MIXP;
   MIXP.zeros(MM.ncol(),MM.ncol());
   int i;
@@ -354,10 +362,9 @@ NumericMatrix SSQ_RCPP(S4 MAT,NumericVector wei){
     
     Mc=(M(span(0,(M.n_rows-1)),span(1,(M.n_cols-1)))+M(span(0,(M.n_rows-1)),span(0,(M.n_cols-2))))/2.0;
     Mr=(M(span(0,(M.n_rows-1)),span(1,(M.n_cols-1)))-M(span(0,(M.n_rows-1)),span(0,(M.n_cols-2))))/2.0;
-    arma::mat W=diagmat(diff(p));
-    
-    
-    MIXP=MIXP+Mc*W*Mc.t()*wei(i)+Mr*W*Mr.t()*wei(i)/3.0;
+    arma::rowvec w=arma::trans(arma::diff(p));
+    // Mc*diag(w)*Mc' without building the dense diagonal matrix
+    MIXP=MIXP+(Mc.each_row()%w)*Mc.t()*wei(i)+(Mr.each_row()%w)*Mr.t()*wei(i)/3.0;
   }
   //now compute the second part
   
@@ -380,11 +387,10 @@ NumericMatrix SSQ_RCPP(S4 MAT,NumericVector wei){
   arma::vec p=resu2[1];
   arma::mat Mc;
   arma::mat Mr;
-  arma::mat W=diagmat(diff(p));
+  arma::rowvec w=arma::trans(arma::diff(p));
   Mc=(M(span(0,(M.n_rows-1)),span(1,(M.n_cols-1)))+M(span(0,(M.n_rows-1)),span(0,(M.n_cols-2))))/2.0;
   Mr=(M(span(0,(M.n_rows-1)),span(1,(M.n_cols-1)))-M(span(0,(M.n_rows-1)),span(0,(M.n_cols-2))))/2.0;
-  arma::mat MIXP2;
-  MIXP=MIXP-Mc*W*Mc.t()*Sumwei-Mr*W*Mr.t()*Sumwei/3.0;
+  MIXP=MIXP-(Mc.each_row()%w)*Mc.t()*Sumwei-(Mr.each_row()%w)*Mr.t()*Sumwei/3.0;
   
   ////////////////////////////////////////////////////////////////////////
   NumericMatrix fin_resu;
@@ -539,6 +545,50 @@ List c_ComputeFASTSSQ(NumericMatrix subMM){
   
   return L;
 }
+// Same as c_ComputeFASTSSQ(M[, c(sel, ncol(M))]) but without copying the
+// selected columns and without temporary vectors. sel are 1-based column
+// indices; the last column of M is the cdf. The operations are the same (and
+// in the same order) of c_ComputeFASTSSQ, so results are identical.
+// [[Rcpp::export]]
+List c_ComputeFASTSSQ_sel(NumericMatrix M, IntegerVector sel){
+  int rr=M.nrow();
+  int ns=sel.size();
+  const double* pM=M.begin();
+  const double* mp=pM+(M.ncol()-1)*rr;
+  // row means (two-pass long double algorithm, as Rcpp::mean)
+  std::vector<long double> s(rr,0.0L), t(rr,0.0L);
+  for (int c=0;c<ns;c++){
+    const double* col=pM+(sel[c]-1)*rr;
+    for (int q=0;q<rr;q++) s[q]+=col[q];
+  }
+  for (int q=0;q<rr;q++) s[q]/=ns;
+  for (int c=0;c<ns;c++){
+    const double* col=pM+(sel[c]-1)*rr;
+    for (int q=0;q<rr;q++) t[q]+=col[q]-s[q];
+  }
+  NumericVector Mqua(rr);
+  for (int q=0;q<rr;q++){
+    long double sq=s[q];
+    if (R_FINITE((double)sq)) sq+=t[q]/ns;
+    Mqua[q]=(double)sq;
+  }
+  double SSQ=0;
+  for (int c=0;c<ns;c++){
+    const double* col=pM+(sel[c]-1)*rr;
+    double part=0;
+    for (int q=0;q<(rr-1);q++){
+      double c1=(col[q]+col[q+1])/2.0;
+      double r1=(col[q+1]-col[q])/2.0;
+      double cM=(Mqua[q]+Mqua[q+1])/2.0;
+      double rM=(Mqua[q+1]-Mqua[q])/2.0;
+      part+=(std::pow((c1-cM),2)+std::pow((r1-rM),2)/3.0)*(mp[q+1]-mp[q]);
+    }
+    SSQ=SSQ+part;
+  }
+  NumericVector mpv(mp, mp+rr);
+  List L = List::create(Named("SSQ") = SSQ , _["mx"] = Mqua,_["mp"]=mpv);
+  return L;
+}
 // [[Rcpp::export]]
 List c_Compute_M_from_MM(NumericMatrix subMM){
   
@@ -627,33 +677,28 @@ List c_Prepare(S4 x,bool simplify,int qua,bool standardize){
     }
   }else{
     for(j=0;j<vars;j++){
-      
       List TMP_res;
       S4 T_MAT("MatH");
       T_MAT.slot("M")=M(_,j);
       TMP_res=PREPARE_A_VEC_MAT(T_MAT);
-      NumericMatrix AA=as<NumericMatrix>(TMP_res(0));//Ã¨ la matrice
-      NumericVector BB=as<NumericVector>(TMP_res(1));//sono i pesi
-      NumericMatrix CC((AA.nrow()+1),AA.ncol());
-      int kk;
-      for(kk=0;kk<AA.nrow();kk++){
-        CC(kk,_)=AA(kk,_);
+      NumericMatrix AA=as<NumericMatrix>(TMP_res(0));// rows: individuals, cols: grid
+      NumericVector BB=as<NumericVector>(TMP_res(1));// the common cdf
+      int G=AA.ncol();
+      // MM[j] is the transpose of AA with the cdf as last column (filled
+      // directly: up to 1.0.8 by copying rows and transposing)
+      NumericMatrix CC(G,(AA.nrow()+1));
+      for(i=0;i<ind;i++){
+        for (int q=0;q<G;q++) CC(q,i)=AA(i,q);
       }
-      CC(AA.nrow(),_)=BB;
-      
-      MM[j]=transpose(CC);
+      for (int q=0;q<G;q++) CC(q,ind)=BB[q];
+      MM[j]=CC;
       for(i=0;i<ind;i++){
         S4 o=M(i,j);
-        NumericVector dom;
-        dom=CC(i,_);
-        
-        o.slot("x")=dom;
+        o.slot("x")=CC(_,i);
         o.slot("p")=BB;
-        NumericVector MOM;
-        MOM=M_STD_H(o);
+        // (up to 1.0.8 mean and std were recomputed here and not used)
         M(i,j)=o;
       }
-      
     }
   }
   

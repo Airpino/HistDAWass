@@ -949,12 +949,8 @@ setMethod(
     if (is.registeredMH(object)) {
       return(object)
     }
-    commoncdf <- numeric(0)
-    for (i in 1:nrows) {
-      for (j in 1:ncols) {
-        commoncdf <- rbind(commoncdf, t(t(object@M[i, j][[1]]@p)))
-      }
-    }
+    # all the cdf values (up to 1.0.8 collected with rbind() in a loop)
+    commoncdf <- unlist(lapply(object@M, function(o) o@p), use.names = FALSE)
     commoncdf <- sort(unique(round(commoncdf, digits = 10)))
     commoncdf[1] <- 0
     commoncdf[length(commoncdf)] <- 1
@@ -972,7 +968,7 @@ setMethod(
         # for (rr in 1:nr){
         #   x=c(x,compQ(object@M[r,c][[1]],commoncdf[rr]))
         # }
-        NEWMAT@M[r, c][[1]] <- new("distributionH", x, commoncdf)
+        NEWMAT@M[r, c][[1]] <- .distH(x, commoncdf)
       }
     }
     return(NEWMAT)
