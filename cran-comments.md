@@ -18,14 +18,19 @@ faster (up to 25 times), with identical results, and adds five vignettes
 * Ubuntu 24.04, R 4.3.3, released Rcpp and Rcpp development branch of
   PR #1513 (1.1.2.4, with the sugar length checks enabled), ggplot2 3.4.4 and
   4.0.3
+* Windows 11, R 4.5.3 (FactoMineR >= 2.15); Ubuntu also with FactoMineR 2.18
 * win-builder: R-devel and R-release
 * macOS (mac-builder), R-release
 
 ## R CMD check results
 
-0 errors | 0 warnings | NOTEs related only to the local environment
-(installed size of the compiled code with debug symbols, compilation flags
-set by the local R installation).
+0 errors | 0 warnings | 2 NOTEs
+
+* Days since last update: 5. This release follows 1.0.9 shortly because it
+  fixes the bugs listed above; it also fixes the total inertia returned by
+  `WH.1d.PCA()` and a vignette with FactoMineR >= 2.15.
+* "unable to verify current time": the time server was not reachable from
+  the local machine.
 
 ## Reverse dependencies
 
