@@ -10,14 +10,16 @@ it fixes errors found after the 1.0.9 submission:
   by negative numbers returned invalid objects.
 
 It also makes the computations with histograms having different bins much
-faster (up to 25 times), with identical results (see NEWS.md).
+faster (up to 25 times), with identical results, and adds five vignettes
+(see NEWS.md).
 
 ## Test environments
 
 * Ubuntu 24.04, R 4.3.3, released Rcpp and Rcpp development branch of
   PR #1513 (1.1.2.4, with the sugar length checks enabled), ggplot2 3.4.4 and
   4.0.3
-* (to add: win-builder R-devel, macOS via R-hub / mac-builder)
+* win-builder: R-devel and R-release
+* macOS (mac-builder), R-release
 
 ## R CMD check results
 
@@ -27,5 +29,7 @@ set by the local R installation).
 
 ## Reverse dependencies
 
-(to verify before submission with
-`tools::package_dependencies("HistDAWass", reverse = TRUE, which = "all")`)
+There are two reverse dependencies: dataSDA (Imports) and ggInterval
+(Suggests). The test suite and the examples of dataSDA give the same results
+with HistDAWass 1.0.8 and 1.0.10; ggInterval only uses the `BLOOD` dataset
+and the `get.MatH.*` accessors, which are unchanged.

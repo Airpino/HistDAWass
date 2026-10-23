@@ -39,7 +39,7 @@ pca1 <- WH.1d.PCA(BLOOD, var = 1, quantiles = 10, listaxes = c(1, 2))
 The results of `FactoMineR::PCA()` are in `PCAout`:
 
 ```{r}
-round(pca1$PCAout$eig[1:4, ], 2)
+round(head(pca1$PCAout$eig, 3), 2)
 round(head(pca1$PCAout$ind$coord[, 1:2]), 3)
 ```
 
@@ -63,7 +63,7 @@ quantiles.
 
 ```{r}
 mpca <- WH.MultiplePCA(BLOOD, list.of.vars = 1:3, quantiles = 10, graph = FALSE)
-round(mpca$eig[1:4, ], 2)
+round(head(mpca$eig, 3), 2)
 ```
 
 The Spanish-fan plot of the quantiles of all the variables on the first

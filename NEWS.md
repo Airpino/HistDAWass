@@ -44,6 +44,10 @@ sums). Times on a matrix of 300 histograms x 3 variables with different bins:
 
 ## Bug fixes
 
+* `WH.1d.PCA()`: `INERTIA` (total inertia) was the sum of the eigenvalues
+  returned by `FactoMineR::PCA()`, which since FactoMineR 2.15 are only the
+  first ones; it is now computed from the percentage of inertia of the first
+  axis.
 * `HTS.moving.averages()`: each average was assigned the timestamp of the
   element following the central one of its window; `weights` of length
   different from `k` are now an error.

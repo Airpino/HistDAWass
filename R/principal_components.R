@@ -134,7 +134,9 @@ WH.1d.PCA <- function(data, var, quantiles = 10, plots = TRUE, listaxes = c(1:4)
   res.pca <- PCA(MATF, quanti.sup = c((ncol(MATF) - 1), ncol(MATF)), scale.unit = FALSE, graph = F)
 
   VARW <- 0 # WH.var.covar(data)
-  TOTINE <- sum(res.pca$eig[, 1])
+  # total inertia from the percentage of the first axis: FactoMineR >= 2.15
+  # returns only the first eigenvalues, so their sum is not the total
+  TOTINE <- res.pca$eig[1, 1] * 100 / res.pca$eig[1, 2]
   ## plotting PCA results ----------------
   if (plots) {
     # since 1.0.9: the plots are drawn on the current device, four panels

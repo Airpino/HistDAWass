@@ -49,3 +49,10 @@ test_that("histograms on the factorial plane have the requested size", {
   expect_equal(mean(tapply(d$x_o, d$ID_o, function(v) diff(range(v)))) /
     diff(range(co[, 1])), 0.2)
 })
+
+test_that("WH.1d.PCA returns the total inertia", {
+  p <- WH.1d.PCA(BLOOD, 1, quantiles = 10, plots = FALSE)
+  X <- as.matrix(p$PCAout$call$X)[, 1:11]
+  tot <- sum(apply(X, 2, function(v) mean((v - mean(v))^2)))
+  expect_equal(p$INERTIA, tot, tolerance = 1e-8)
+})
